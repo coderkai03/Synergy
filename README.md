@@ -38,46 +38,53 @@ Check out our [Figma Design](https://www.figma.com/design/frfbpSb6osZ0zZ0yzMaYlx
 
 ## Mission & Vision
 
-**Mission:**  
+**Mission:**
 Make team-matching and hackathon finding easier for students.
 
-**Vision:**  
+**Vision:**
 Get everyone to use **Synergy** to find their teammates when they want to participate in a hackathon, fostering collaboration and innovation within the student community.
 
 ## Features
 
 ### Home (Swiping)
+
 - **Swipe Functionality:** Swipe on other student profiles (left to decline, right to accept).
 - **Multiple Hackathon Pages:** Switch between different hackathon pages seamlessly.
 - **Filters:** Home FYP filters including distance, university, number of hackathons attended, and more (premium filters available).
 
 ### Profiles
+
 - **Demographics:** Includes name, college/university, age, and number of hackathons attended.
 - **Projects:** Display prompts along with links to DevPost or GitHub projects.
 - **Compatibility Score:** (Premium feature) Indicates how well you match with other users.
 
 ### Teams
+
 - **Team Management:** Create and preview teams with unique names.
 - **Hackathon Details:** View hackathon title, date, location, and website link.
 - **Profile Carousel:** Swipe through team members' profiles.
 - **Search & Filter:** Easily search and filter teams by title, date, and location.
 
 ### Hackathons
+
 - **Browse Hackathons:** Search and filter hackathons by title, date, and location.
 - **Infinite Scroll:** View an endless list of hackathon previews.
 - **Add to Home FYP:** Add hackathons to your personalized feed with a single click.
 
 ### Direct Messages (DMs)
+
 - **Chat History:** View all your DMs and engage in conversations.
 - **Profile Access:** Click on profile headers to view full profiles.
 - **Team Invitations:** Easily add users to your team via DMs.
 
 ### Profile Management
+
 - **Edit Profile:** Update demographics and prompts.
 - **Preview Profile:** View your profile as other users see it.
 - **Advanced Filters:** (Premium) Access additional filtering options based on compatibility and skills.
 
 ### App Settings
+
 - **Customization:** Tailor app settings to your preferences effortlessly.
 
 ## Design
@@ -104,15 +111,16 @@ Follow these instructions to set up and run Synergy locally on your machine.
    git clone https://github.com/your-username/synergy.git
    cd synergy
    ```
-
 2. **Install Dependencies:**
 
    Using npm:
+
    ```bash
    npm install
    ```
 
    Or using yarn:
+
    ```bash
    yarn install
    ```
@@ -138,10 +146,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see Syner
 ## Milestones & Timeline
 
 ### Milestones
+
 - **B2B with MLH:** Establish partnerships with Major League Hacking for broader reach.
 - **Premium Student Membership:** Introduce premium features for enhanced user experience.
 
 ### Timeline
+
 - **Wireframe:** 10/30/24
 - **UI Design:** 11/03/24
 - **Landing Page (Mailing List):** 10/30/24
@@ -166,27 +176,28 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see Syner
 Contributions are welcome! If you have suggestions or improvements, feel free to open an issue or submit a pull request.
 
 1. **Fork the Repository**
-
 2. **Create a Feature Branch**
+
    ```bash
    git checkout -b feature/YourFeature
    ```
-
 3. **Commit Your Changes**
+
    ```bash
    git commit -m "Add some feature"
    ```
-
 4. **Push to the Branch**
+
    ```bash
    git push origin feature/YourFeature
    ```
-
 5. **Open a Pull Request**
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+ro
 
 ---
 
