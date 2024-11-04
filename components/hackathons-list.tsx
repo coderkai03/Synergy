@@ -194,7 +194,7 @@ export function HackathonsListComponent() {
                 {hackathon.participants && (
                   <div className="flex items-center gap-1.5 text-sm text-gray-600">
                     <Users className="h-4 w-4 text-blue-500" />
-                    {`${hackathon.participants} on Synergy`}
+                    {`${hackathon.participants} want to match on Synergy`}
                   </div>
                 )}
                 <div className="mt-4 flex gap-3">
