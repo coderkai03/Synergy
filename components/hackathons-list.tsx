@@ -19,7 +19,15 @@ export function HackathonsListComponent() {
   const [dateFilter, setDateFilter] = React.useState("");
   const [locationFilter, setLocationFilter] = React.useState("all");
 
-  const hackathons: Hackathon[] = hackathonsList;
+  const hackathons: Hackathon[] = React.useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day
+
+    return hackathonsList.filter((hackathon) => {
+      const hackathonDate = new Date(hackathon.endDate);
+      return hackathonDate >= today;
+    });
+  }, []);
 
   const filteredHackathons = React.useMemo(() => {
     return hackathons.filter((hackathon) => {

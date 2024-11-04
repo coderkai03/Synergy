@@ -1,6 +1,25 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-export default clerkMiddleware();
+const publicRoutes = createRouteMatcher([
+  // Public routes that don't require authentication
+  "/",
+  "/alpha",
+  // Static files and Next.js internals
+  "/_next(.*)",
+  "/favicon.ico",
+  "/api(.*)",
+]);
+
+export default clerkMiddleware(async (auth, request) => {
+  if (!publicRoutes(request)) {
+    const signedIn = await auth.protect();
+    if (!signedIn) {
+      return NextResponse.redirect(new URL("/alpha", request.url));
+    }
+  }
+  return NextResponse.next();
+});
 
 export const config = {
   matcher: [

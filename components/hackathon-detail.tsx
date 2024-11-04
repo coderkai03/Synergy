@@ -25,7 +25,7 @@ export function HackathonDetailComponent() {
   const params = useParams();
   const id = params.id as string;
 
-  const { signOut } = useClerk(); // Destructure signOut from useClerk
+  const { user, signOut } = useClerk(); // Destructure user and signOut from useClerk
   const [hackathon, setHackathon] = useState<Hackathon | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -106,11 +106,20 @@ export function HackathonDetailComponent() {
         "submittedHackathons",
         JSON.stringify(submittedHackathons)
       );
-
+      // https://docs.google.com/forms/d/e/1FAIpQLSdZik-P5jC2D4pd_NvvA6lWwaYI810_VQ3zP8LeATOYGx_iiA/viewform?usp=pp_url&
+      // entry.1254405797=clerckUserId&
+      // entry.1689384675=personName&entry.1225022342=personEmail&entry.1242978094=hackathonName&entry.664542093=yes/no&entry.1119798189=projectIdea1&entry.1594324207=goal1&entry.684422712=tech1&entry.23754417=problemSpace1
       // Prepare FormData for Google Forms submission
       const googleFormUrl =
         "https://docs.google.com/forms/d/e/1FAIpQLSdZik-P5jC2D4pd_NvvA6lWwaYI810_VQ3zP8LeATOYGx_iiA/formResponse";
       const submissionData = new FormData();
+      submissionData.append("entry.1254405797", user?.id || ""); // clerkUserId
+      submissionData.append("entry.1689384675", user?.fullName || ""); // personName
+      submissionData.append(
+        "entry.1225022342",
+        user?.primaryEmailAddress?.emailAddress || ""
+      ); // personEmail
+      submissionData.append("entry.1242978094", hackathon?.name || ""); // hackathonName
       submissionData.append("entry.664542093", formData.alreadyInTeam); // Yes/No-ProjectIdea
       submissionData.append("entry.1119798189", formData.projectIdea); // Idea1
       submissionData.append("entry.1594324207", formData.goals.join(", ")); // goal1
