@@ -97,11 +97,7 @@ export function HackathonDetailComponent() {
     setIsSubmitting(true);
 
     try {
-      // Here you would typically send the formData to your backend
-      console.log("Form Data:", formData);
-      toast.success("Information submitted successfully!");
-
-      // Update local storage
+      // Save to localStorage
       const submittedHackathons = JSON.parse(
         localStorage.getItem("submittedHackathons") || "[]"
       );
@@ -111,7 +107,30 @@ export function HackathonDetailComponent() {
         JSON.stringify(submittedHackathons)
       );
 
-      setHasSubmitted(true);
+      // Prepare FormData for Google Forms submission
+      const googleFormUrl =
+        "https://docs.google.com/forms/d/e/1FAIpQLSdZik-P5jC2D4pd_NvvA6lWwaYI810_VQ3zP8LeATOYGx_iiA/formResponse";
+      const submissionData = new FormData();
+      submissionData.append("entry.664542093", formData.alreadyInTeam); // Yes/No-ProjectIdea
+      submissionData.append("entry.1119798189", formData.projectIdea); // Idea1
+      submissionData.append("entry.1594324207", formData.goals.join(", ")); // goal1
+      submissionData.append("entry.684422712", formData.technologies); // tech1
+      submissionData.append("entry.23754417", formData.problemSpaces); // problem1
+
+      // Submit to Google Forms
+      const response = await fetch(googleFormUrl, {
+        method: "POST",
+        body: submissionData,
+        mode: "no-cors",
+      });
+
+      if (response.ok || response.type === "opaque") {
+        toast.success("Information submitted successfully!");
+
+        setHasSubmitted(true);
+      } else {
+        throw new Error("Network response was not ok.");
+      }
     } catch {
       toast.error("Failed to submit information. Please try again.");
     } finally {

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+// import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -21,12 +21,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { ChevronDown, ChevronUp } from "lucide-react";
+// import {
+//   Collapsible,
+//   CollapsibleContent,
+//   CollapsibleTrigger,
+// } from "@/components/ui/collapsible";
+// import { ChevronDown, ChevronUp } from "lucide-react";
 import { Multiselect } from "./multiselect";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
@@ -38,7 +38,7 @@ export function AccountSetupComponent() {
 
   const [formData, setFormData] = useState({
     fullName: user?.fullName || "",
-    email: user?.primaryEmailAddress?.emailAddress || "",
+    // email: user?.primaryEmailAddress?.emailAddress || "",
     phone: "",
     graduatingClass: "",
     school: "",
@@ -48,8 +48,8 @@ export function AccountSetupComponent() {
     devpostProfile: "",
     githubProfile: "",
     hackathonsAttended: "",
-    achievements: "",
-    objectives: "",
+    // achievements: "",
+    // objectives: "",
     focuses: [] as string[],
     preferredRoles: {
       projectManagement: 50,
@@ -57,11 +57,11 @@ export function AccountSetupComponent() {
       hardware: 50,
       uiDesign: 50,
     },
-    dietaryRestrictions: "",
-    accessibilityNeeds: "",
+    // dietaryRestrictions: "",
+    // accessibilityNeeds: "",
   });
 
-  const [isOptionalExpanded, setIsOptionalExpanded] = useState(false);
+  //const [isOptionalExpanded, setIsOptionalExpanded] = useState(false);
 
   useEffect(() => {
     const savedData = localStorage.getItem("accountSetupData");
@@ -106,7 +106,9 @@ export function AccountSetupComponent() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       console.log("Submitting formData:", formData);
@@ -114,6 +116,68 @@ export function AccountSetupComponent() {
       // Save to localStorage
       localStorage.setItem("accountSetupData", JSON.stringify(formData));
       console.log("Account Setup Data saved to localStorage:", formData);
+
+      //entry.868333928=name
+      //entry.2109342534=phone
+      //entry.1001414379=gradyear
+      //entry.279323951=school
+      //entry.1194461452=degree
+      //entry.1215536533=langs
+      //entry.2068797540=frameworks
+      //entry.1483794269=devpost
+      //entry.618662987=github
+      //entry.1247596049=numHackathons
+      //entry.289288076=focus
+      //entry.444967086=prodMgmt
+      //entry.1174368867=software
+      //entry.638316355=hardware
+      //entry.334805419=uiuxdesign
+
+      // setIsSubmitting(true);
+
+      const localFormData = new FormData();
+      localFormData.append("entry.868333928", formData.fullName);
+      localFormData.append("entry.2109342534", formData.phone);
+      localFormData.append("entry.1001414379", formData.graduatingClass);
+      localFormData.append("entry.279323951", formData.school);
+      localFormData.append("entry.1194461452", formData.degree);
+      localFormData.append(
+        "entry.1215536533",
+        formData.programmingLanguages.join(",")
+      );
+      localFormData.append(
+        "entry.2068797540",
+        formData.frameworksAndTools.join(",")
+      );
+      localFormData.append("entry.1483794269", formData.devpostProfile);
+      localFormData.append("entry.618662987", formData.githubProfile);
+      localFormData.append("entry.1247596049", formData.hackathonsAttended);
+      localFormData.append("entry.289288076", formData.focuses.join(","));
+      localFormData.append(
+        "entry.444967086",
+        formData.preferredRoles.projectManagement.toString()
+      );
+      localFormData.append(
+        "entry.1174368867",
+        formData.preferredRoles.software.toString()
+      );
+      localFormData.append(
+        "entry.638316355",
+        formData.preferredRoles.hardware.toString()
+      );
+      localFormData.append(
+        "entry.334805419",
+        formData.preferredRoles.uiDesign.toString()
+      );
+
+      await fetch(
+        "https://docs.google.com/forms/d/e/1FAIpQLSf6PNnpumkNMZqvoJA8cOPNtLfv9UfrXygDQA1zEm24LW46NA/formResponse",
+        {
+          method: "POST",
+          body: localFormData,
+          mode: "no-cors",
+        }
+      );
 
       // Navigate to the next page
       router.push("/alpha/hackathons");
@@ -184,17 +248,6 @@ export function AccountSetupComponent() {
                     id="fullName"
                     name="fullName"
                     value={formData.fullName}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
                     onChange={handleChange}
                     required
                   />
@@ -346,16 +399,6 @@ export function AccountSetupComponent() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="achievements">Achievements</Label>
-                  <Textarea
-                    id="achievements"
-                    name="achievements"
-                    value={formData.achievements}
-                    onChange={handleChange}
-                    placeholder="Highlights past successes and areas of excellence"
-                  />
-                </div>
               </div>
             </div>
 
@@ -459,7 +502,7 @@ export function AccountSetupComponent() {
 
             {/* Optional Information section */}
 
-            <Collapsible
+            {/* <Collapsible
               open={isOptionalExpanded}
               onOpenChange={setIsOptionalExpanded}
               className="space-y-2"
@@ -513,7 +556,7 @@ export function AccountSetupComponent() {
                   />
                 </div>
               </CollapsibleContent>
-            </Collapsible>
+            </Collapsible> */}
           </CardContent>
           <CardFooter>
             <Button type="submit" className="w-full">
