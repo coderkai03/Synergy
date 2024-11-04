@@ -1,5 +1,10 @@
-import SignUpPage from "@/components/signup-page";
+// import SignUpPage from "@/components/signup-page";
+
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return <SignUpPage />;
+  // route to alpha page
+  redirect("/alpha");
+
+  // return <SignUpPage />;
 }
