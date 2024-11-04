@@ -12,13 +12,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "react-hot-toast";
 import HackathonWait from "./wait";
 import { useClerk, UserButton } from "@clerk/nextjs"; // Importing Clerk components
+import { Multiselect } from "./multiselect";
 
 export function HackathonDetailComponent() {
   const router = useRouter();
@@ -34,8 +34,8 @@ export function HackathonDetailComponent() {
     hasProjectIdea: "",
     projectIdea: "",
     goals: [] as string[],
-    technologies: "",
-    problemSpaces: "",
+    technologies: [] as string[],
+    problemSpaces: [] as string[],
   });
 
   useEffect(() => {
@@ -123,8 +123,14 @@ export function HackathonDetailComponent() {
       submissionData.append("entry.664542093", formData.alreadyInTeam); // Yes/No-ProjectIdea
       submissionData.append("entry.1119798189", formData.projectIdea); // Idea1
       submissionData.append("entry.1594324207", formData.goals.join(", ")); // goal1
-      submissionData.append("entry.684422712", formData.technologies); // tech1
-      submissionData.append("entry.23754417", formData.problemSpaces); // problem1
+      submissionData.append(
+        "entry.684422712",
+        formData.technologies.join(", ")
+      ); // tech1
+      submissionData.append(
+        "entry.23754417",
+        formData.problemSpaces.join(", ")
+      ); // problem1
 
       // Submit to Google Forms
       const response = await fetch(googleFormUrl, {
@@ -158,6 +164,32 @@ export function HackathonDetailComponent() {
   if (hasSubmitted) {
     return <HackathonWait />;
   }
+
+  // const technologyOptions = [
+  //   "JavaScript",
+  //   "Python",
+  //   "React",
+  //   "Node.js",
+  //   "Machine Learning",
+  //   "Product Management",
+  //   "UI/UX Design",
+  //   "Data Science",
+  //   "Mobile Development",
+  //   "Cloud Computing",
+  // ];
+
+  const problemSpaceOptions = [
+    "Healthcare",
+    "Education",
+    "Fintech",
+    "Sustainability",
+    "Social Impact",
+    "AI/ML",
+    "Developer Tools",
+    "Entertainment",
+    "E-commerce",
+    "Productivity",
+  ];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -267,31 +299,29 @@ export function HackathonDetailComponent() {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="technologies">
                   Which Technologies or Skills Are You Interested in Exploring?
                 </Label>
-                <Input
-                  id="technologies"
-                  name="technologies"
-                  value={formData.technologies}
-                  onChange={handleChange}
-                  placeholder="e.g., JavaScript, Product Management"
-                  required
+                <Multiselect
+                  options={technologyOptions}
+                  selectedItems={formData.technologies}
+                  setSelectedItems={(items) =>
+                    setFormData({ ...formData, technologies: items })
+                  }
                 />
-              </div>
+              </div> */}
 
               <div className="space-y-2">
                 <Label htmlFor="problemSpaces">
-                  What Problem Spaces or Domains Are You Passionate About?
+                  What Categories Are You Passionate About?
                 </Label>
-                <Input
-                  id="problemSpaces"
-                  name="problemSpaces"
-                  value={formData.problemSpaces}
-                  onChange={handleChange}
-                  placeholder="e.g., Healthcare, Education, Fintech"
-                  required
+                <Multiselect
+                  options={problemSpaceOptions}
+                  selectedItems={formData.problemSpaces}
+                  setSelectedItems={(items) =>
+                    setFormData({ ...formData, problemSpaces: items })
+                  }
                 />
               </div>
             </div>
