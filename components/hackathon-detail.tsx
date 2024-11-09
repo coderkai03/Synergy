@@ -189,6 +189,19 @@ export function HackathonDetailComponent() {
     "Entertainment",
     "E-commerce",
     "Productivity",
+    "PNC",
+    "Piñata",
+    "EOG Resources",
+    "Goldman Sachs",
+    "Infosys",
+    "CBRE",
+    "Frontier",
+    "Veolia",
+    "Toyota",
+    "Design",
+    "Beginner",
+    "Hardware",
+    "Samba",
   ];
 
   return (

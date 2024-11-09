@@ -167,12 +167,17 @@ export function HackathonsListComponent() {
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Calendar className="h-4 w-4 text-blue-500" />
                   <time dateTime={hackathon.date}>
-                    {new Date(hackathon.date).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })}
+                    {new Date(`${hackathon.date}T00:00:00`).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                      }
+                    )}
                     {" - "}
-                    {new Date(hackathon.endDate).toLocaleDateString("en-US", {
+                    {new Date(
+                      `${hackathon.endDate}T00:00:00`
+                    ).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                     })}
@@ -191,12 +196,12 @@ export function HackathonsListComponent() {
                   )}
                   {hackathon.location}
                 </div>
-                {hackathon.participants && (
+                {/* {hackathon.participants && (
                   <div className="flex items-center gap-1.5 text-sm text-gray-600">
                     <Users className="h-4 w-4 text-blue-500" />
                     {`${hackathon.participants} want to match on Synergy`}
                   </div>
-                )}
+                )} */}
                 <div className="mt-4 flex gap-3">
                   <Button asChild className="flex-1">
                     <Link href={`/alpha/hackathons/${hackathon.id}`}>
