@@ -203,7 +203,7 @@ export function HackathonDetailComponent() {
     "Design",
     "Beginner",
     "Hardware",
-    "Samba",
+    "Samba Nova",
   ];
 
   return (
