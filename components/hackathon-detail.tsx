@@ -33,6 +33,7 @@ export function HackathonDetailComponent() {
     alreadyInTeam: "",
     hasProjectIdea: "",
     projectIdea: "",
+    teamMembers: "",
     goals: [] as string[],
     technologies: [] as string[],
     problemSpaces: [] as string[],
@@ -131,6 +132,7 @@ export function HackathonDetailComponent() {
         "entry.23754417",
         formData.problemSpaces.join(", ")
       ); // problem1
+      submissionData.append("entry.675935465", formData.teamMembers); // existingTeamMembers
 
       // Submit to Google Forms
       const response = await fetch(googleFormUrl, {
@@ -246,6 +248,22 @@ export function HackathonDetailComponent() {
                   </div>
                 </RadioGroup>
               </div>
+
+              {formData.alreadyInTeam === "yes" && (
+                <div className="space-y-2">
+                  <Label htmlFor="teamMembers">
+                    Please list your existing team members:
+                  </Label>
+                  <Textarea
+                    id="teamMembers"
+                    name="teamMembers"
+                    value={formData.teamMembers}
+                    onChange={handleChange}
+                    placeholder="List the names of your team members..."
+                    className="min-h-[100px]"
+                  />
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label>Do You Have a Project Idea for This Hackathon?</Label>
