@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Slider } from "@/components/ui/slider"
 import {
   Card,
   CardContent,
@@ -10,8 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 // import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -20,17 +21,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-// import {
-//   Collapsible,
-//   CollapsibleContent,
-//   CollapsibleTrigger,
-// } from "@/components/ui/collapsible";
-// import { ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronDown, ChevronUp, Zap } from "lucide-react";
 import { Multiselect } from "./multiselect";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
+import Image from "next/image"
+import { Badge } from "@/components/ui/badge"
 
 export function AccountSetupComponent() {
   const router = useRouter();
@@ -227,8 +229,8 @@ export function AccountSetupComponent() {
   ];
 
   return (
-    <div className="container mx-auto py-10">
-      <Card className="w-full max-w-4xl mx-auto">
+    <div className="flex justify-center min-h-screen bg-[#111119]">
+      <Card className="felx fex-col items-center space-y-6 w-3/4 bg-[#111119] text-white border-none">
         <CardHeader>
           <CardTitle>Synergy: Hackathon Account Setup</CardTitle>
           <CardDescription>
@@ -237,40 +239,38 @@ export function AccountSetupComponent() {
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 text-white">
             {/* Personal Information section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Personal Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <Input
-                    id="fullName"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                    required
-                  />
+            <Collapsible className="bg-zinc-800 rounded-lg">
+              <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
+                <h2 className="text-lg font-semibold text-white">Personal Information</h2>
+                <ChevronDown className="w-5 h-5 text-zinc-400" />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="p-4 pt-0 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input id="firstName" className="bg-zinc-500 border-amber-500/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input id="lastName" className="bg-zinc-500 border-amber-500/50" />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={handleChange}
-                  />
+                  <Input id="phone" className="bg-zinc-500 border-amber-500/50" />
                 </div>
-                <div className="space-y-2">
+
+                {/* <div className="space-y-2">
                   <Label htmlFor="graduatingClass">Graduating Class</Label>
                   <Select
                     name="graduatingClass"
                     value={formData.graduatingClass}
                     onValueChange={handleSelectChange("graduatingClass")}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select graduation year" />
+                    <SelectTrigger >
+                      <SelectValue placeholder="Select graduation year"/>
                     </SelectTrigger>
                     <SelectContent>
                       {[2024, 2025, 2026, 2027, 2028, 2029, 2030].map(
@@ -282,24 +282,27 @@ export function AccountSetupComponent() {
                       )}
                     </SelectContent>
                   </Select>
-                </div>
-              </div>
-            </div>
+                </div> */}
+              </CollapsibleContent>
+            </Collapsible> 
 
             {/* Educational Background section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Educational Background</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Collapsible className="bg-zinc-800 rounded-lg">
+            <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
+              <h2 className="text-lg font-semibold text-white">Educational Background</h2>
+              <ChevronDown className="w-5 h-5 text-zinc-400" />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="p-4 pt-0 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="school">School</Label>
-                  <Input
-                    id="school"
+                  <Input id="school" className="bg-zinc-700 border-amber-500/50" 
                     name="school"
                     value={formData.school}
                     onChange={handleChange}
                     placeholder="Your School"
-                    required
-                  />
+                    required 
+                    />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="degree">Degree</Label>
@@ -310,195 +313,257 @@ export function AccountSetupComponent() {
                     onChange={handleChange}
                     placeholder="Your Degree"
                     required
+                    className="bg-zinc-700 border-amber-500/50"
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="degree">Degree</Label>
+                  <Select
+                        id="graduatingClass"
+                        name="graduatingClass"
+                        value={formData.graduatingClass}
+                        onValueChange={handleSelectChange("graduatingClass")}
+                        className="bg-zinc-700 border-amber-500/50"
+                      >
+                        <SelectTrigger className="bg-zinc-700 border-amber-500/50 text-white-500">
+                          <SelectValue placeholder="Select graduation year"/>
+                        </SelectTrigger>
+                        <SelectContent className="bg-zinc-700 border-amber-500/50 text-white hover:bg-[##FFAD08]">
+                          {[2024, 2025, 2026, 2027, 2028, 2029, 2030].map((year) => (
+                            <SelectItem key={year} value={year.toString()}>
+                              {year}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                </div>
               </div>
-            </div>
+            </CollapsibleContent>
+          </Collapsible>
 
             {/* Technical Skills section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Technical Skills</h3>
-              <div className="space-y-2">
-                <Label htmlFor="programmingLanguages">
-                  Programming Languages
-                </Label>
-                <Multiselect
-                  options={programmingLanguages}
-                  selectedItems={formData.programmingLanguages}
-                  setSelectedItems={(items) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      programmingLanguages: items,
-                    }));
-                  }}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="frameworksAndTools">Frameworks and Tools</Label>
-                <Multiselect
-                  options={frameworksAndTools}
-                  selectedItems={formData.frameworksAndTools}
-                  setSelectedItems={(items) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      frameworksAndTools: items,
-                    }));
-                  }}
-                />
-              </div>
-            </div>
+            <Collapsible className="bg-zinc-800 rounded-lg">
+                <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
+                  <h2 className="text-lg font-semibold text-white">Technical Skills</h2>
+                  <ChevronDown className="w-5 h-5 text-zinc-400" />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="p-4 pt-0 space-y-4">
+                <div className="space-y-2 text-black">
+                  <Label htmlFor="programmingLanguages" className="text-white">Programming Languages</Label>
+                  <Multiselect
+                    id="programmingLanguages"
+                    // className="bg-zinc-700 border-amber-500/50"
+                    options={programmingLanguages}
+                    selectedItems={formData.programmingLanguages}
+                    setSelectedItems={(items) => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        programmingLanguages: items,
+                      }));
+                    }}
+                  />
+                </div>
+
+                <div className="space-y-2 text-black">
+                  <Label htmlFor="frameworksAndTools" className="text-white">Frameworks and Tools</Label>
+                  <Multiselect
+                    id="frameworksAndTools"
+                    options={frameworksAndTools}
+                    selectedItems={formData.frameworksAndTools}
+                    setSelectedItems={(items) => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        frameworksAndTools: items,
+                      }));
+                    }}
+                  />
+                </div>
+                </CollapsibleContent>
+              </Collapsible>
 
             {/* Online Profiles section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Online Profiles</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="devpostProfile">Devpost Profile</Label>
-                  <Input
-                    id="devpostProfile"
-                    name="devpostProfile"
-                    value={formData.devpostProfile}
-                    onChange={handleChange}
-                    placeholder="https://devpost.com/yourusername"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="githubProfile">GitHub Profile</Label>
-                  <Input
-                    id="githubProfile"
-                    name="githubProfile"
-                    value={formData.githubProfile}
-                    onChange={handleChange}
-                    placeholder="https://github.com/yourusername"
-                  />
-                </div>
-              </div>
-            </div>
+            <Collapsible className="bg-zinc-800 rounded-lg">
+                <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
+                  <h2 className="text-lg font-semibold text-white">Online Profiles</h2>
+                  <ChevronDown className="w-5 h-5 text-zinc-400" />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="p-4 pt-0 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="devpostProfile">Devpost Profile</Label>
+                      <Input
+                        id="devpostProfile"
+                        name="devpostProfile"
+                        value={formData.devpostProfile}
+                        onChange={handleChange}
+                        placeholder="https://devpost.com/yourusername"
+                        className="bg-zinc-700 border-amber-500/50"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="githubProfile">GitHub Profile</Label>
+                      <Input
+                        id="githubProfile"
+                        name="githubProfile"
+                        value={formData.githubProfile}
+                        onChange={handleChange}
+                        placeholder="https://github.com/yourusername"
+                        className="bg-zinc-700 border-amber-500/50"
+                      />
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
 
             {/* Hackathon Experience section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Hackathon Experience</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="hackathonsAttended">
-                    Number of Hackathons Attended
-                  </Label>
-                  <Select
-                    onValueChange={handleSelectChange("hackathonsAttended")}
-                    value={formData.hackathonsAttended}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select number of hackathons" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[0, 1, 2, 3, 4, "5+"].map((num) => (
-                        <SelectItem key={num} value={num.toString()}>
-                          {num}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
+            <Collapsible className="bg-zinc-800 rounded-lg">
+                <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
+                  <h2 className="text-lg font-semibold text-white">Hackathons Experience and Preferred Roles</h2>
+                  <ChevronDown className="w-5 h-5 text-zinc-400" />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="p-4 pt-0 space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="hackathonsAttended">Number of Hackathons Attended</Label>
+                      <Select
+                        id="hackathonsAttended"
+                        name="hackathonsAttended"
+                        value={formData.hackathonsAttended}
+                        onValueChange={handleSelectChange("hackathonsAttended")}
+                        className="bg-zinc-700 border-amber-500/50"
+                      >
+                        <SelectTrigger className="bg-zinc-700 border-amber-500/50">
+                          <SelectValue placeholder="Select number of hackathons" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-zinc-700 border-amber-500/50 text-white">
+                          {[0, 1, 2, 3, 4, "5+"].map((num) => (
+                            <SelectItem key={num} value={num.toString()}>
+                              {num}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2 text-black">
+                      <Label className="text-white">Focuses</Label>
+                      <Multiselect
+                        options={focuses}
+                        selectedItems={formData.focuses}
+                        setSelectedItems={(selectedItems) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            focuses: selectedItems,
+                          }));
+                        }}
+                      />
+                    </div>
+                  </div>
 
-            {/* Goals and Interests section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Goals and Interests</h3>
-              <div className="space-y-2">
-                <Label htmlFor="focuses">Focuses</Label>
-                <Multiselect
-                  options={focuses}
-                  selectedItems={formData.focuses}
-                  setSelectedItems={(selectedItems) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      focuses: selectedItems,
-                    }));
-                  }}
-                />
-              </div>
-            </div>
+                  <div className="space-y-8">
+                    <h3 className="text-sm text-zinc-400">Rate your experience level in each role from 0 to 5</h3>
 
-            {/* Preferred Roles section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Preferred Roles</h3>
-              <p className="text-sm text-muted-foreground">
-                Rate your confidence level in each role from 0 to 100
-              </p>
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="projectManagement">Project Management</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Leading teams, coordinating tasks, and ensuring project
-                    success, presentation skills
-                  </p>
-                  <Slider
-                    id="projectManagement"
-                    min={0}
-                    max={100}
-                    step={1}
-                    value={[formData.preferredRoles.projectManagement]}
-                    onValueChange={handleSliderChange("projectManagement")}
-                  />
-                  <p className="text-sm text-right">
-                    {formData.preferredRoles.projectManagement}%
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="software">Software Development</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Programming, app development, and software architecture
-                  </p>
-                  <Slider
-                    id="software"
-                    min={0}
-                    max={100}
-                    step={1}
-                    value={[formData.preferredRoles.software]}
-                    onValueChange={handleSliderChange("software")}
-                  />
-                  <p className="text-sm text-right">
-                    {formData.preferredRoles.software}%
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="hardware">Hardware Development</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Electronics, prototyping, and physical computing
-                  </p>
-                  <Slider
-                    id="hardware"
-                    min={0}
-                    max={100}
-                    step={1}
-                    value={[formData.preferredRoles.hardware]}
-                    onValueChange={handleSliderChange("hardware")}
-                  />
-                  <p className="text-sm text-right">
-                    {formData.preferredRoles.hardware}%
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="uiDesign">UI/UX Design</Label>
-                  <p className="text-sm text-muted-foreground">
-                    User interface design, user experience, wireframing, and
-                    prototyping
-                  </p>
-                  <Slider
-                    id="uiDesign"
-                    min={0}
-                    max={100}
-                    step={1}
-                    value={[formData.preferredRoles.uiDesign]}
-                    onValueChange={handleSliderChange("uiDesign")}
-                  />
-                  <p className="text-sm text-right">
-                    {formData.preferredRoles.uiDesign}%
-                  </p>
-                </div>
-              </div>
-            </div>
+                    {/* Project Management */}
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <Label htmlFor="projectManagement">Project Management</Label>
+                        <span className="text-zinc-400 text-sm">Leading teams, coordinating tasks, and ensuring project success</span>
+                      </div>
+                      <Slider
+                        id="projectManagement"
+                        min={0}
+                        max={5}
+                        step={1}
+                        value={[formData.preferredRoles.projectManagement]}
+                        onValueChange={handleSliderChange("projectManagement")}
+                        className="[&_[role=slider]]:bg-amber-500"
+                      />
+                      <div className="flex justify-between text-xs text-zinc-400">
+                        <span>0</span>
+                        <span>1</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4</span>
+                        <span>5</span>
+                      </div>
+                    </div>
+
+                    {/* Software Development */}
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <Label htmlFor="software">Software Development</Label>
+                        <span className="text-zinc-400 text-sm">Programming, app development, and software architecture</span>
+                      </div>
+                      <Slider
+                        id="software"
+                        min={0}
+                        max={5}
+                        step={1}
+                        value={[formData.preferredRoles.software]}
+                        onValueChange={handleSliderChange("software")}
+                        className="[&_[role=slider]]:bg-amber-500"
+                      />
+                      <div className="flex justify-between text-xs text-zinc-400">
+                        <span>0</span>
+                        <span>1</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4</span>
+                        <span>5</span>
+                      </div>
+                    </div>
+
+                    {/* Hardware Development */}
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <Label htmlFor="hardware">Hardware Development</Label>
+                        <span className="text-zinc-400 text-sm">Electronics, prototyping, and physical computing</span>
+                      </div>
+                      <Slider
+                        id="hardware"
+                        min={0}
+                        max={5}
+                        step={1}
+                        value={[formData.preferredRoles.hardware]}
+                        onValueChange={handleSliderChange("hardware")}
+                        className="[&_[role=slider]]:bg-amber-500"
+                      />
+                      <div className="flex justify-between text-xs text-zinc-400">
+                        <span>0</span>
+                        <span>1</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4</span>
+                        <span>5</span>
+                      </div>
+                    </div>
+
+                    {/* UI/UX Design */}
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <Label htmlFor="uiDesign">UI/UX Design</Label>
+                        <span className="text-zinc-400 text-sm">User interface design, user experience, wireframing, and prototyping</span>
+                      </div>
+                      <Slider
+                        id="uiDesign"
+                        min={0}
+                        max={5}
+                        step={1}
+                        value={[formData.preferredRoles.uiDesign]}
+                        onValueChange={handleSliderChange("uiDesign")}
+                        className="[&_[role=slider]]:bg-amber-500"
+                      />
+                      <div className="flex justify-between text-xs text-zinc-400">
+                        <span>0</span>
+                        <span>1</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4</span>
+                        <span>5</span>
+                      </div>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
 
             {/* Optional Information section */}
 
@@ -559,9 +624,12 @@ export function AccountSetupComponent() {
             </Collapsible> */}
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">
-              Save Profile
-            </Button>
+            {/* Submit Button */}
+            <div className="flex justify-end">
+              <Button type="submit" className="bg-amber-500 hover:bg-amber-600">
+                Submit
+              </Button>
+            </div>
           </CardFooter>
         </form>
       </Card>

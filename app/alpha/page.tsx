@@ -5,14 +5,18 @@ import { useRouter } from "next/navigation";
 import {
   useUser,
   SignInButton,
-  SignUpButton,
+  // SignUpButton,
   SignOutButton,
+  // useAuth,
 } from "@clerk/nextjs";
 import { motion } from "framer-motion";
-import { Users, Rocket, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Toaster } from "react-hot-toast";
+import Link from "next/link";
+import { ArrowRight, ClipboardList, Users, UserPlus, Rocket, Zap } from "lucide-react";
+import betaPrev from "@/public/img/betapreview.png";
+import homeBg from "@/public/img/homepage.png";
 
 export default function SynergyLanding() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -25,131 +29,229 @@ export default function SynergyLanding() {
   }, [isLoaded, isSignedIn, router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-100">
-      <Toaster position="top-center" />
-      <header className="p-6 flex items-center justify-between">
-        <div className="flex items-center">
-          <a href="/">
-            <Image
-              src="/assets/logoSize.png"
-              alt="Synergy Logo"
-              className="h-10 w-10"
-              width={40}
-              height={40}
-            />
-          </a>
-          <span className="ml-2 font-bold text-2xl text-gray-800">Synergy</span>
-        </div>
-        <nav>{/* Future navigation links can be added here */}</nav>
-        <div className="flex items-center gap-4">
-          {isSignedIn ? (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => router.push("/alpha/account-setup")}
+    <div className="min-h-screen fglw-full bg-[#111119]">
+      <div className="min-h-screen w-full bg-cover bg-center" 
+        style={{
+          backgroundImage:`url(${homeBg.src})`}}>
+
+        {isSignedIn && (
+          <header className="p-10 flex items-center justify-between w-full max-w-6xl mx-auto">
+            <nav>{/* Future navigation links can be added here */}</nav>
+            <div className="flex items-center gap-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push("/alpha/account-setup")}
+                  >
+                    Edit Profile
+                  </Button>
+                  <span className="text-sm">{user?.fullName || "John Doe"}</span>
+                  <SignOutButton>
+                    <Button variant="outline" size="sm">
+                      Sign Out
+                    </Button>
+                  </SignOutButton>
+            </div>
+          </header>
+        )}
+        {/* <Toaster position="top-center" /> */}
+        
+
+        <main className="flex items-center justify-start min-h-screen p-20">
+          <div className="w-1/2 px-4 py-16 flex flex-col items-start overflow-hidden"> 
+            <div className="flex items-center text-white">
+              <svg
+                className="h-12 w-12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                Edit Profile
-              </Button>
-              <span className="text-sm">{user?.fullName || "John Doe"}</span>
-              <SignOutButton>
-                <Button variant="outline" size="sm">
-                  Sign Out
-                </Button>
-              </SignOutButton>
-            </>
-          ) : null}
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
-          <h1 className="text-5xl font-extrabold mb-6 text-blue-600">
-            Synergy
-          </h1>
-          <p className="text-xl text-gray-700 max-w-2xl mx-auto leading-relaxed">
-            Connect with like-minded individuals and form the perfect teams for
-            your next hackathon. Boost your productivity and make meaningful
-            collaborations effortlessly.
-          </p>
-        </motion.div>
-
-        {!isSignedIn && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl"
-          >
-            <div className="space-y-6">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+              <span className="text-5xl font-light tracking-wide"> Synery </span>
+            </div>
+            {/* <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center mb-16"
+            >
+              <h1 className="text-5xl font-extrabold mb-6 text-blue-600">
+                Synergy
+              </h1> */}
+              <div className="flex items-center justify-center mt-8 text-white">
+                <p className="text-xl font-light leading-relaxed">
+                  Connect with like-minded individuals and form the perfect teams for
+                  your next hackathon. Boost your productivity and make meaningful
+                  collaborations effortlessly.
+                </p>
+              </div>
+              
               <SignInButton
                 fallbackRedirectUrl="/alpha/hackathons"
                 mode="modal"
               >
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
-                  Sign In
+                <Button
+                  className="group mt-8 inline-flex items-center gap-2 rounded-full border-2 border-white/80 px-6 py-3 text-xl font-medium text-white transition-all hover:bg-white hover:text-gray-900"
+                >
+                  Apply Now
+                  <ArrowRight className="transition-transform group-hover:translate-x-1" />
                 </Button>
               </SignInButton>
-              <SignUpButton
-                fallbackRedirectUrl="/alpha/account-setup"
-                mode="modal"
+              
+            {/* </motion.div> */}
+
+            {/* {!isSignedIn && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl"
               >
-                <Button
-                  variant="outline"
-                  className="w-full text-blue-600 border-blue-600 hover:bg-blue-50"
-                >
-                  Sign Up
-                </Button>
-              </SignUpButton>
+                <div className="space-y-6">
+                  <SignInButton
+                    fallbackRedirectUrl="/alpha/hackathons"
+                    mode="modal"
+                  >
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+                      Sign In
+                    </Button>
+                  </SignInButton>
+                  <SignUpButton
+                    fallbackRedirectUrl="/alpha/account-setup"
+                    mode="modal"
+                  >
+                    <Button
+                      variant="outline"
+                      className="w-full text-blue-600 border-blue-600 hover:bg-blue-50"
+                    >
+                      Sign Up
+                    </Button>
+                  </SignUpButton>
+                </div>
+              </motion.div>
+            )} */}
             </div>
-          </motion.div>
-        )}
+        </main>
+      </div>
 
+      <section className="min--screen bg-[#111119] py-24 px-20">
+          <div className="container px-4 mx-auto">
+            <h2 className="text-center mb-16 text-4xl text-white">
+              What can <span className="italic">Synergy</span> bring to you...
+            </h2>
+          </div>
+      
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-24 grid md:grid-cols-3 gap-8"
-        >
-          <div className="bg-white p-8 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl">
-            <Users className="h-12 w-12 text-blue-500 mb-4" />
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              Find Your Dream Team
-            </h2>
-            <p className="text-gray-600 leading-relaxed">
-              Connect with like-minded developers, designers, and innovators to
-              form the perfect hackathon team.
-            </p>
-          </div>
-          <div className="bg-white p-8 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl">
-            <Rocket className="h-12 w-12 text-blue-500 mb-4" />
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              Boost Your Projects
-            </h2>
-            <p className="text-gray-600 leading-relaxed">
-              Leverage diverse skills and perspectives to take your hackathon
-              projects to new heights.
-            </p>
-          </div>
-          <div className="bg-white p-8 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl">
-            <Zap className="h-12 w-12 text-blue-500 mb-4" />
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              Accelerate Your Growth
-            </h2>
-            <p className="text-gray-600 leading-relaxed">
-              Learn from peers, gain new skills, and expand your network in the
-              tech community.
-            </p>
-          </div>
-        </motion.div>
-      </main>
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mt-24 grid md:grid-cols-3 gap-8 bg-[#111119]"
+          >
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
+              <div className="relative bg-black rounded-lg p-8 space-y-6 border-gradient-to-r from-pink-600 to-orange-600">
+                <Users className="h-12 w-12 text-white mb-4" />
+                <h3 className="text-2xl font-semibold text-white">Find Your Dream Team</h3>
+                <p className="text-gray-300">
+                  Connect with like-minded developers, designers, and innovators to form the perfect hackathon team.
+                </p>
+              </div>
+            </div>
+            
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-600 to-green-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
+              <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent">
+                <Zap className="h-12 w-12 text-white mb-4" />
+                <h3 className="text-2xl font-semibold text-white">Boost Your Productivity</h3>
+                <p className="text-gray-300">
+                  Collaborate with your team members effortlessly and boost your productivity with our intuitive platform.
+                </p>
+              </div>
+            </div>
 
-      <footer className="mt-24 py-12 bg-blue-50">
+            <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-yellow-600 rounded-lg opacity-100 group-hover:blur"></div>
+            <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent">
+              <Zap className="h-12 w-12 text-white mb-4" />
+              <h3 className="text-2xl font-semibold text-white">Accelerate Your Growth</h3>
+              <p className="text-gray-300">
+                Learn from peers, gain new skills, and expand your network in the tech community.
+              </p>
+            </div>
+          </div>
+          </motion.div>
+        </section>
+
+        <div className="grid lg:grid-cols-2 gap-8 items-start p-20 text-white">
+          <div className="space-y-8">
+            <div className="rounded-lg p-6 backdrop-blur hover:bg-zinc-900/50">
+              <div className="flex gap-4 items-start">
+                <div className="p-2 bg-amber-500/10 rounded-lg">
+                  <ClipboardList className="w-6 h-6 text-amber-500" />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-xl font-semibold">
+                    Complete the <span className="text-amber-500">sign up form</span>
+                  </h2>
+                  <p className="text-zinc-400">
+                    Create your profile and tell us about your interests, skills, and what you're looking to learn
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-lg p-6 backdrop-blur hover:bg-zinc-900/50">
+              <div className="flex gap-4 items-start">
+                <div className="p-2 bg-amber-500/10 rounded-lg">
+                  <Users className="w-6 h-6 text-amber-500" />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-xl font-semibold">
+                    Select Hackathon to <span className="text-amber-500">find team</span>
+                  </h2>
+                  <p className="text-zinc-400">
+                    Browse through upcoming hackathons and choose the ones that match your interests and schedule
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-lg p-6 backdrop-blur hover:bg-zinc-900/50">
+              <div className="flex gap-4 items-start">
+                <div className="p-2 bg-amber-500/10 rounded-lg">
+                  <UserPlus className="w-6 h-6 text-amber-500" />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-xl font-semibold">
+                    Wait to <span className="text-amber-500">get matched</span>
+                  </h2>
+                  <p className="text-zinc-400">
+                    Our matching algorithm will help you find the perfect teammates based on skills and interests
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="bg-amber-500 absolute -inset-1.5 rounded-xl" />
+            <div className="relative bg-zinc-900 p-2 rounded-xl overflow-hidden">
+              <Image
+                src={betaPrev}
+                width={400}
+                height={200}
+                alt="Platform interface showing hackathon selection and team matching"
+                className="rounded-lg w-full transition-transform duration-300 transform hover:scale-105"
+              />
+            </div>
+          </div>
+        </div>
+
+      <footer className="mt-24 py-5 bg-[#111119]">
         <div className="container mx-auto px-4 text-center">
           <p className="text-gray-600">
             &copy; 2024 Synergy. All rights reserved.
