@@ -40,6 +40,7 @@ import { Badge } from "@/components/ui/badge"
 export function AccountSetupComponent() {
   const router = useRouter();
   const { user } = useUser();
+  const { signOut } = useClerk();
 
   const [formData, setFormData] = useState({
     fullName: user?.fullName || "",
@@ -298,6 +299,7 @@ export function AccountSetupComponent() {
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-6 text-white">
+
               {/* Personal Information section */}
               <Collapsible className="bg-zinc-800 rounded-lg">
                 <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
@@ -308,16 +310,16 @@ export function AccountSetupComponent() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">First Name</Label>
-                      <Input id="firstName" className="bg-zinc-500 border-amber-500/50" />
+                      <Input id="firstName" className="bg-zinc-700 border-amber-500/50" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastName">Last Name</Label>
-                      <Input id="lastName" className="bg-zinc-500 border-amber-500/50" />
+                      <Input id="lastName" className="bg-zinc-700 border-amber-500/50" />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" className="bg-zinc-500 border-amber-500/50" />
+                    <Input id="phone" className="bg-zinc-700 border-amber-500/50" />
                   </div>
 
                   {/* <div className="space-y-2">
@@ -377,11 +379,9 @@ export function AccountSetupComponent() {
                   <div className="space-y-2">
                     <Label htmlFor="degree">Degree</Label>
                     <Select
-                          id="graduatingClass"
                           name="graduatingClass"
                           value={formData.graduatingClass}
                           onValueChange={handleSelectChange("graduatingClass")}
-                          className="bg-zinc-700 border-amber-500/50"
                         >
                           <SelectTrigger className="bg-zinc-700 border-amber-500/50 text-white-500">
                             <SelectValue placeholder="Select graduation year"/>
@@ -409,8 +409,6 @@ export function AccountSetupComponent() {
                   <div className="space-y-2 text-black">
                     <Label htmlFor="programmingLanguages" className="text-white">Programming Languages</Label>
                     <Multiselect
-                      id="programmingLanguages"
-                      // className="bg-zinc-700 border-amber-500/50"
                       options={programmingLanguages}
                       selectedItems={formData.programmingLanguages}
                       setSelectedItems={(items) => {
@@ -425,7 +423,6 @@ export function AccountSetupComponent() {
                   <div className="space-y-2 text-black">
                     <Label htmlFor="frameworksAndTools" className="text-white">Frameworks and Tools</Label>
                     <Multiselect
-                      id="frameworksAndTools"
                       options={frameworksAndTools}
                       selectedItems={formData.frameworksAndTools}
                       setSelectedItems={(items) => {
@@ -484,11 +481,9 @@ export function AccountSetupComponent() {
                       <div className="space-y-2">
                         <Label htmlFor="hackathonsAttended">Number of Hackathons Attended</Label>
                         <Select
-                          id="hackathonsAttended"
                           name="hackathonsAttended"
                           value={formData.hackathonsAttended}
                           onValueChange={handleSelectChange("hackathonsAttended")}
-                          className="bg-zinc-700 border-amber-500/50"
                         >
                           <SelectTrigger className="bg-zinc-700 border-amber-500/50">
                             <SelectValue placeholder="Select number of hackathons" />
