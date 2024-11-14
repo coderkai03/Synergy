@@ -21,63 +21,23 @@ import homeBg from "@/public/img/homepage.png";
 import Navbar from "@/components/navbar";
 import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import SynergyLogo from "@/components/synergy-logo";
 
 export default function SynergyLanding() {
   const { signOut } = useClerk();
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
 
-  useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      router.push("/alpha/hackathons");
-    }
-  }, [isLoaded, isSignedIn, router]);
-
   return (
     <div className="min-h-screen fglw-full bg-[#111119]">
-      <div className="min-h-screen w-full bg-cover bg-center" 
-        style={{
-          backgroundImage:`url(${homeBg.src})`}}>
-
-        {isSignedIn && (
-          // <header className="p-10 flex items-center justify-between w-full max-w-6xl mx-auto">
-          //   <nav>{/* Future navigation links can be added here */}</nav>
-          //   <div className="flex items-center gap-4">
-          //         <Button
-          //           variant="outline"
-          //           size="sm"
-          //           onClick={() => router.push("/alpha/account-setup")}
-          //         >
-          //           Edit Profile
-          //         </Button>
-          //         <span className="text-sm">{user?.fullName || "John Doe"}</span>
-          //         <SignOutButton>
-          //           <Button variant="outline" size="sm">
-          //             Sign Out
-          //           </Button>
-          //         </SignOutButton>
-          //   </div>
-          // </header>
-          <Navbar/>
-        )}
+      <div className="min-h-screen w-full bg-cover bg-center">
         {/* <Toaster position="top-center" /> */}
         
 
-        <main className="flex items-center justify-start min-h-screen p-20">
-          <div className="w-1/2 px-4 py-16 flex flex-col items-start overflow-hidden"> 
-            <div className="flex items-center text-white">
-              <svg
-                className="h-12 w-12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-              </svg>
-              <span className="text-5xl font-light tracking-wide"> ynergy </span>
+        <main className="flex items-center justify-center min-h-screen p-20">
+          <div className="w-1/2 px-4 py-16 flex flex-col items-center overflow-hidden"> 
+            <div className="scale-150">
+              <SynergyLogo/>
             </div>
             {/* <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -90,56 +50,31 @@ export default function SynergyLanding() {
               </h1> */}
               <div className="flex items-center justify-center mt-8 text-white">
                 <p className="text-xl font-light leading-relaxed">
-                  Connect with like-minded individuals and form the perfect teams for
-                  your next hackathon. Boost your productivity and make meaningful
-                  collaborations effortlessly.
+                  Find your next hackathon team in a flash.
                 </p>
               </div>
               
-              <SignInButton
-                fallbackRedirectUrl="/alpha/hackathons"
+              {isLoaded && !isSignedIn ? (
+                <SignInButton
+                fallbackRedirectUrl="/alpha/account-setup"
                 mode="modal"
               >
                 <Button
                   className="group mt-8 inline-flex items-center gap-2 rounded-full border-2 border-white/80 px-6 py-3 text-xl font-medium text-white transition-all hover:bg-white hover:text-gray-900"
                 >
-                  Apply Now
+                  Get Started
                   <ArrowRight className="transition-transform group-hover:translate-x-1" />
                 </Button>
               </SignInButton>
-              
-            {/* </motion.div> */}
-
-            {/* {!isSignedIn && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl"
-              >
-                <div className="space-y-6">
-                  <SignInButton
-                    fallbackRedirectUrl="/alpha/hackathons"
-                    mode="modal"
-                  >
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
-                      Sign In
-                    </Button>
-                  </SignInButton>
-                  <SignUpButton
-                    fallbackRedirectUrl="/alpha/account-setup"
-                    mode="modal"
-                  >
-                    <Button
-                      variant="outline"
-                      className="w-full text-blue-600 border-blue-600 hover:bg-blue-50"
-                    >
-                      Sign Up
-                    </Button>
-                  </SignUpButton>
-                </div>
-              </motion.div>
-            )} */}
+              ) : (
+                <Link
+                  href='/alpha/hackathons'
+                  className="group mt-8 inline-flex items-center gap-2 rounded-full border-2 border-white/80 px-6 py-3 text-xl font-medium text-white transition-all hover:bg-white hover:text-gray-900"
+                >
+                  Get Started
+                  <ArrowRight className="transition-transform group-hover:translate-x-1" />
+                </Link>
+              )}
             </div>
         </main>
       </div>

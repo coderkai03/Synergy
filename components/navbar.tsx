@@ -5,6 +5,7 @@ import Link from "next/link";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Zap, Users } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/nextjs";
+import SynergyLogo from "./synergy-logo";
 
 export default function Navbar() {
     const { user } = useUser();
@@ -13,12 +14,7 @@ export default function Navbar() {
     return (
         <header className="sticky top-0 z-10 bg-[#111119] px-4 shadow-sm">
             <div className="container mx-auto px-4 py-4 backdrop-blur-md flex justify-between items-center rounded-full">
-                <div className="flex items-center">
-                <Zap className="w-8 h-8 -mr-1 rotate-[10deg] scale-x-[0.7]" style={{ color: "#FFAD08" }} />
-                <Link href="/" className="text-2xl font-bold text-white">
-                    ynergy
-                </Link>
-                </div>
+                <SynergyLogo/>
 
                 <div className="flex items-center gap-2">
                 <DropdownMenu.Root>

@@ -37,15 +37,17 @@ import { toast } from "react-hot-toast";
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { db } from '@/firebaseConfig'
-import { doc, setDoc, updateDoc, collection, addDoc } from '@firebase/firestore'
+import { doc, setDoc, updateDoc, collection, addDoc, getDoc } from '@firebase/firestore'
+import User from "@/interfaces/User";
+import SkillsSection from "./slider-section";
 
 export function AccountSetupComponent() {
   const router = useRouter();
   const { user } = useUser();
   const { signOut } = useClerk();
 
-  const [formData, setFormData] = useState({
-    fullName: user?.fullName || "",
+  const [formData, setFormData] = useState<User>({
+    full_name: "",
     // email: user?.primaryEmailAddress?.emailAddress || "",
     phone: "",
     gradYear: "",
@@ -58,12 +60,11 @@ export function AccountSetupComponent() {
     number_of_hackathons: "",
     // achievements: "",
     // objectives: "",
-    category_experience: [] as string[],
     role_experience: {
-      projectManagement: 50,
-      software: 50,
-      hardware: 50,
-      uiDesign: 50,
+      product_management: -1,
+      software: -1,
+      hardware: -1,
+      uiux_design: -1,
     },
     // dietaryRestrictions: "",
     // accessibilityNeeds: "",
@@ -72,21 +73,33 @@ export function AccountSetupComponent() {
   //const [isOptionalExpanded, setIsOptionalExpanded] = useState(false);
 
   useEffect(() => {
-    const savedData = localStorage.getItem("accountSetupData");
-    if (savedData) {
-      setFormData(JSON.parse(savedData));
-    } else if (user) {
-      setFormData((prev) => ({
-        ...prev,
-        fullName: user.fullName || "",
-        email: user.primaryEmailAddress?.emailAddress || "",
-      }));
-    }
-  }, [user]);
+    async function fetchUserData() {
+      try {
+        const userId = user?.id
+        const userEmail = user?.primaryEmailAddress?.emailAddress
 
-  useEffect(() => {
-    console.log("Current formData:", formData);
-  }, [formData]);
+        if (!userId) {
+          throw new Error("User ID not found")
+        }
+
+        if (!userEmail) {
+          throw new Error("User email not found")
+        }
+
+        const userDoc = await getDoc(doc(db, 'users', userId))
+        setFormData({
+          ...(userDoc.data()) as User
+        });
+        console.log('Loaded user: ',userDoc.data())
+        
+      } catch (error) {
+        console.error("Error getting user ID:", error)
+        return
+      }
+    }
+
+    fetchUserData()
+  }, [user]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -128,7 +141,6 @@ export function AccountSetupComponent() {
 
       const docRef = doc(db, 'users', userId);
       await setDoc(docRef, {
-        email: userEmail,
         ...formData
       });
 
@@ -212,16 +224,20 @@ export function AccountSetupComponent() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">First Name</Label>
-                      <Input id="firstName" className="bg-zinc-700 border-amber-500/50" />
+                      <Input id="firstName" className="bg-zinc-700 border-amber-500/50" value={
+                        formData.full_name ? formData.full_name.split(' ')[0] : ""
+                      }/>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastName">Last Name</Label>
-                      <Input id="lastName" className="bg-zinc-700 border-amber-500/50" />
+                      <Input id="lastName" className="bg-zinc-700 border-amber-500/50" value={
+                        formData.full_name ? formData.full_name.split(' ')[formData.full_name.split(' ').length-1] : ""
+                      }/>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" className="bg-zinc-700 border-amber-500/50" />
+                    <Input id="phone" className="bg-zinc-700 border-amber-500/50" value={formData.phone}/>
                   </div>
                 </CollapsibleContent>
               </Collapsible> 
@@ -259,21 +275,21 @@ export function AccountSetupComponent() {
                   <div className="space-y-2">
                     <Label htmlFor="degree">Degree</Label>
                     <Select
-                          name="graduatingClass"
-                          value={formData.graduatingClass}
-                          onValueChange={handleSelectChange("graduatingClass")}
-                        >
-                          <SelectTrigger className="bg-zinc-700 border-amber-500/50 text-white-500">
-                            <SelectValue placeholder="Select graduation year"/>
-                          </SelectTrigger>
-                          <SelectContent className="bg-zinc-700 border-amber-500/50 text-white hover:bg-[##FFAD08]">
-                            {[2024, 2025, 2026, 2027, 2028, 2029, 2030].map((year) => (
-                              <SelectItem key={year} value={year.toString()}>
-                                {year}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                      name="graduatingClass"
+                      value={formData.gradYear}
+                      onValueChange={handleSelectChange("graduatingClass")}
+                    >
+                      <SelectTrigger className="bg-zinc-700 border-amber-500/50 text-white-500">
+                        <SelectValue placeholder="Select graduation year"/>
+                      </SelectTrigger>
+                      <SelectContent className="bg-zinc-700 border-amber-500/50 text-white hover:bg-[##FFAD08]">
+                        {[2024, 2025, 2026, 2027, 2028, 2029, 2030].map((year) => (
+                          <SelectItem key={year} value={year.toString()}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </CollapsibleContent>
@@ -364,7 +380,7 @@ export function AccountSetupComponent() {
                         <Label htmlFor="hackathonsAttended">Number of Hackathons Attended</Label>
                         <Select
                           name="hackathonsAttended"
-                          value={formData.hackathonsAttended}
+                          value={formData.number_of_hackathons}
                           onValueChange={handleSelectChange("hackathonsAttended")}
                         >
                           <SelectTrigger className="bg-zinc-700 border-amber-500/50">
@@ -379,123 +395,12 @@ export function AccountSetupComponent() {
                           </SelectContent>
                         </Select>
                       </div>
-                      <div className="space-y-2 text-black">
-                        <Label className="text-white">Focuses</Label>
-                        <Multiselect
-                          options={focuses}
-                          selectedItems={formData.focuses}
-                          setSelectedItems={(selectedItems) => {
-                            setFormData((prev) => ({
-                              ...prev,
-                              focuses: selectedItems,
-                            }));
-                          }}
-                        />
-                      </div>
                     </div>
 
                     <div className="space-y-8">
                       <h3 className="text-sm text-zinc-400">Rate your experience level in each role from 0 to 5</h3>
 
-                      {/* Project Management */}
-                      <div className="space-y-4">
-                        <div className="flex justify-between">
-                          <Label htmlFor="projectManagement">Project Management</Label>
-                          <span className="text-zinc-400 text-sm">Leading teams, coordinating tasks, and ensuring project success</span>
-                        </div>
-                        <Slider
-                          id="projectManagement"
-                          min={0}
-                          max={5}
-                          step={1}
-                          value={[formData.preferredRoles.projectManagement]}
-                          onValueChange={handleSliderChange("projectManagement")}
-                          className="[&_[role=slider]]:bg-amber-500"
-                        />
-                        <div className="flex justify-between text-xs text-zinc-400">
-                          <span>0</span>
-                          <span>1</span>
-                          <span>2</span>
-                          <span>3</span>
-                          <span>4</span>
-                          <span>5</span>
-                        </div>
-                      </div>
-
-                      {/* Software Development */}
-                      <div className="space-y-4">
-                        <div className="flex justify-between">
-                          <Label htmlFor="software">Software Development</Label>
-                          <span className="text-zinc-400 text-sm">Programming, app development, and software architecture</span>
-                        </div>
-                        <Slider
-                          id="software"
-                          min={0}
-                          max={5}
-                          step={1}
-                          value={[formData.preferredRoles.software]}
-                          onValueChange={handleSliderChange("software")}
-                          className="[&_[role=slider]]:bg-amber-500"
-                        />
-                        <div className="flex justify-between text-xs text-zinc-400">
-                          <span>0</span>
-                          <span>1</span>
-                          <span>2</span>
-                          <span>3</span>
-                          <span>4</span>
-                          <span>5</span>
-                        </div>
-                      </div>
-
-                      {/* Hardware Development */}
-                      <div className="space-y-4">
-                        <div className="flex justify-between">
-                          <Label htmlFor="hardware">Hardware Development</Label>
-                          <span className="text-zinc-400 text-sm">Electronics, prototyping, and physical computing</span>
-                        </div>
-                        <Slider
-                          id="hardware"
-                          min={0}
-                          max={5}
-                          step={1}
-                          value={[formData.preferredRoles.hardware]}
-                          onValueChange={handleSliderChange("hardware")}
-                          className="[&_[role=slider]]:bg-amber-500"
-                        />
-                        <div className="flex justify-between text-xs text-zinc-400">
-                          <span>0</span>
-                          <span>1</span>
-                          <span>2</span>
-                          <span>3</span>
-                          <span>4</span>
-                          <span>5</span>
-                        </div>
-                      </div>
-
-                      {/* UI/UX Design */}
-                      <div className="space-y-4">
-                        <div className="flex justify-between">
-                          <Label htmlFor="uiDesign">UI/UX Design</Label>
-                          <span className="text-zinc-400 text-sm">User interface design, user experience, wireframing, and prototyping</span>
-                        </div>
-                        <Slider
-                          id="uiDesign"
-                          min={0}
-                          max={5}
-                          step={1}
-                          value={[formData.preferredRoles.uiDesign]}
-                          onValueChange={handleSliderChange("uiDesign")}
-                          className="[&_[role=slider]]:bg-amber-500"
-                        />
-                        <div className="flex justify-between text-xs text-zinc-400">
-                          <span>0</span>
-                          <span>1</span>
-                          <span>2</span>
-                          <span>3</span>
-                          <span>4</span>
-                          <span>5</span>
-                        </div>
-                      </div>
+                      <SkillsSection formData={formData} handleSliderChange={handleSliderChange}/>
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
