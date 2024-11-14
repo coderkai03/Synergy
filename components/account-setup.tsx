@@ -31,6 +31,8 @@ import { Multiselect } from "./multiselect";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
+import { db } from '@/firebaseConfig'
+import { doc, setDoc, updateDoc, collection, addDoc } from '@firebase/firestore'
 
 export function AccountSetupComponent() {
   const router = useRouter();
@@ -40,18 +42,18 @@ export function AccountSetupComponent() {
     fullName: user?.fullName || "",
     // email: user?.primaryEmailAddress?.emailAddress || "",
     phone: "",
-    graduatingClass: "",
+    gradYear: "",
     school: "",
     degree: "",
-    programmingLanguages: [] as string[],
-    frameworksAndTools: [] as string[],
-    devpostProfile: "",
-    githubProfile: "",
-    hackathonsAttended: "",
+    programming_languages: [] as string[],
+    frameworks_and_tools: [] as string[],
+    devpost: "",
+    github: "",
+    number_of_hackathons: "",
     // achievements: "",
     // objectives: "",
-    focuses: [] as string[],
-    preferredRoles: {
+    category_experience: [] as string[],
+    role_experience: {
       projectManagement: 50,
       software: 50,
       hardware: 50,
@@ -99,8 +101,8 @@ export function AccountSetupComponent() {
   const handleSliderChange = (role: string) => (value: number[]) => {
     setFormData({
       ...formData,
-      preferredRoles: {
-        ...formData.preferredRoles,
+      role_experience: {
+        ...formData.role_experience,
         [role]: value[0],
       },
     });
@@ -112,82 +114,27 @@ export function AccountSetupComponent() {
     e.preventDefault();
     try {
       console.log("Submitting formData:", formData);
+      const userId = user?.id;
+      const userEmail = user?.primaryEmailAddress?.emailAddress
 
-      // Save to localStorage
-      localStorage.setItem("accountSetupData", JSON.stringify(formData));
-      console.log("Account Setup Data saved to localStorage:", formData);
+      if (!userId) throw new Error("User ID is not available");
+      if (!userEmail) throw new Error("User email is not available");
 
-      //entry.868333928=name
-      //entry.2109342534=phone
-      //entry.1001414379=gradyear
-      //entry.279323951=school
-      //entry.1194461452=degree
-      //entry.1215536533=langs
-      //entry.2068797540=frameworks
-      //entry.1483794269=devpost
-      //entry.618662987=github
-      //entry.1247596049=numHackathons
-      //entry.289288076=focus
-      //entry.444967086=prodMgmt
-      //entry.1174368867=software
-      //entry.638316355=hardware
-      //entry.334805419=uiuxdesign
-
-      // setIsSubmitting(true);
-
-      const localFormData = new FormData();
-      localFormData.append("entry.868333928", formData.fullName);
-      localFormData.append("entry.2109342534", formData.phone);
-      localFormData.append("entry.1001414379", formData.graduatingClass);
-      localFormData.append("entry.279323951", formData.school);
-      localFormData.append("entry.1194461452", formData.degree);
-      localFormData.append(
-        "entry.1215536533",
-        formData.programmingLanguages.join(",")
-      );
-      localFormData.append(
-        "entry.2068797540",
-        formData.frameworksAndTools.join(",")
-      );
-      localFormData.append("entry.1483794269", formData.devpostProfile);
-      localFormData.append("entry.618662987", formData.githubProfile);
-      localFormData.append("entry.1247596049", formData.hackathonsAttended);
-      localFormData.append("entry.289288076", formData.focuses.join(","));
-      localFormData.append(
-        "entry.444967086",
-        formData.preferredRoles.projectManagement.toString()
-      );
-      localFormData.append(
-        "entry.1174368867",
-        formData.preferredRoles.software.toString()
-      );
-      localFormData.append(
-        "entry.638316355",
-        formData.preferredRoles.hardware.toString()
-      );
-      localFormData.append(
-        "entry.334805419",
-        formData.preferredRoles.uiDesign.toString()
-      );
-
-      await fetch(
-        "https://docs.google.com/forms/d/e/1FAIpQLSf6PNnpumkNMZqvoJA8cOPNtLfv9UfrXygDQA1zEm24LW46NA/formResponse",
-        {
-          method: "POST",
-          body: localFormData,
-          mode: "no-cors",
-        }
-      );
+      const docRef = doc(db, 'users', userId);
+      await setDoc(docRef, {
+        email: userEmail,
+        ...formData
+      });
 
       // Navigate to the next page
       router.push("/alpha/hackathons");
     } catch (error) {
-      console.error("Error saving to localStorage:", error);
+      console.error("Error saving to Firestore:", error);
       toast.error("Failed to save your profile. Please try again.");
     }
   };
 
-  const programmingLanguages = [
+  const programming_languages = [
     "JavaScript",
     "Python",
     "Java",
@@ -200,7 +147,7 @@ export function AccountSetupComponent() {
     "TypeScript",
   ];
 
-  const frameworksAndTools = [
+  const frameworks_and_tools = [
     "React",
     "Angular",
     "Vue.js",
@@ -213,7 +160,7 @@ export function AccountSetupComponent() {
     "PyTorch",
   ];
 
-  const focuses = [
+  const category_experience = [
     "Web Development",
     "Mobile Development",
     "AI/Machine Learning",
@@ -225,6 +172,15 @@ export function AccountSetupComponent() {
     "AR/VR",
     "Game Development",
   ];
+
+  const createRandomDoc = async (data: any) => {
+    try {
+      const docRef = await addDoc(collection(db, 'users'), data); // Automatically generates a random ID
+      console.log("Document written with ID: ", docRef.id);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
 
   return (
     <div className="container mx-auto py-10">
@@ -260,14 +216,16 @@ export function AccountSetupComponent() {
                     type="tel"
                     value={formData.phone}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="graduatingClass">Graduating Class</Label>
+                  <Label htmlFor="gradYear">Graduating Class</Label>
                   <Select
-                    name="graduatingClass"
-                    value={formData.graduatingClass}
-                    onValueChange={handleSelectChange("graduatingClass")}
+                    name="gradYear"
+                    value={formData.gradYear}
+                    onValueChange={handleSelectChange("gradYear")}
+                    required
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select graduation year" />
@@ -319,29 +277,29 @@ export function AccountSetupComponent() {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Technical Skills</h3>
               <div className="space-y-2">
-                <Label htmlFor="programmingLanguages">
+                <Label htmlFor="programming_languages">
                   Programming Languages
                 </Label>
                 <Multiselect
-                  options={programmingLanguages}
-                  selectedItems={formData.programmingLanguages}
+                  options={programming_languages}
+                  selectedItems={formData.programming_languages}
                   setSelectedItems={(items) => {
                     setFormData((prev) => ({
                       ...prev,
-                      programmingLanguages: items,
+                      programming_languages: items,
                     }));
                   }}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="frameworksAndTools">Frameworks and Tools</Label>
+                <Label htmlFor="frameworks_and_tools">Frameworks and Tools</Label>
                 <Multiselect
-                  options={frameworksAndTools}
-                  selectedItems={formData.frameworksAndTools}
+                  options={frameworks_and_tools}
+                  selectedItems={formData.frameworks_and_tools}
                   setSelectedItems={(items) => {
                     setFormData((prev) => ({
                       ...prev,
-                      frameworksAndTools: items,
+                      frameworks_and_tools: items,
                     }));
                   }}
                 />
@@ -353,23 +311,25 @@ export function AccountSetupComponent() {
               <h3 className="text-lg font-semibold">Online Profiles</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="devpostProfile">Devpost Profile</Label>
+                  <Label htmlFor="devpost">Devpost Profile</Label>
                   <Input
-                    id="devpostProfile"
-                    name="devpostProfile"
-                    value={formData.devpostProfile}
+                    id="devpost"
+                    name="devpost"
+                    value={formData.devpost}
                     onChange={handleChange}
                     placeholder="https://devpost.com/yourusername"
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="githubProfile">GitHub Profile</Label>
+                  <Label htmlFor="github">GitHub Profile</Label>
                   <Input
-                    id="githubProfile"
-                    name="githubProfile"
-                    value={formData.githubProfile}
+                    id="github"
+                    name="github"
+                    value={formData.github}
                     onChange={handleChange}
                     placeholder="https://github.com/yourusername"
+                    required
                   />
                 </div>
               </div>
@@ -380,12 +340,13 @@ export function AccountSetupComponent() {
               <h3 className="text-lg font-semibold">Hackathon Experience</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="hackathonsAttended">
+                  <Label htmlFor="number_of_hackathons">
                     Number of Hackathons Attended
                   </Label>
                   <Select
-                    onValueChange={handleSelectChange("hackathonsAttended")}
-                    value={formData.hackathonsAttended}
+                    onValueChange={handleSelectChange("number_of_hackathons")}
+                    value={formData.number_of_hackathons}
+                    required
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select number of hackathons" />
@@ -406,14 +367,14 @@ export function AccountSetupComponent() {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Goals and Interests</h3>
               <div className="space-y-2">
-                <Label htmlFor="focuses">Focuses</Label>
+                <Label htmlFor="category_experience">Category_experience</Label>
                 <Multiselect
-                  options={focuses}
-                  selectedItems={formData.focuses}
+                  options={category_experience}
+                  selectedItems={formData.category_experience}
                   setSelectedItems={(selectedItems) => {
                     setFormData((prev) => ({
                       ...prev,
-                      focuses: selectedItems,
+                      category_experience: selectedItems,
                     }));
                   }}
                 />
@@ -438,11 +399,11 @@ export function AccountSetupComponent() {
                     min={0}
                     max={100}
                     step={1}
-                    value={[formData.preferredRoles.projectManagement]}
+                    value={[formData.role_experience.projectManagement]}
                     onValueChange={handleSliderChange("projectManagement")}
                   />
                   <p className="text-sm text-right">
-                    {formData.preferredRoles.projectManagement}%
+                    {formData.role_experience.projectManagement}%
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -455,11 +416,11 @@ export function AccountSetupComponent() {
                     min={0}
                     max={100}
                     step={1}
-                    value={[formData.preferredRoles.software]}
+                    value={[formData.role_experience.software]}
                     onValueChange={handleSliderChange("software")}
                   />
                   <p className="text-sm text-right">
-                    {formData.preferredRoles.software}%
+                    {formData.role_experience.software}%
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -472,11 +433,11 @@ export function AccountSetupComponent() {
                     min={0}
                     max={100}
                     step={1}
-                    value={[formData.preferredRoles.hardware]}
+                    value={[formData.role_experience.hardware]}
                     onValueChange={handleSliderChange("hardware")}
                   />
                   <p className="text-sm text-right">
-                    {formData.preferredRoles.hardware}%
+                    {formData.role_experience.hardware}%
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -490,11 +451,11 @@ export function AccountSetupComponent() {
                     min={0}
                     max={100}
                     step={1}
-                    value={[formData.preferredRoles.uiDesign]}
+                    value={[formData.role_experience.uiDesign]}
                     onValueChange={handleSliderChange("uiDesign")}
                   />
                   <p className="text-sm text-right">
-                    {formData.preferredRoles.uiDesign}%
+                    {formData.role_experience.uiDesign}%
                   </p>
                 </div>
               </div>
