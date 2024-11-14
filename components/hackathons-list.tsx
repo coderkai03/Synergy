@@ -5,7 +5,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 import { Calendar, Globe2, MapPin, Search, Users, Zap } from "lucide-react";
 import Link from "next/link";
-import { useClerk, UserButton } from "@clerk/nextjs";
+import { useClerk, UserButton, useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
@@ -15,9 +15,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { hackathons as hackathonsList } from "@/constants/hackathonlist";
 import { Hackathon } from "@/constants/hackathonlist";
 import { Checkbox } from "@/components/ui/checkbox";
-import Image from "next/image";
+// import Image from "next/image";
 
 export function HackathonsListComponent() {
+  const { user } = useUser();
   const { signOut } = useClerk();
   const [searchTerm, setSearchTerm] = React.useState("");
   const [dateFilter, setDateFilter] = React.useState("");
@@ -58,27 +59,43 @@ export function HackathonsListComponent() {
               Synergy
             </Link>
           </div>
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              className="hover:bg-blue-50"
-              asChild
-            >
-              <Link href="/alpha/account-setup">
-                <Users className="h-4 w-4 mr-2" />
-                Edit Profile
-              </Link>
-            </Button>
-            <UserButton />
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hover:bg-red-50 hover:text-red-600 transition-colors"
-              onClick={() => signOut()}
-            >
-              Sign Out
-            </Button>
+          {/* Profile Dropdown Menu */}
+          <div className="flex items-center gap-2">
+            {/* Profile Dropdown */}
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <div className="flex items-center gap-2 cursor-pointer">
+                  {/* Display the user's full name */}
+                  <span className="text-white">{user?.fullName || "Username"}</span>
+                  {/* Display the user's profile picture */}
+                  {/* <Image
+                    src={user?.profileImageUrl || "/placeholder.svg"}
+                    alt="Profile"
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  /> */}
+                  <UserButton />
+                </div>
+              </DropdownMenu.Trigger>
+
+              <DropdownMenu.Content className="w-48 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2">
+                <DropdownMenu.Item asChild>
+                  <Link href="/alpha/account-setup" className="flex items-center gap-2 p-2 rounded hover:bg-amber-100 hover:text-black">
+                    <Users className="h-4 w-4" />
+                    <span>Edit Profile</span>
+                  </Link>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item asChild>
+                  <button
+                    onClick={signOut}
+                    className="flex items-center gap-2 p-2 w-full text-left rounded hover:bg-amber-100 hover:text-black"
+                  >
+                    <span>Sign Out</span>
+                  </button>
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           </div>
         </div>
       </header>
