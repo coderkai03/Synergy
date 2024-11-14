@@ -50,8 +50,8 @@ export function HackathonsListComponent() {
   }, [hackathons, searchTerm, dateFilter, locationFilter]);
 
   return (
-    <div className="min-h-screen bg-zinc-800">
-      <header className="sticky top-0 z-10 bg-white/20 backdrop-blur-md shadow-sm">
+    <div className="min-h-screen bg-zinc-800 p-4">
+      <header className="sticky top-0 z-10 bg-white/20 rounded-full mx-2 px-4 backdrop-blur-md shadow-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Zap className="w-8 h-8 text-white" />
@@ -88,7 +88,7 @@ export function HackathonsListComponent() {
                 </DropdownMenu.Item>
                 <DropdownMenu.Item asChild>
                   <button
-                    onClick={signOut}
+                    onClick={() => signOut()}
                     className="flex items-center gap-2 p-2 w-full text-left rounded hover:bg-amber-100 hover:text-black"
                   >
                     <span>Sign Out</span>
@@ -152,19 +152,31 @@ export function HackathonsListComponent() {
                 <div className="p-2 space-y-2">
                   <DropdownMenu.Item asChild>
                     <label className="flex items-center space-x-2">
-                      <Checkbox id="online" />
+                      <Checkbox 
+                        id="online"
+                        checked={locationFilter == "online"}
+                        onCheckedChange={() => setLocationFilter("online")}
+                        />
                       <span>Online</span>
                     </label>
                   </DropdownMenu.Item>
                   <DropdownMenu.Item asChild>
                     <label className="flex items-center space-x-2">
-                      <Checkbox id="in-person" />
+                    <Checkbox 
+                        id="in-person"
+                        checked={locationFilter == "in-person"}
+                        onCheckedChange={() => setLocationFilter("in-person")}
+                      />
                       <span>In-person</span>
                     </label>
                   </DropdownMenu.Item>
                   <DropdownMenu.Item asChild>
                     <label className="flex items-center space-x-2">
-                      <Checkbox id="no-filter" />
+                    <Checkbox 
+                        id="all"
+                        checked={locationFilter == "all"}
+                        onCheckedChange={() => setLocationFilter("all")}
+                      />
                       <span>No Filter</span>
                     </label>
                   </DropdownMenu.Item>
