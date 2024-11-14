@@ -19,6 +19,15 @@ import { toast } from "react-hot-toast";
 import HackathonWait from "./wait";
 import { useClerk, UserButton } from "@clerk/nextjs"; // Importing Clerk components
 import { Multiselect } from "./multiselect";
+import { Calendar, Globe2, MapPin, Search, Users, Zap } from "lucide-react";
+import Link from "next/link";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
 
 export function HackathonDetailComponent() {
   const router = useRouter();
@@ -207,16 +216,66 @@ export function HackathonDetailComponent() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header with Avatar and Sign Out */}
-      <div className="flex justify-end mb-4">
-        <UserButton />
-        <Button variant="secondary" onClick={() => signOut()} className="ml-2">
-          Sign Out
-        </Button>
-      </div>
+    <div className="min-h-screen bg-zinc-800 px-4 py-8 text-white">
+    {/* <div className="container mx-auto px-4 py-8 bg-zinc-800"> */}
+      {/* <header className="sticky top-0 z-10 bg-white/20 backdrop-blur-md shadow-sm"> */}
+      <header className="sticky top-0 z-10 bg-white/20 backdrop-blur-md shadow-sm">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Zap className="w-8 h-8 text-white" />
+            <Link href="/" className="text-2xl font-bold text-white">
+              ynergy
+            </Link>
+          </div>
+          {/* Profile Dropdown Menu */}
+          <div className="flex items-center gap-2">
+            {/* Profile Dropdown */}
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <div className="flex items-center gap-2 cursor-pointer">
+                  {/* Display the user's full name */}
+                  <span className="text-white">{user?.fullName || "Username"}</span>
+                  {/* Display the user's profile picture */}
+                  {/* <Image
+                    src={user?.profileImageUrl || "/placeholder.svg"}
+                    alt="Profile"
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  /> */}
+                  <UserButton />
+                </div>
+              </DropdownMenu.Trigger>
 
-      <Card className="max-w-2xl mx-auto">
+              <DropdownMenu.Content className="w-48 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2">
+                <DropdownMenu.Item asChild>
+                  <Link href="/alpha/account-setup" className="flex items-center gap-2 p-2 rounded hover:bg-amber-100 hover:text-black">
+                    <Users className="h-4 w-4" />
+                    <span>Edit Profile</span>
+                  </Link>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item asChild>
+                  <button
+                    onClick={() => signOut()}
+                    className="flex items-center gap-2 p-2 w-full text-left rounded hover:bg-amber-100 hover:text-black"
+                  >
+                    <span>Sign Out</span>
+                  </button>
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          </div>
+          {/* <div className="flex justify-end mb-4">
+            <UserButton />
+            <Button variant="secondary" onClick={() => signOut()} className="ml-2">
+              Sign Out
+            </Button>
+          </div> */}
+        </div>
+      </header>
+      
+
+      <Card className="max-w-2xl mx-auto my-9 text-white bg-zinc-800">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
             Team Formation for {hackathon.name}
@@ -230,20 +289,26 @@ export function HackathonDetailComponent() {
               </div>
 
               <div className="space-y-2">
-                <Label>Are you in already?</Label>
+                <Label>Are you in a team already?</Label>
                 <RadioGroup
                   name="alreadyInTeam"
                   value={formData.alreadyInTeam}
-                  onValueChange={(value) =>
-                    handleRadioChange("alreadyInTeam", value)
-                  }
+                  onValueChange={(value) => handleRadioChange("alreadyInTeam", value)}
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="alreadyInTeam-yes" />
+                    <RadioGroupItem
+                      value="yes"
+                      id="alreadyInTeam-yes"
+                      className="w-4 h-4 border border-white bg-transparent rounded text-white checked:text-white"
+                    />
                     <Label htmlFor="alreadyInTeam-yes">Yes</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="alreadyInTeam-no" />
+                    <RadioGroupItem
+                      value="no"
+                      id="alreadyInTeam-no"
+                      className="w-4 h-4 border border-white bg-transparent rounded text-white checked:text-white"
+                    />
                     <Label htmlFor="alreadyInTeam-no">No</Label>
                   </div>
                 </RadioGroup>
@@ -251,16 +316,14 @@ export function HackathonDetailComponent() {
 
               {formData.alreadyInTeam === "yes" && (
                 <div className="space-y-2">
-                  <Label htmlFor="teamMembers">
-                    Please list your existing team members:
-                  </Label>
+                  <Label htmlFor="teamMembers">Please list your existing team members:</Label>
                   <Textarea
                     id="teamMembers"
                     name="teamMembers"
                     value={formData.teamMembers}
                     onChange={handleChange}
                     placeholder="List the names of your team members..."
-                    className="min-h-[100px]"
+                    className="min-h-[100px] text-white"
                   />
                 </div>
               )}
@@ -270,16 +333,22 @@ export function HackathonDetailComponent() {
                 <RadioGroup
                   name="hasProjectIdea"
                   value={formData.hasProjectIdea}
-                  onValueChange={(value) =>
-                    handleRadioChange("hasProjectIdea", value)
-                  }
+                  onValueChange={(value) => handleRadioChange("hasProjectIdea", value)}
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="hasProjectIdea-yes" />
+                    <RadioGroupItem
+                      value="yes"
+                      id="hasProjectIdea-yes"
+                      className="w-4 h-4 border border-white bg-transparent rounded text-white checked:text-white"
+                    />
                     <Label htmlFor="hasProjectIdea-yes">Yes</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="hasProjectIdea-no" />
+                    <RadioGroupItem
+                      value="no"
+                      id="hasProjectIdea-no"
+                      className="w-4 h-4 border border-white bg-transparent rounded text-white checked:text-white"
+                    />
                     <Label htmlFor="hasProjectIdea-no">No</Label>
                   </div>
                 </RadioGroup>
@@ -287,9 +356,7 @@ export function HackathonDetailComponent() {
 
               {formData.hasProjectIdea === "yes" && (
                 <div className="space-y-2">
-                  <Label htmlFor="projectIdea">
-                    If Yes, Please Describe Your Project Idea:
-                  </Label>
+                  <Label htmlFor="projectIdea">If Yes, Please Describe Your Project Idea:</Label>
                   <Textarea
                     id="projectIdea"
                     name="projectIdea"
@@ -301,34 +368,32 @@ export function HackathonDetailComponent() {
                   />
                 </div>
               )}
-            </div>
 
-            <div className="space-y-4">
-              <div className="text-lg font-semibold">
-                Goals and Expectations:
-              </div>
+              <div className="space-y-4">
+                <div className="text-lg font-semibold">Goals and Expectations:</div>
 
-              <div className="space-y-2">
-                <Label>What Are Your Goals for This Hackathon?</Label>
                 <div className="space-y-2">
-                  {[
-                    "Learning new technologies",
-                    "Networking",
-                    "Winning prizes",
-                  ].map((goal) => (
-                    <div key={goal} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={goal}
-                        checked={formData.goals.includes(goal)}
-                        onCheckedChange={(checked) =>
-                          handleCheckboxChange(goal, checked as boolean)
-                        }
-                      />
-                      <Label htmlFor={goal}>{goal}</Label>
-                    </div>
-                  ))}
+                  <Label>What Are Your Goals for This Hackathon?</Label>
+                  <div className="space-y-2">
+                    {["Learning new technologies", "Networking", "Winning prizes"].map(
+                      (goal) => (
+                        <div key={goal} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={goal}
+                            checked={formData.goals.includes(goal)}
+                            onCheckedChange={(checked) =>
+                              handleCheckboxChange(goal, checked as boolean)
+                            }
+                            className="w-4 h-4 border border-white rounded bg-transparent"
+                          />
+                          <Label htmlFor={goal}>{goal}</Label>
+                        </div>
+                      )
+                    )}
+                  </div>
                 </div>
               </div>
+
 
               {/* <div className="space-y-2">
                 <Label htmlFor="technologies">
@@ -344,7 +409,7 @@ export function HackathonDetailComponent() {
               </div> */}
 
               <div className="space-y-2">
-                <Label htmlFor="problemSpaces">
+                <Label htmlFor="problemSpaces" className="text-white">
                   What Categories Are You Passionate About?
                 </Label>
                 <Multiselect
@@ -353,12 +418,38 @@ export function HackathonDetailComponent() {
                   setSelectedItems={(items) =>
                     setFormData({ ...formData, problemSpaces: items })
                   }
+                  styles={{
+                    container: {
+                      backgroundColor: '#111119',
+                      color: 'white',
+                    },
+                    dropdown: {
+                      backgroundColor: '#111119',
+                      color: 'white',
+                      left: '0',
+                      right: 'auto',
+                    },
+                    option: {
+                      backgroundColor: '#111119',
+                      color: 'white',
+                      '&:hover': {
+                        backgroundColor: '#1e1e2e',
+                      },
+                    },
+                    selectedItem: {
+                      backgroundColor: '#2a2a3a',
+                      color: 'white',
+                    },
+                    input: {
+                      color: 'white',
+                    },
+                  }}
                 />
               </div>
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-white" disabled={isSubmitting}>
               {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </CardFooter>

@@ -56,7 +56,7 @@ export function HackathonsListComponent() {
           <div className="flex items-center gap-2">
             <Zap className="w-8 h-8 text-white" />
             <Link href="/" className="text-2xl font-bold text-white">
-              Synergy
+              ynergy
             </Link>
           </div>
           {/* Profile Dropdown Menu */}
@@ -144,7 +144,7 @@ export function HackathonsListComponent() {
 
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
-                <Button variant="secondary" className="bg-amber-500 hover:bg-amber-600 text-white">
+                <Button variant="secondary" className="bg-amber-500 hover:bg-amber-600 text-white h-12">
                   Filter by category
                 </Button>
               </DropdownMenu.Trigger>
