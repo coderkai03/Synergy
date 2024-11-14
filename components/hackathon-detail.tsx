@@ -216,10 +216,10 @@ export function HackathonDetailComponent() {
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-800 px-4 py-8 text-white">
+    <div className="min-h-screen bg-zinc-800 p-4 py-8 text-white">
     {/* <div className="container mx-auto px-4 py-8 bg-zinc-800"> */}
       {/* <header className="sticky top-0 z-10 bg-white/20 backdrop-blur-md shadow-sm"> */}
-      <header className="sticky top-0 z-10 bg-white/20 backdrop-blur-md shadow-sm">
+      <header className="sticky top-0 z-10 bg-white/20 rounded-full mx-2 px-4 backdrop-blur-md shadow-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Zap className="w-8 h-8 text-white" />
@@ -418,32 +418,6 @@ export function HackathonDetailComponent() {
                   setSelectedItems={(items) =>
                     setFormData({ ...formData, problemSpaces: items })
                   }
-                  styles={{
-                    container: {
-                      backgroundColor: '#111119',
-                      color: 'white',
-                    },
-                    dropdown: {
-                      backgroundColor: '#111119',
-                      color: 'white',
-                      left: '0',
-                      right: 'auto',
-                    },
-                    option: {
-                      backgroundColor: '#111119',
-                      color: 'white',
-                      '&:hover': {
-                        backgroundColor: '#1e1e2e',
-                      },
-                    },
-                    selectedItem: {
-                      backgroundColor: '#2a2a3a',
-                      color: 'white',
-                    },
-                    input: {
-                      color: 'white',
-                    },
-                  }}
                 />
               </div>
             </div>
