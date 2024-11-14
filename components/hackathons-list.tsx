@@ -59,7 +59,7 @@ export function HackathonsListComponent() {
           transition={{ duration: 0.5 }}
           className="text-4xl md:text-5xl font-bold mb-4 text-center"
         >
-          <span className="bg-gradient-to-r from-pink-500 to-purple-500 text-transparent bg-clip-text">2024</span>
+          <span className="bg-gradient-to-r from-yellow-500 to-zinc-300 text-transparent bg-clip-text">2024</span>
           <span className="text-white"> Hackathon Season</span>
         </motion.h1>
         <motion.p
@@ -134,7 +134,7 @@ export function HackathonsListComponent() {
           {filteredHackathons.map((hackathon) => (
             <Card
               key={hackathon.id}
-              className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#E4E4E4] border-none"
+              className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#4A4A4A] border-none"
             >
               <CardHeader className="p-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -145,11 +145,11 @@ export function HackathonsListComponent() {
                 />
               </CardHeader>
               <CardContent className="grid gap-3 p-4">
-                <h3 className="text-xl font-semibold text-black line-clamp-1">
+                <h3 className="text-xl font-semibold text-white line-clamp-1">
                   {hackathon.name}
                 </h3>
-                <div className="flex items-center gap-2 text-sm text-zinc-800">
-                  <Calendar className="h-4 w-4 text-black" />
+                <div className="flex items-center gap-2 text-sm text-white">
+                  <Calendar className="h-4 w-4 text-white" />
                   <time dateTime={hackathon.date}>
                     {new Date(`${hackathon.date}T00:00:00`).toLocaleDateString(
                       "en-US",
@@ -172,11 +172,11 @@ export function HackathonsListComponent() {
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-black">
+                <div className="flex items-center gap-2 text-sm text-white">
                   {hackathon.isOnline ? (
-                    <Globe2 className="h-4 w-4 text-black" />
+                    <Globe2 className="h-4 w-4 text-white" />
                   ) : (
-                    <MapPin className="h-4 w-4 text-black" />
+                    <MapPin className="h-4 w-4 text-white" />
                   )}
                   {hackathon.location}
                 </div>
@@ -187,12 +187,12 @@ export function HackathonsListComponent() {
                   </div>
                 )} */}
                 <div className="mt-4 flex gap-3">
-                  <Button asChild className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-black hover:text-white">
+                  <Button asChild className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-white hover:text-white">
                     <Link href={`/alpha/hackathons/${hackathon.id}`}>
                       Form Team
                     </Link>
                   </Button>
-                  <Button asChild variant="outline" className="flex-1 bg-[#E4E4E4] border-emerald-500 text-emerald-500 hover:bg-emerald-500/10 hover:text-emerald">
+                  <Button asChild variant="outline" className="flex-1 bg-[#4A4A4A] border-[#ffac4c] text-[#ffac4c] hover:bg-[#FFAD08]/10 hover:text-[#ffac4c]">
                     <Link
                       href={hackathon.website}
                       target="_blank"

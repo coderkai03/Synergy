@@ -19,6 +19,8 @@ import { ArrowRight, ClipboardList, Users, UserPlus, Rocket, Zap } from "lucide-
 import betaPrev from "@/public/img/betapreview.png";
 import homeBg from "@/public/img/homepage.png";
 import Navbar from "@/components/navbar";
+import { ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export default function SynergyLanding() {
   const { signOut } = useClerk();
@@ -156,7 +158,7 @@ export default function SynergyLanding() {
             className="mt-24 grid md:grid-cols-3 gap-8 bg-[#111119]"
           >
             <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-yellow-600 to-zinc-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
               <div className="relative bg-black rounded-lg p-8 space-y-6 border-gradient-to-r from-pink-600 to-orange-600">
                 <Users className="h-12 w-12 text-white mb-4" />
                 <h3 className="text-2xl font-semibold text-white">Find Your Dream Team</h3>
@@ -167,7 +169,7 @@ export default function SynergyLanding() {
             </div>
             
             <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-600 to-green-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-zinc-600 to-zinc-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
               <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent">
                 <Zap className="h-12 w-12 text-white mb-4" />
                 <h3 className="text-2xl font-semibold text-white">Boost Your Productivity</h3>
@@ -178,7 +180,7 @@ export default function SynergyLanding() {
             </div>
 
             <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-yellow-600 rounded-lg opacity-100 group-hover:blur"></div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-zinc-600 to-yellow-600 rounded-lg opacity-100 group-hover:blur"></div>
             <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent">
               <Zap className="h-12 w-12 text-white mb-4" />
               <h3 className="text-2xl font-semibold text-white">Accelerate Your Growth</h3>

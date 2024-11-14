@@ -14,7 +14,7 @@ export default function Navbar() {
         <header className="sticky top-0 z-10 bg-[#111119] px-4 shadow-sm">
             <div className="container mx-auto px-4 py-4 backdrop-blur-md flex justify-between items-center rounded-full">
                 <div className="flex items-center">
-                <Zap className="w-8 h-8 text-white" />
+                <Zap className="w-8 h-8 -mr-1 rotate-[10deg] scale-x-[0.7]" style={{ color: "#FFAD08" }} />
                 <Link href="/" className="text-2xl font-bold text-white">
                     ynergy
                 </Link>
@@ -24,7 +24,7 @@ export default function Navbar() {
                 <DropdownMenu.Root>
                     <DropdownMenu.Trigger asChild>
                     <div className="flex items-center gap-2 cursor-pointer">
-                        <span className="text-white">{user?.fullName || "Username"}</span>
+                        <span className="text-white font-semibold">{user?.fullName || ""}</span>
                         <UserButton />
                     </div>
                     </DropdownMenu.Trigger>
