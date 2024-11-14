@@ -19,6 +19,15 @@ import { toast } from "react-hot-toast";
 import HackathonWait from "./wait";
 import { useClerk, UserButton } from "@clerk/nextjs"; // Importing Clerk components
 import { Multiselect } from "./multiselect";
+import { Calendar, Globe2, MapPin, Search, Users, Zap } from "lucide-react";
+import Link from "next/link";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
 import { addDoc, collection, setDoc } from "@firebase/firestore";
 import { doc } from "@firebase/firestore";
 import { db } from "@/firebaseConfig";
@@ -36,6 +45,7 @@ export function HackathonDetailComponent() {
     alreadyInTeam: "",
     hasProjectIdea: "",
     projectIdea: "",
+    teamMembers: "",
     goals: [] as string[],
     technologies: [] as string[],
     problemSpaces: [] as string[],
@@ -160,19 +170,24 @@ export function HackathonDetailComponent() {
     "Entertainment",
     "E-commerce",
     "Productivity",
+    "PNC",
+    "Piñata",
+    "EOG Resources",
+    "Goldman Sachs",
+    "Infosys",
+    "CBRE",
+    "Frontier",
+    "Veolia",
+    "Toyota",
+    "Design",
+    "Beginner",
+    "Hardware",
+    "Samba Nova",
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header with Avatar and Sign Out */}
-      <div className="flex justify-end mb-4">
-        <UserButton />
-        <Button variant="secondary" onClick={() => signOut()} className="ml-2">
-          Sign Out
-        </Button>
-      </div>
-
-      <Card className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-zinc-800 p-4 py-8 text-white">
+      <Card className="max-w-2xl mx-auto my-9 text-white bg-zinc-800">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
             Team Formation for {hackathon.name}
@@ -186,40 +201,66 @@ export function HackathonDetailComponent() {
               </div>
 
               <div className="space-y-2">
-                <Label>Are you in already?</Label>
+                <Label>Are you in a team already?</Label>
                 <RadioGroup
                   name="alreadyInTeam"
                   value={formData.alreadyInTeam}
-                  onValueChange={(value) =>
-                    handleRadioChange("alreadyInTeam", value)
-                  }
+                  onValueChange={(value) => handleRadioChange("alreadyInTeam", value)}
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="alreadyInTeam-yes" />
+                    <RadioGroupItem
+                      value="yes"
+                      id="alreadyInTeam-yes"
+                      className="w-4 h-4 border border-white bg-transparent rounded text-white checked:text-white"
+                    />
                     <Label htmlFor="alreadyInTeam-yes">Yes</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="alreadyInTeam-no" />
+                    <RadioGroupItem
+                      value="no"
+                      id="alreadyInTeam-no"
+                      className="w-4 h-4 border border-white bg-transparent rounded text-white checked:text-white"
+                    />
                     <Label htmlFor="alreadyInTeam-no">No</Label>
                   </div>
                 </RadioGroup>
               </div>
+
+              {formData.alreadyInTeam === "yes" && (
+                <div className="space-y-2">
+                  <Label htmlFor="teamMembers">Please list your existing team members:</Label>
+                  <Textarea
+                    id="teamMembers"
+                    name="teamMembers"
+                    value={formData.teamMembers}
+                    onChange={handleChange}
+                    placeholder="List the names of your team members..."
+                    className="min-h-[100px] text-white"
+                  />
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label>Do You Have a Project Idea for This Hackathon?</Label>
                 <RadioGroup
                   name="hasProjectIdea"
                   value={formData.hasProjectIdea}
-                  onValueChange={(value) =>
-                    handleRadioChange("hasProjectIdea", value)
-                  }
+                  onValueChange={(value) => handleRadioChange("hasProjectIdea", value)}
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="hasProjectIdea-yes" />
+                    <RadioGroupItem
+                      value="yes"
+                      id="hasProjectIdea-yes"
+                      className="w-4 h-4 border border-white bg-transparent rounded text-white checked:text-white"
+                    />
                     <Label htmlFor="hasProjectIdea-yes">Yes</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="hasProjectIdea-no" />
+                    <RadioGroupItem
+                      value="no"
+                      id="hasProjectIdea-no"
+                      className="w-4 h-4 border border-white bg-transparent rounded text-white checked:text-white"
+                    />
                     <Label htmlFor="hasProjectIdea-no">No</Label>
                   </div>
                 </RadioGroup>
@@ -227,9 +268,7 @@ export function HackathonDetailComponent() {
 
               {formData.hasProjectIdea === "yes" && (
                 <div className="space-y-2">
-                  <Label htmlFor="projectIdea">
-                    If Yes, Please Describe Your Project Idea:
-                  </Label>
+                  <Label htmlFor="projectIdea">If Yes, Please Describe Your Project Idea:</Label>
                   <Textarea
                     id="projectIdea"
                     name="projectIdea"
@@ -241,34 +280,32 @@ export function HackathonDetailComponent() {
                   />
                 </div>
               )}
-            </div>
 
-            <div className="space-y-4">
-              <div className="text-lg font-semibold">
-                Goals and Expectations:
-              </div>
+              <div className="space-y-4">
+                <div className="text-lg font-semibold">Goals and Expectations:</div>
 
-              <div className="space-y-2">
-                <Label>What Are Your Goals for This Hackathon?</Label>
                 <div className="space-y-2">
-                  {[
-                    "Learning new technologies",
-                    "Networking",
-                    "Winning prizes",
-                  ].map((goal) => (
-                    <div key={goal} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={goal}
-                        checked={formData.goals.includes(goal)}
-                        onCheckedChange={(checked) =>
-                          handleCheckboxChange(goal, checked as boolean)
-                        }
-                      />
-                      <Label htmlFor={goal}>{goal}</Label>
-                    </div>
-                  ))}
+                  <Label>What Are Your Goals for This Hackathon?</Label>
+                  <div className="space-y-2">
+                    {["Learning new technologies", "Networking", "Winning prizes"].map(
+                      (goal) => (
+                        <div key={goal} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={goal}
+                            checked={formData.goals.includes(goal)}
+                            onCheckedChange={(checked) =>
+                              handleCheckboxChange(goal, checked as boolean)
+                            }
+                            className="w-4 h-4 border border-white rounded bg-transparent"
+                          />
+                          <Label htmlFor={goal}>{goal}</Label>
+                        </div>
+                      )
+                    )}
+                  </div>
                 </div>
               </div>
+
 
               {/* <div className="space-y-2">
                 <Label htmlFor="technologies">
@@ -284,7 +321,7 @@ export function HackathonDetailComponent() {
               </div> */}
 
               <div className="space-y-2">
-                <Label htmlFor="problemSpaces">
+                <Label htmlFor="problemSpaces" className="text-white">
                   What Categories Are You Passionate About?
                 </Label>
                 <Multiselect
@@ -298,7 +335,7 @@ export function HackathonDetailComponent() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-white" disabled={isSubmitting}>
               {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </CardFooter>

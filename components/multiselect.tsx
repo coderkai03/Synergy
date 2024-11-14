@@ -56,12 +56,12 @@ export function Multiselect({
       <div className="w-full px-4">
         <div className="flex flex-col items-center relative">
           <div className="w-full">
-            <div className="my-2 p-1 flex border border-gray-200 bg-white rounded">
+            <div className="my-2 p-1 flex border border-gray-200 bg-[#111119] rounded">
               <div className="flex flex-auto flex-wrap">
                 {selectedItems.map((item) => (
                   <div
                     key={item}
-                    className="flex justify-center items-center m-1 font-medium py-1 px-2 bg-teal-100 text-teal-700 rounded-full border border-teal-300"
+                    className="flex justify-center items-center m-1 font-medium py-1 px-2 bg-amber-600 text-white rounded-full border border-amber-600"
                   >
                     <div className="text-xs font-normal leading-none max-w-full flex-initial">
                       {item}
@@ -72,7 +72,7 @@ export function Multiselect({
                         onClick={() => removeItem(item)}
                         aria-label={`Remove ${item}`}
                       >
-                        <X className="cursor-pointer hover:text-teal-400 rounded-full w-4 h-4 ml-2" />
+                        <X className="cursor-pointer hover:text-zinc-800 rounded-full w-4 h-4 ml-2" />
                       </button>
                     </div>
                   </div>
@@ -97,26 +97,26 @@ export function Multiselect({
           </div>
           {isOpen && (
             <div
-              className="absolute shadow top-full bg-white z-40 w-full left-0 rounded max-h-select overflow-y-auto"
-              style={{ maxHeight: "300px", top: "100%" }}
+              className="absolute shadow top-full left-0 bg-zinc-800 z-40 w-full rounded max-h-60 overflow-y-auto"
+              style={{ maxHeight: "160px" }}
             >
               <div className="flex flex-col w-full">
                 {options.map((item) => (
                   <div
                     key={item}
-                    className={`cursor-pointer w-full border-gray-100 rounded-t border-b hover:bg-teal-100 ${
-                      selectedItems.includes(item) ? "bg-teal-50" : ""
+                    className={`cursor-pointer w-full border-gray-100 rounded-t border-b hover:bg-amber-100 ${
+                      selectedItems.includes(item) ? "bg-amber-600 text-white" : "text-white"
                     }`}
                     onClick={(e) => {
                       e.stopPropagation();
                       addItem(item);
                     }}
                   >
-                    <div className="flex w-full items-center p-2 pl-2 border-transparent border-l-2 relative hover:border-teal-100">
+                    <div className="flex w-full items-center p-2 pl-2 border-transparent border-l-2 relative hover:border-amber-600 hover:text-zinc-800">
                       <div className="w-full flex items-center">
                         <div className="mx-2 leading-6">{item}</div>
                         {selectedItems.includes(item) && (
-                          <CheckIcon className="w-4 h-4 text-teal-600 ml-auto" />
+                          <CheckIcon className="w-4 h-4 text-amber-600 ml-auto" />
                         )}
                       </div>
                     </div>
@@ -125,6 +125,7 @@ export function Multiselect({
               </div>
             </div>
           )}
+
         </div>
       </div>
     </div>
