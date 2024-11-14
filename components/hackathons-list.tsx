@@ -51,55 +51,6 @@ export function HackathonsListComponent() {
 
   return (
     <div className="min-h-screen bg-zinc-800 p-4">
-      <header className="sticky top-0 z-10 bg-white/20 rounded-full mx-2 px-4 backdrop-blur-md shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Zap className="w-8 h-8 text-white" />
-            <Link href="/" className="text-2xl font-bold text-white">
-              ynergy
-            </Link>
-          </div>
-          {/* Profile Dropdown Menu */}
-          <div className="flex items-center gap-2">
-            {/* Profile Dropdown */}
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
-                <div className="flex items-center gap-2 cursor-pointer">
-                  {/* Display the user's full name */}
-                  <span className="text-white">{user?.fullName || "Username"}</span>
-                  {/* Display the user's profile picture */}
-                  {/* <Image
-                    src={user?.profileImageUrl || "/placeholder.svg"}
-                    alt="Profile"
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  /> */}
-                  <UserButton />
-                </div>
-              </DropdownMenu.Trigger>
-
-              <DropdownMenu.Content className="w-48 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2">
-                <DropdownMenu.Item asChild>
-                  <Link href="/alpha/account-setup" className="flex items-center gap-2 p-2 rounded hover:bg-amber-100 hover:text-black">
-                    <Users className="h-4 w-4" />
-                    <span>Edit Profile</span>
-                  </Link>
-                </DropdownMenu.Item>
-                <DropdownMenu.Item asChild>
-                  <button
-                    onClick={() => signOut()}
-                    className="flex items-center gap-2 p-2 w-full text-left rounded hover:bg-amber-100 hover:text-black"
-                  >
-                    <span>Sign Out</span>
-                  </button>
-                </DropdownMenu.Item>
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          </div>
-        </div>
-      </header>
-
       {/* Hero Section */}
       <main className="container mx-auto px-4 py-8">
         <motion.h1
@@ -128,19 +79,11 @@ export function HackathonsListComponent() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <Input
                 placeholder="Search hackathons..."
-                className="pl-10 h-12 flex-1 bg-white border-amber-500/20"
+                className="pl-10 h-12 flex-1 bg-[#E4E4E4] border-amber-500/20"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            {/* <div className="flex-shrink-0">
-              <Input
-                type="date"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-                className="h-12 w-full md:w-[200px] bg-white shadow-sm border-gray-200 focus:border-blue-400 focus:ring-blue-400"
-              />
-            </div> */}
 
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
@@ -184,35 +127,6 @@ export function HackathonsListComponent() {
               </DropdownMenu.Content>
             </DropdownMenu.Root>
           </div>
-
-          {/* <Tabs
-            defaultValue="all"
-            className="w-full"
-            onValueChange={(value) => setLocationFilter(value)}
-          >
-            <TabsList className="w-full bg-white shadow-sm border border-gray-200 p-1 rounded-md">
-              <TabsTrigger
-                value="all"
-                className="flex-1 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-              >
-                All Events
-              </TabsTrigger>
-              <TabsTrigger
-                value="online"
-                className="flex-1 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-              >
-                <Globe2 className="h-4 w-4 mr-2" />
-                Online
-              </TabsTrigger>
-              <TabsTrigger
-                value="in-person"
-                className="flex-1 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-              >
-                <MapPin className="h-4 w-4 mr-2" />
-                In-Person
-              </TabsTrigger>
-            </TabsList>
-          </Tabs> */}
         </div>
 
         {/* Hackathon Grid */}
@@ -220,7 +134,7 @@ export function HackathonsListComponent() {
           {filteredHackathons.map((hackathon) => (
             <Card
               key={hackathon.id}
-              className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#F0F1F0] border-none"
+              className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#E4E4E4] border-none"
             >
               <CardHeader className="p-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -278,7 +192,7 @@ export function HackathonsListComponent() {
                       Form Team
                     </Link>
                   </Button>
-                  <Button asChild variant="outline" className="flex-1 border-emerald-500 text-emerald-500 hover:bg-emerald-500/10 hover:text-emerald">
+                  <Button asChild variant="outline" className="flex-1 bg-[#E4E4E4] border-emerald-500 text-emerald-500 hover:bg-emerald-500/10 hover:text-emerald">
                     <Link
                       href={hackathon.website}
                       target="_blank"
