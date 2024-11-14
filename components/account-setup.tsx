@@ -250,14 +250,6 @@ export function AccountSetupComponent() {
                 <div className="flex items-center gap-2 cursor-pointer">
                   {/* Display the user's full name */}
                   <span className="text-white">{user?.fullName || "Username"}</span>
-                  {/* Display the user's profile picture */}
-                  {/* <Image
-                    src={user?.profileImageUrl || "/placeholder.svg"}
-                    alt="Profile"
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  /> */}
                   <UserButton />
                 </div>
               </DropdownMenu.Trigger>
@@ -280,12 +272,6 @@ export function AccountSetupComponent() {
               </DropdownMenu.Content>
             </DropdownMenu.Root>
           </div>
-          {/* <div className="flex justify-end mb-4">
-            <UserButton />
-            <Button variant="secondary" onClick={() => signOut()} className="ml-2">
-              Sign Out
-            </Button>
-          </div> */}
         </div>
       </header>
       <div className="flex justify-center">
@@ -321,28 +307,6 @@ export function AccountSetupComponent() {
                     <Label htmlFor="phone">Phone Number</Label>
                     <Input id="phone" className="bg-zinc-700 border-amber-500/50" />
                   </div>
-
-                  {/* <div className="space-y-2">
-                    <Label htmlFor="graduatingClass">Graduating Class</Label>
-                    <Select
-                      name="graduatingClass"
-                      value={formData.graduatingClass}
-                      onValueChange={handleSelectChange("graduatingClass")}
-                    >
-                      <SelectTrigger >
-                        <SelectValue placeholder="Select graduation year"/>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[2024, 2025, 2026, 2027, 2028, 2029, 2030].map(
-                          (year) => (
-                            <SelectItem key={year} value={year.toString()}>
-                              {year}
-                            </SelectItem>
-                          )
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div> */}
                 </CollapsibleContent>
               </Collapsible> 
 
@@ -618,63 +582,6 @@ export function AccountSetupComponent() {
                   </CollapsibleContent>
                 </Collapsible>
 
-              {/* Optional Information section */}
-
-              {/* <Collapsible
-                open={isOptionalExpanded}
-                onOpenChange={setIsOptionalExpanded}
-                className="space-y-2"
-              >
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="flex items-center justify-between w-full"
-                  >
-                    <span>Optional Information</span>
-                    {isOptionalExpanded ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    )}
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="objectives">Goals</Label>
-                    <Textarea
-                      id="objectives"
-                      name="objectives"
-                      value={formData.objectives}
-                      onChange={handleChange}
-                      placeholder="What's something you're excited to work on in the next 10 years? Dream big!"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="dietaryRestrictions">
-                      Dietary Restrictions
-                    </Label>
-                    <Input
-                      id="dietaryRestrictions"
-                      name="dietaryRestrictions"
-                      value={formData.dietaryRestrictions}
-                      onChange={handleChange}
-                      placeholder="Any dietary requirements or allergies"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="accessibilityNeeds">
-                      Accessibility Needs
-                    </Label>
-                    <Textarea
-                      id="accessibilityNeeds"
-                      name="accessibilityNeeds"
-                      value={formData.accessibilityNeeds}
-                      onChange={handleChange}
-                      placeholder="Any specific accessibility requirements"
-                    />
-                  </div>
-                </CollapsibleContent>
-              </Collapsible> */}
             </CardContent>
             <CardFooter>
               {/* Submit Button */}
