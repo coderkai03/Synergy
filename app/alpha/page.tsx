@@ -50,7 +50,7 @@ export default function SynergyLanding() {
               </h1> */}
               <div className="flex items-center justify-center mt-8 text-white">
                 <p className="text-xl font-light leading-relaxed">
-                  Find your next hackathon team in a flash.
+                  Hackathon team matching done for you.
                 </p>
               </div>
               
@@ -92,9 +92,9 @@ export default function SynergyLanding() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="mt-24 grid md:grid-cols-3 gap-8 bg-[#111119]"
           >
-            <div className="relative group">
+            <div className="relative group mb-4 h-72">
               <div className="absolute -inset-1 bg-gradient-to-r from-yellow-600 to-zinc-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
-              <div className="relative bg-black rounded-lg p-8 space-y-6 border-gradient-to-r from-pink-600 to-orange-600">
+              <div className="relative bg-black rounded-lg p-8 space-y-6 border-gradient-to-r from-pink-600 to-orange-600 h-full">
                 <Users className="h-12 w-12 text-white mb-4" />
                 <h3 className="text-2xl font-semibold text-white">Find Your Dream Team</h3>
                 <p className="text-gray-300">
@@ -103,9 +103,9 @@ export default function SynergyLanding() {
               </div>
             </div>
             
-            <div className="relative group">
+            <div className="relative group mb-4 h-72">
               <div className="absolute -inset-1 bg-gradient-to-r from-zinc-600 to-zinc-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
-              <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent">
+              <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent h-full">
                 <Zap className="h-12 w-12 text-white mb-4" />
                 <h3 className="text-2xl font-semibold text-white">Boost Your Productivity</h3>
                 <p className="text-gray-300">
@@ -114,16 +114,16 @@ export default function SynergyLanding() {
               </div>
             </div>
 
-            <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-zinc-600 to-yellow-600 rounded-lg opacity-100 group-hover:blur"></div>
-            <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent">
-              <Zap className="h-12 w-12 text-white mb-4" />
-              <h3 className="text-2xl font-semibold text-white">Accelerate Your Growth</h3>
-              <p className="text-gray-300">
-                Learn from peers, gain new skills, and expand your network in the tech community.
-              </p>
+            <div className="relative group mb-4 h-72">
+              <div className="absolute -inset-1 bg-gradient-to-r from-zinc-600 to-yellow-600 rounded-lg opacity-100 group-hover:blur"></div>
+              <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent h-full">
+                <Zap className="h-12 w-12 text-white mb-4" />
+                <h3 className="text-2xl font-semibold text-white">Accelerate Your Growth</h3>
+                <p className="text-gray-300">
+                  Learn from peers, gain new skills, and expand your network in the tech community.
+                </p>
+              </div>
             </div>
-          </div>
           </motion.div>
         </section>
 
