@@ -31,7 +31,7 @@ function SkillsSection({ formData, handleSliderChange }: { formData: User, handl
           label="UI/UX Design"
           description="User interface design, user experience, wireframing, and prototyping"
           value={formData.role_experience.uiux_design}
-          onValueChange={handleSliderChange("uiDesign")}
+          onValueChange={handleSliderChange("uiux_design")}
         />
       </div>
     );

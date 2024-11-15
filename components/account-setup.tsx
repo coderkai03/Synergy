@@ -118,6 +118,7 @@ export function AccountSetupComponent() {
   };
 
   const handleSliderChange = (role: string) => (value: number[]) => {
+    console.log(`Role: ${role}, Value: ${value}`);
     setFormData({
       ...formData,
       role_experience: {
