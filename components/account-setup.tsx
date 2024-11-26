@@ -172,27 +172,27 @@ export function AccountSetupComponent() {
     "PyTorch",
   ];
 
-  const category_experience = [
-    "Web Development",
-    "Mobile Development",
-    "AI/Machine Learning",
-    "Data Science",
-    "IoT",
-    "Blockchain",
-    "Cybersecurity",
-    "Cloud Computing",
-    "AR/VR",
-    "Game Development",
-  ];
+  // const category_experience = [
+  //   "Web Development",
+  //   "Mobile Development",
+  //   "AI/Machine Learning",
+  //   "Data Science",
+  //   "IoT",
+  //   "Blockchain",
+  //   "Cybersecurity",
+  //   "Cloud Computing",
+  //   "AR/VR",
+  //   "Game Development",
+  // ];
 
-  const createRandomDoc = async (data: any) => {
-    try {
-      const docRef = await addDoc(collection(db, 'users'), data); // Automatically generates a random ID
-      console.log("Document written with ID: ", docRef.id);
-    } catch (error) {
-      console.error("Error adding document: ", error);
-    }
-  };
+  // const createRandomDoc = async (data: any) => {
+  //   try {
+  //     const docRef = await addDoc(collection(db, 'users'), data); // Automatically generates a random ID
+  //     console.log("Document written with ID: ", docRef.id);
+  //   } catch (error) {
+  //     console.error("Error adding document: ", error);
+  //   }
+  // };
 
   return (
     <div className="justify-center min-h-screen bg-[#111119] p-4">
