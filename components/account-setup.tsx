@@ -31,7 +31,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import { db } from '@/firebaseConfig'
-import { doc, setDoc, collection, addDoc, getDoc } from '@firebase/firestore'
+import { doc, setDoc, getDoc } from '@firebase/firestore'
 import User from "@/interfaces/User";
 import SkillsSection from "./slider-section";
 
