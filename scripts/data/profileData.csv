@@ -1,0 +1,20 @@
+Timestamp,name,phone,gradYear,school,degree,programming_languages,frameworks_and_tools,devpost,gitHub,number_of_hackathons,focus_experience,product_management,software,hardware,uiux_design
+11/3/2024 19:07:57,name,phone,gradyear,school,degree,langs,frameworks,devpost,github,numHackathons,focus,prodMgmt,software,hardware,uiuxdesign
+11/3/2024 19:19:43,Chinat Yu,123456789,2025,Stanford,Masters,"Python,Ruby,C++","Node.js,Vue.js,Express.js",devpost,github,2,Mobile Development,60,70,33,33
+11/3/2024 20:47:49,Rian Corcino,9517721073,2026,Western Governors University,Computer Science,"JavaScript,Python,Java,C++,TypeScript","React,Node.js,Flask,Express.js",riancorci,coderkai03,5+,"Web Development,Mobile Development",90,100,6,12
+11/3/2024 22:53:28,Warren Yun,,2028,Worcester Polytechnic Institute,Bachelors in CS,"JavaScript,Python,C++,Java,Go,TypeScript","React,Node.js,Flask,Express.js",,,5+,"Web Development,IoT,AI/Machine Learning,Mobile Development",70,85,85,50
+11/4/2024 4:34:33,Kieran Llarena,,2027,University of Michigan-Dearborn,Computer Science,,,,,,,50,50,50,50
+11/4/2024 6:18:59,Audrey Chen,5176430288,2026,Michigan State University ,Computer Engineering ,"Python,C++,JavaScript,TypeScript","React,Node.js,Flask,Express.js,TensorFlow",,,5+,"AI/Machine Learning,Web Development,Blockchain",90,75,71,67
+11/4/2024 6:19:00,Audrey Chen,5176430288,2026,Michigan State University ,Computer Engineering ,"Python,C++,JavaScript,TypeScript","React,Node.js,Flask,Express.js,TensorFlow",,,5+,"AI/Machine Learning,Web Development,Blockchain",90,75,71,67
+11/4/2024 10:09:00,Charlie Weinberger,3109279624,2026,"University of California, Irvine",Computer Science,"JavaScript,Python,C++,TypeScript","React,Node.js,Express.js",https://devpost.com/364charliebrown,https://github.com/charlieweinberger/,5+,"Web Development,AI/Machine Learning,Mobile Development,AR/VR,IoT",70,85,40,80
+11/4/2024 10:26:39,Charlie Weinberger,3109279624,,"University of California, Irvine",Computer Science,"Python,JavaScript,C++,TypeScript","React,Node.js",https://devpost.com/364charliebrown,https://github.com/charlieweinberger/,5+,"Web Development,Mobile Development,AI/Machine Learning,IoT,AR/VR",71,89,38,80
+11/4/2024 11:12:37,Steven Uy,7323548556,2026,Fordham University ,Computer Science ,"JavaScript,Python,TypeScript","React,Node.js,Flask,Express.js",,https://github.com/,4,Web Development,50,50,50,50
+11/4/2024 17:07:18,William Wang,+14168807375,2025,University of Waterloo,CS,,,,,,,50,50,50,50
+11/4/2024 18:34:41,Aurelia Sindhu,,2025,RCC,Associate,"JavaScript,Python,C++,PHP,TypeScript","React,Node.js,Django,Flask,TensorFlow,PyTorch",,,5+,"Web Development,Mobile Development,AI/Machine Learning,Data Science,Cybersecurity,AR/VR,Game Development",50,50,50,50
+11/4/2024 18:34:42,Aurelia Sindhu,,2025,RCC,Associate,"JavaScript,Python,C++,PHP,TypeScript","React,Node.js,Django,Flask,TensorFlow,PyTorch",,,5+,"Web Development,Mobile Development,AI/Machine Learning,Data Science,Cybersecurity,AR/VR,Game Development",50,50,50,50
+11/5/2024 15:17:09,Salman Jaher,4086214393,2025,UT Dallas,CS,"Java,TypeScript,Python",React,,,1,AI/Machine Learning,80,60,80,70
+11/5/2024 15:37:53,Veer Shah,2146775525,2026,The University of Texas at Dallas,Computer Science,"JavaScript,Python,TypeScript","React,Node.js,Django,Flask,TensorFlow",https://devpost.com/veermickey,https://github.com/veermshah,5+,"Blockchain,Web Development,AI/Machine Learning,Mobile Development",50,100,0,100
+11/5/2024 21:21:23,Jay Wu,,2026,Harvard,M.S.,,,,,,,50,50,50,50
+11/6/2024 18:29:01,Rian Corcino,9517721073,,Western Governors University,Computer Science,,,,,,,50,50,50,50
+11/6/2024 18:30:30,Rian Corcino,9517721073,2026,Western Governors University,Computer Science,,,,,,,50,50,50,50
+11/6/2024 20:05:01,Rian Corcino,9517721073,2026,Western Governors University,Computer Science,,,,,,,50,50,50,50

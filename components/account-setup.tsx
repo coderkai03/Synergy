@@ -1,7 +1,13 @@
 "use client";
 
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import Link from "next/link";
+import { useClerk, UserButton } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Slider } from "@/components/ui/slider"
 import {
   Card,
   CardContent,
@@ -10,8 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 // import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -20,42 +24,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-// import {
-//   Collapsible,
-//   CollapsibleContent,
-//   CollapsibleTrigger,
-// } from "@/components/ui/collapsible";
-// import { ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronDown, ChevronUp, Users, Zap } from "lucide-react";
 import { Multiselect } from "./multiselect";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
+import Image from "next/image"
+import { Badge } from "@/components/ui/badge"
+import { db } from '@/firebaseConfig'
+import { doc, setDoc, updateDoc, collection, addDoc, getDoc } from '@firebase/firestore'
+import User from "@/interfaces/User";
+import SkillsSection from "./slider-section";
 
 export function AccountSetupComponent() {
   const router = useRouter();
   const { user } = useUser();
+  const { signOut } = useClerk();
 
-  const [formData, setFormData] = useState({
-    fullName: user?.fullName || "",
+  const [formData, setFormData] = useState<User>({
+    full_name: "",
     // email: user?.primaryEmailAddress?.emailAddress || "",
     phone: "",
-    graduatingClass: "",
+    gradYear: "",
     school: "",
     degree: "",
-    programmingLanguages: [] as string[],
-    frameworksAndTools: [] as string[],
-    devpostProfile: "",
-    githubProfile: "",
-    hackathonsAttended: "",
+    programming_languages: [] as string[],
+    frameworks_and_tools: [] as string[],
+    devpost: "",
+    github: "",
+    number_of_hackathons: "",
     // achievements: "",
     // objectives: "",
-    focuses: [] as string[],
-    preferredRoles: {
-      projectManagement: 50,
-      software: 50,
-      hardware: 50,
-      uiDesign: 50,
+    role_experience: {
+      product_management: -1,
+      software: -1,
+      hardware: -1,
+      uiux_design: -1,
     },
     // dietaryRestrictions: "",
     // accessibilityNeeds: "",
@@ -64,21 +73,33 @@ export function AccountSetupComponent() {
   //const [isOptionalExpanded, setIsOptionalExpanded] = useState(false);
 
   useEffect(() => {
-    const savedData = localStorage.getItem("accountSetupData");
-    if (savedData) {
-      setFormData(JSON.parse(savedData));
-    } else if (user) {
-      setFormData((prev) => ({
-        ...prev,
-        fullName: user.fullName || "",
-        email: user.primaryEmailAddress?.emailAddress || "",
-      }));
-    }
-  }, [user]);
+    async function fetchUserData() {
+      try {
+        const userId = user?.id
+        const userEmail = user?.primaryEmailAddress?.emailAddress
 
-  useEffect(() => {
-    console.log("Current formData:", formData);
-  }, [formData]);
+        if (!userId) {
+          throw new Error("User ID not found")
+        }
+
+        if (!userEmail) {
+          throw new Error("User email not found")
+        }
+
+        const userDoc = await getDoc(doc(db, 'users', userId))
+        setFormData({
+          ...(userDoc.data()) as User
+        });
+        console.log('Loaded user: ',userDoc.data())
+        
+      } catch (error) {
+        console.error("Error getting user ID:", error)
+        return
+      }
+    }
+
+    fetchUserData()
+  }, [user]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -97,10 +118,11 @@ export function AccountSetupComponent() {
   };
 
   const handleSliderChange = (role: string) => (value: number[]) => {
+    console.log(`Role: ${role}, Value: ${value}`);
     setFormData({
       ...formData,
-      preferredRoles: {
-        ...formData.preferredRoles,
+      role_experience: {
+        ...formData.role_experience,
         [role]: value[0],
       },
     });
@@ -112,82 +134,26 @@ export function AccountSetupComponent() {
     e.preventDefault();
     try {
       console.log("Submitting formData:", formData);
+      const userId = user?.id;
+      const userEmail = user?.primaryEmailAddress?.emailAddress
 
-      // Save to localStorage
-      localStorage.setItem("accountSetupData", JSON.stringify(formData));
-      console.log("Account Setup Data saved to localStorage:", formData);
+      if (!userId) throw new Error("User ID is not available");
+      if (!userEmail) throw new Error("User email is not available");
 
-      //entry.868333928=name
-      //entry.2109342534=phone
-      //entry.1001414379=gradyear
-      //entry.279323951=school
-      //entry.1194461452=degree
-      //entry.1215536533=langs
-      //entry.2068797540=frameworks
-      //entry.1483794269=devpost
-      //entry.618662987=github
-      //entry.1247596049=numHackathons
-      //entry.289288076=focus
-      //entry.444967086=prodMgmt
-      //entry.1174368867=software
-      //entry.638316355=hardware
-      //entry.334805419=uiuxdesign
-
-      // setIsSubmitting(true);
-
-      const localFormData = new FormData();
-      localFormData.append("entry.868333928", formData.fullName);
-      localFormData.append("entry.2109342534", formData.phone);
-      localFormData.append("entry.1001414379", formData.graduatingClass);
-      localFormData.append("entry.279323951", formData.school);
-      localFormData.append("entry.1194461452", formData.degree);
-      localFormData.append(
-        "entry.1215536533",
-        formData.programmingLanguages.join(",")
-      );
-      localFormData.append(
-        "entry.2068797540",
-        formData.frameworksAndTools.join(",")
-      );
-      localFormData.append("entry.1483794269", formData.devpostProfile);
-      localFormData.append("entry.618662987", formData.githubProfile);
-      localFormData.append("entry.1247596049", formData.hackathonsAttended);
-      localFormData.append("entry.289288076", formData.focuses.join(","));
-      localFormData.append(
-        "entry.444967086",
-        formData.preferredRoles.projectManagement.toString()
-      );
-      localFormData.append(
-        "entry.1174368867",
-        formData.preferredRoles.software.toString()
-      );
-      localFormData.append(
-        "entry.638316355",
-        formData.preferredRoles.hardware.toString()
-      );
-      localFormData.append(
-        "entry.334805419",
-        formData.preferredRoles.uiDesign.toString()
-      );
-
-      await fetch(
-        "https://docs.google.com/forms/d/e/1FAIpQLSf6PNnpumkNMZqvoJA8cOPNtLfv9UfrXygDQA1zEm24LW46NA/formResponse",
-        {
-          method: "POST",
-          body: localFormData,
-          mode: "no-cors",
-        }
-      );
+      const docRef = doc(db, 'users', userId);
+      await setDoc(docRef, {
+        ...formData
+      });
 
       // Navigate to the next page
       router.push("/alpha/hackathons");
     } catch (error) {
-      console.error("Error saving to localStorage:", error);
+      console.error("Error saving to Firestore:", error);
       toast.error("Failed to save your profile. Please try again.");
     }
   };
 
-  const programmingLanguages = [
+  const programming_languages = [
     "JavaScript",
     "Python",
     "Java",
@@ -200,7 +166,7 @@ export function AccountSetupComponent() {
     "TypeScript",
   ];
 
-  const frameworksAndTools = [
+  const frameworks_and_tools = [
     "React",
     "Angular",
     "Vue.js",
@@ -213,7 +179,7 @@ export function AccountSetupComponent() {
     "PyTorch",
   ];
 
-  const focuses = [
+  const category_experience = [
     "Web Development",
     "Mobile Development",
     "AI/Machine Learning",
@@ -226,345 +192,232 @@ export function AccountSetupComponent() {
     "Game Development",
   ];
 
+  const createRandomDoc = async (data: any) => {
+    try {
+      const docRef = await addDoc(collection(db, 'users'), data); // Automatically generates a random ID
+      console.log("Document written with ID: ", docRef.id);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
+
   return (
-    <div className="container mx-auto py-10">
-      <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader>
-          <CardTitle>Synergy: Hackathon Account Setup</CardTitle>
-          <CardDescription>
-            Complete your profile to find the perfect hackathon partners and
-            enhance your experience.
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-6">
-            {/* Personal Information section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Personal Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <Input
-                    id="fullName"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="graduatingClass">Graduating Class</Label>
-                  <Select
-                    name="graduatingClass"
-                    value={formData.graduatingClass}
-                    onValueChange={handleSelectChange("graduatingClass")}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select graduation year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[2024, 2025, 2026, 2027, 2028, 2029, 2030].map(
-                        (year) => (
+    <div className="justify-center min-h-screen bg-[#111119] p-4">
+      <div className="flex justify-center">
+        <Card className="felx fex-col items-center space-y-6 w-3/4 bg-[#111119] text-white border-none pt-5">
+          <CardHeader>
+            <CardTitle>Synergy: Hackathon Account Setup</CardTitle>
+            <CardDescription>
+              Complete your profile to find the perfect hackathon partners and
+              enhance your experience.
+            </CardDescription>
+          </CardHeader>
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-6 text-white">
+
+              {/* Personal Information section */}
+              <Collapsible className="bg-zinc-800 rounded-lg">
+                <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
+                  <h2 className="text-lg font-semibold text-white">Personal Information</h2>
+                  <ChevronDown className="w-5 h-5 text-zinc-400" />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="p-4 pt-0 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName">First Name</Label>
+                      <Input id="firstName" className="bg-zinc-700 border-amber-500/50" value={
+                        formData.full_name ? formData.full_name.split(' ')[0] : ""
+                      }/>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <Input id="lastName" className="bg-zinc-700 border-amber-500/50" value={
+                        formData.full_name ? formData.full_name.split(' ')[formData.full_name.split(' ').length-1] : ""
+                      }/>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <Input id="phone" className="bg-zinc-700 border-amber-500/50" value={formData.phone}/>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible> 
+
+              {/* Educational Background section */}
+              <Collapsible className="bg-zinc-800 rounded-lg">
+              <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
+                <h2 className="text-lg font-semibold text-white">Educational Background</h2>
+                <ChevronDown className="w-5 h-5 text-zinc-400" />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="p-4 pt-0 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="school">School</Label>
+                    <Input id="school" className="bg-zinc-700 border-amber-500/50" 
+                      name="school"
+                      value={formData.school}
+                      onChange={handleChange}
+                      placeholder="Your School"
+                      required 
+                      />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="degree">Degree</Label>
+                    <Input
+                      id="degree"
+                      name="degree"
+                      value={formData.degree}
+                      onChange={handleChange}
+                      placeholder="Your Degree"
+                      required
+                      className="bg-zinc-700 border-amber-500/50"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="degree">Degree</Label>
+                    <Select
+                      name="graduatingClass"
+                      value={formData.gradYear}
+                      onValueChange={handleSelectChange("graduatingClass")}
+                    >
+                      <SelectTrigger className="bg-zinc-700 border-amber-500/50 text-white-500">
+                        <SelectValue placeholder="Select graduation year"/>
+                      </SelectTrigger>
+                      <SelectContent className="bg-zinc-700 border-amber-500/50 text-white hover:bg-[##FFAD08]">
+                        {[2024, 2025, 2026, 2027, 2028, 2029, 2030].map((year) => (
                           <SelectItem key={year} value={year.toString()}>
                             {year}
                           </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            {/* Educational Background section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Educational Background</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="school">School</Label>
-                  <Input
-                    id="school"
-                    name="school"
-                    value={formData.school}
-                    onChange={handleChange}
-                    placeholder="Your School"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="degree">Degree</Label>
-                  <Input
-                    id="degree"
-                    name="degree"
-                    value={formData.degree}
-                    onChange={handleChange}
-                    placeholder="Your Degree"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Technical Skills section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Technical Skills</h3>
-              <div className="space-y-2">
-                <Label htmlFor="programmingLanguages">
-                  Programming Languages
-                </Label>
-                <Multiselect
-                  options={programmingLanguages}
-                  selectedItems={formData.programmingLanguages}
-                  setSelectedItems={(items) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      programmingLanguages: items,
-                    }));
-                  }}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="frameworksAndTools">Frameworks and Tools</Label>
-                <Multiselect
-                  options={frameworksAndTools}
-                  selectedItems={formData.frameworksAndTools}
-                  setSelectedItems={(items) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      frameworksAndTools: items,
-                    }));
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Online Profiles section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Online Profiles</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="devpostProfile">Devpost Profile</Label>
-                  <Input
-                    id="devpostProfile"
-                    name="devpostProfile"
-                    value={formData.devpostProfile}
-                    onChange={handleChange}
-                    placeholder="https://devpost.com/yourusername"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="githubProfile">GitHub Profile</Label>
-                  <Input
-                    id="githubProfile"
-                    name="githubProfile"
-                    value={formData.githubProfile}
-                    onChange={handleChange}
-                    placeholder="https://github.com/yourusername"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Hackathon Experience section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Hackathon Experience</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="hackathonsAttended">
-                    Number of Hackathons Attended
-                  </Label>
-                  <Select
-                    onValueChange={handleSelectChange("hackathonsAttended")}
-                    value={formData.hackathonsAttended}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select number of hackathons" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[0, 1, 2, 3, 4, "5+"].map((num) => (
-                        <SelectItem key={num} value={num.toString()}>
-                          {num}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            {/* Goals and Interests section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Goals and Interests</h3>
-              <div className="space-y-2">
-                <Label htmlFor="focuses">Focuses</Label>
-                <Multiselect
-                  options={focuses}
-                  selectedItems={formData.focuses}
-                  setSelectedItems={(selectedItems) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      focuses: selectedItems,
-                    }));
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Preferred Roles section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Preferred Roles</h3>
-              <p className="text-sm text-muted-foreground">
-                Rate your confidence level in each role from 0 to 100
-              </p>
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="projectManagement">Project Management</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Leading teams, coordinating tasks, and ensuring project
-                    success, presentation skills
-                  </p>
-                  <Slider
-                    id="projectManagement"
-                    min={0}
-                    max={100}
-                    step={1}
-                    value={[formData.preferredRoles.projectManagement]}
-                    onValueChange={handleSliderChange("projectManagement")}
-                  />
-                  <p className="text-sm text-right">
-                    {formData.preferredRoles.projectManagement}%
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="software">Software Development</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Programming, app development, and software architecture
-                  </p>
-                  <Slider
-                    id="software"
-                    min={0}
-                    max={100}
-                    step={1}
-                    value={[formData.preferredRoles.software]}
-                    onValueChange={handleSliderChange("software")}
-                  />
-                  <p className="text-sm text-right">
-                    {formData.preferredRoles.software}%
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="hardware">Hardware Development</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Electronics, prototyping, and physical computing
-                  </p>
-                  <Slider
-                    id="hardware"
-                    min={0}
-                    max={100}
-                    step={1}
-                    value={[formData.preferredRoles.hardware]}
-                    onValueChange={handleSliderChange("hardware")}
-                  />
-                  <p className="text-sm text-right">
-                    {formData.preferredRoles.hardware}%
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="uiDesign">UI/UX Design</Label>
-                  <p className="text-sm text-muted-foreground">
-                    User interface design, user experience, wireframing, and
-                    prototyping
-                  </p>
-                  <Slider
-                    id="uiDesign"
-                    min={0}
-                    max={100}
-                    step={1}
-                    value={[formData.preferredRoles.uiDesign]}
-                    onValueChange={handleSliderChange("uiDesign")}
-                  />
-                  <p className="text-sm text-right">
-                    {formData.preferredRoles.uiDesign}%
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Optional Information section */}
-
-            {/* <Collapsible
-              open={isOptionalExpanded}
-              onOpenChange={setIsOptionalExpanded}
-              className="space-y-2"
-            >
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="flex items-center justify-between w-full"
-                >
-                  <span>Optional Information</span>
-                  {isOptionalExpanded ? (
-                    <ChevronUp className="h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4" />
-                  )}
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="objectives">Goals</Label>
-                  <Textarea
-                    id="objectives"
-                    name="objectives"
-                    value={formData.objectives}
-                    onChange={handleChange}
-                    placeholder="What's something you're excited to work on in the next 10 years? Dream big!"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="dietaryRestrictions">
-                    Dietary Restrictions
-                  </Label>
-                  <Input
-                    id="dietaryRestrictions"
-                    name="dietaryRestrictions"
-                    value={formData.dietaryRestrictions}
-                    onChange={handleChange}
-                    placeholder="Any dietary requirements or allergies"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="accessibilityNeeds">
-                    Accessibility Needs
-                  </Label>
-                  <Textarea
-                    id="accessibilityNeeds"
-                    name="accessibilityNeeds"
-                    value={formData.accessibilityNeeds}
-                    onChange={handleChange}
-                    placeholder="Any specific accessibility requirements"
-                  />
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </CollapsibleContent>
-            </Collapsible> */}
-          </CardContent>
-          <CardFooter>
-            <Button type="submit" className="w-full">
-              Save Profile
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
+            </Collapsible>
+
+              {/* Technical Skills section */}
+              <Collapsible className="bg-zinc-800 rounded-lg">
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
+                    <h2 className="text-lg font-semibold text-white">Technical Skills</h2>
+                    <ChevronDown className="w-5 h-5 text-zinc-400" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="p-4 pt-0 space-y-4">
+                  <div className="space-y-2 text-black">
+                    <Label htmlFor="programming_languages" className="text-white">Programming Languages</Label>
+                    <Multiselect
+                      options={programming_languages}
+                      selectedItems={formData.programming_languages}
+                      setSelectedItems={(items) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          programming_languages: items,
+                        }));
+                      }}
+                    />
+                  </div>
+
+                  <div className="space-y-2 text-black">
+                    <Label htmlFor="frameworks_and_tools" className="text-white">Frameworks and Tools</Label>
+                    <Multiselect
+                      options={frameworks_and_tools}
+                      selectedItems={formData.frameworks_and_tools}
+                      setSelectedItems={(items) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          frameworks_and_tools: items,
+                        }));
+                      }}
+                    />
+                  </div>
+                  </CollapsibleContent>
+                </Collapsible>
+
+              {/* Online Profiles section */}
+              <Collapsible className="bg-zinc-800 rounded-lg">
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
+                    <h2 className="text-lg font-semibold text-white">Online Profiles</h2>
+                    <ChevronDown className="w-5 h-5 text-zinc-400" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="p-4 pt-0 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="devpost">Devpost Profile</Label>
+                        <Input
+                          id="devpost"
+                          name="devpost"
+                          value={formData.devpost}
+                          onChange={handleChange}
+                          placeholder="https://devpost.com/yourusername"
+                    required
+                          className="bg-zinc-700 border-amber-500/50"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="github">GitHub Profile</Label>
+                        <Input
+                          id="github"
+                          name="github"
+                          value={formData.github}
+                          onChange={handleChange}
+                          placeholder="https://github.com/yourusername"
+                    required
+                          className="bg-zinc-700 border-amber-500/50"
+                        />
+                      </div>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+
+              {/* Hackathon Experience section */}
+              <Collapsible className="bg-zinc-800 rounded-lg">
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
+                    <h2 className="text-lg font-semibold text-white">Hackathons Experience and Preferred Roles</h2>
+                    <ChevronDown className="w-5 h-5 text-zinc-400" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="p-4 pt-0 space-y-6">
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="hackathonsAttended">Number of Hackathons Attended</Label>
+                        <Select
+                          name="hackathonsAttended"
+                          value={formData.number_of_hackathons}
+                          onValueChange={handleSelectChange("hackathonsAttended")}
+                        >
+                          <SelectTrigger className="bg-zinc-700 border-amber-500/50">
+                            <SelectValue placeholder="Select number of hackathons" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-zinc-700 border-amber-500/50 text-white">
+                            {[0, 1, 2, 3, 4, "5+"].map((num) => (
+                              <SelectItem key={num} value={num.toString()}>
+                                {num}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-8">
+                      <h3 className="text-sm text-zinc-400">Rate your experience level in each role from 0 to 5</h3>
+
+                      <SkillsSection formData={formData} handleSliderChange={handleSliderChange}/>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+
+            </CardContent>
+            <CardFooter>
+              {/* Submit Button */}
+              <div className="flex justify-end">
+                <Button type="submit" className="bg-amber-500 hover:bg-amber-600">
+                  Submit
+                </Button>
+              </div>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
     </div>
   );
 }
