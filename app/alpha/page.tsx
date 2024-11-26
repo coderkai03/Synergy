@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import {
   useUser,
   SignInButton,
@@ -86,7 +85,7 @@ export default function SynergyLanding() {
                 <Users className="h-12 w-12 text-white mb-4" />
                 <h3 className="text-2xl font-semibold text-white">Find Your Dream Team</h3>
                 <p className="text-gray-300">
-                  Connect with like-minded developers, designers, and innovators to form the perfect hackathon team.
+                  Connect with like-minded developers\, designers\, and innovators to form the perfect hackathon team.
                 </p>
               </div>
             </div>
