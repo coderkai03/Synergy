@@ -1,13 +1,9 @@
 "use client";
 
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import Link from "next/link";
-import { useClerk, UserButton } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
 import {
   Card,
   CardContent,
@@ -29,22 +25,19 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown, ChevronUp, Users, Zap } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Multiselect } from "./multiselect";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
-import Image from "next/image"
-import { Badge } from "@/components/ui/badge"
 import { db } from '@/firebaseConfig'
-import { doc, setDoc, updateDoc, collection, addDoc, getDoc } from '@firebase/firestore'
+import { doc, setDoc, collection, addDoc, getDoc } from '@firebase/firestore'
 import User from "@/interfaces/User";
 import SkillsSection from "./slider-section";
 
 export function AccountSetupComponent() {
   const router = useRouter();
   const { user } = useUser();
-  const { signOut } = useClerk();
 
   const [formData, setFormData] = useState<User>({
     full_name: "",

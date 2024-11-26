@@ -1,32 +1,20 @@
 "use client";
 
-import { useClerk, UserButton } from "@clerk/nextjs";
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   useUser,
   SignInButton,
-  // SignUpButton,
-  SignOutButton,
-  // useAuth,
 } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Toaster } from "react-hot-toast";
 import Link from "next/link";
-import { ArrowRight, ClipboardList, Users, UserPlus, Rocket, Zap } from "lucide-react";
+import { ArrowRight, ClipboardList, Users, UserPlus, Zap } from "lucide-react";
 import betaPrev from "@/public/img/betapreview.png";
-import homeBg from "@/public/img/homepage.png";
-import Navbar from "@/components/navbar";
-import { ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
 import SynergyLogo from "@/components/synergy-logo";
 
 export default function SynergyLanding() {
-  const { signOut } = useClerk();
-  const { isLoaded, isSignedIn, user } = useUser();
-  const router = useRouter();
+  const { isLoaded, isSignedIn } = useUser();
 
   return (
     <div className="min-h-screen fglw-full bg-[#111119]">

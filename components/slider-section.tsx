@@ -1,7 +1,9 @@
 import User from "@/interfaces/User";
 import SkillSlider from "./skill-slider";
 
-function SkillsSection({ formData, handleSliderChange }: { formData: User, handleSliderChange: any }) {
+type SliderChangeHandler = (role: string) => (value: number[]) => void;
+
+function SkillsSection({ formData, handleSliderChange }: { formData: User, handleSliderChange: SliderChangeHandler }) {
     
     return (
       <div>

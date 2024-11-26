@@ -3,25 +3,21 @@
 import * as React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
-import { Calendar, Globe2, MapPin, Search, Users, Zap } from "lucide-react";
+import { Calendar, Globe2, MapPin, Search } from "lucide-react";
 import Link from "next/link";
-import { useClerk, UserButton, useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { hackathons as hackathonsList } from "@/constants/hackathonlist";
 import { Hackathon } from "@/constants/hackathonlist";
 import { Checkbox } from "@/components/ui/checkbox";
-// import Image from "next/image";
 
 export function HackathonsListComponent() {
-  const { user } = useUser();
-  const { signOut } = useClerk();
+  //currently pulling from constants, will need to pull from database
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [dateFilter, setDateFilter] = React.useState("");
+  const [dateFilter] = React.useState("");
   const [locationFilter, setLocationFilter] = React.useState("all");
 
   const hackathons: Hackathon[] = React.useMemo(() => {

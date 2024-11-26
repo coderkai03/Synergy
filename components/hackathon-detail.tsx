@@ -17,19 +17,15 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "react-hot-toast";
 import HackathonWait from "./wait";
-import { useClerk, UserButton } from "@clerk/nextjs"; // Importing Clerk components
+import { useClerk } from "@clerk/nextjs"; // Importing Clerk components
 import { Multiselect } from "./multiselect";
-import { Calendar, Globe2, MapPin, Search, Users, Zap } from "lucide-react";
-import Link from "next/link";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-import { addDoc, collection, setDoc } from "@firebase/firestore";
-import { doc } from "@firebase/firestore";
+import { addDoc, collection } from "@firebase/firestore";
 import { db } from "@/firebaseConfig";
 
 export function HackathonDetailComponent() {
@@ -37,7 +33,7 @@ export function HackathonDetailComponent() {
   const params = useParams();
   const id = params.id as string;
 
-  const { user, signOut } = useClerk(); // Destructure user and signOut from useClerk
+  const { user } = useClerk(); // Destructure user and signOut from useClerk
   const [hackathon, setHackathon] = useState<Hackathon | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -113,7 +109,7 @@ export function HackathonDetailComponent() {
     try {
       console.log("Submitting formData:", formData);
       const userId = user?.id;
-      const userEmail = user?.primaryEmailAddress?.emailAddress
+      //const userEmail = user?.primaryEmailAddress?.emailAddress
 
       if (!userId) throw new Error("User ID is not available");
 
