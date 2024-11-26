@@ -126,7 +126,7 @@ export default function SynergyLanding() {
                     Complete the <span className="text-amber-500">sign up form</span>
                   </h2>
                   <p className="text-zinc-400">
-                    Create your profile and tell us about your interests, skills, and what you\'re looking to learn
+                    Create your profile and tell us about your interests, skills, and what you&apos;re looking to learn
                   </p>
                 </div>
               </div>
