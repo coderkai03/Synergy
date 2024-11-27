@@ -184,7 +184,7 @@ export function HackathonsListComponent() {
                 )} */}
                 <div className="mt-4 flex gap-3">
                   <Button asChild className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-white hover:text-white">
-                    <Link href={`/alpha/hackathons/${hackathon.id}`}>
+                    <Link href={`/hackathons/${hackathon.id}`}>
                       Form Team
                     </Link>
                   </Button>

@@ -139,7 +139,7 @@ export function AccountSetupComponent() {
       });
 
       // Navigate to the next page
-      router.push("/alpha/hackathons");
+      router.push("/hackathons");
     } catch (error) {
       console.error("Error saving to Firestore:", error);
       toast.error("Failed to save your profile. Please try again.");

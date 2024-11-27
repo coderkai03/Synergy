@@ -18,7 +18,7 @@ export default function Navbar() {
 
                 <div className="flex items-center gap-4">
                     <Link 
-                        href="/alpha/legal"
+                        href="/legal"
                         className="text-white hover:text-amber-100"
                     >
                         Legal
@@ -35,7 +35,7 @@ export default function Navbar() {
                         <DropdownMenu.Content className="w-48 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2">
                         <DropdownMenu.Item asChild>
                             <Link
-                            href="/alpha/account-setup"
+                            href="/account-setup"
                             className="flex items-center gap-2 p-2 rounded hover:bg-amber-100 hover:text-black"
                             >
                             <Users className="h-4 w-4" />

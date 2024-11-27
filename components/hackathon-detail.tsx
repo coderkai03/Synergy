@@ -55,7 +55,7 @@ export function HackathonDetailComponent() {
         setHackathon(foundHackathon);
       } else {
         toast.error("Hackathon not found");
-        router.push("/alpha/hackathons");
+        router.push("/hackathons");
       }
     };
 
@@ -122,7 +122,7 @@ export function HackathonDetailComponent() {
       console.log("Team created with ID:", docRef.id);
       console.log("Team details:", formData);
       toast.success("Team created successfully!");
-      router.push("/alpha/hackathons");
+      router.push("/hackathons");
     } catch {
       toast.error("Failed to submit information. Please try again.");
     } finally {

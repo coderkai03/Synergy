@@ -23,7 +23,7 @@ export default function HackathonWait() {
             <div className="h-2 bg-primary/20 rounded-full max-w-[160px] mx-auto"></div>
           </div>
           <Link
-            href="/alpha/hackathons"
+            href="/hackathons"
             className="mt-6 inline-flex items-center text-sm text-primary hover:text-primary/80 transition-colors"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />

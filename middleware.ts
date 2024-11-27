@@ -4,8 +4,7 @@ import { NextResponse } from "next/server";
 const publicRoutes = createRouteMatcher([
   // Public routes that don't require authentication
   "/",
-  "/alpha",
-  "/alpha/legal",
+  "/legal",
   // Static files and Next.js internals
   "/_next(.*)",
   "/favicon.ico",
@@ -16,7 +15,7 @@ export default clerkMiddleware(async (auth, request) => {
   if (!publicRoutes(request)) {
     const signedIn = await auth.protect();
     if (!signedIn) {
-      return NextResponse.redirect(new URL("/alpha", request.url));
+      return NextResponse.redirect(new URL("", request.url));
     }
   }
   return NextResponse.next();
