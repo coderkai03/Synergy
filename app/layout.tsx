@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   title: "Synergy",
   description:
     "Find your perfect hackathon teammates and create amazing projects together.",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
