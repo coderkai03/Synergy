@@ -5,6 +5,7 @@ const publicRoutes = createRouteMatcher([
   // Public routes that don't require authentication
   "/",
   "/alpha",
+  "/alpha/legal",
   // Static files and Next.js internals
   "/_next(.*)",
   "/favicon.ico",
