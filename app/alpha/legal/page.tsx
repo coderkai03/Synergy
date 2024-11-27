@@ -1,8 +1,7 @@
 "use client";
 
 import PrivacyPolicy from "@/components/privacy-policy";
-import TermsOfService from "@/components/terms-of-service";
-import { motion } from "framer-motion";
+//import TermsOfService from "@/components/terms-of-service";
 
 export default function LegalPage() {
   return (

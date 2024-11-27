@@ -22,7 +22,7 @@ export default function TermsOfService() {
             <div className="space-y-6 text-zinc-300">
             <section>
                 <h2 className="text-2xl font-semibold text-white mb-4">1. Acceptance of Terms</h2>
-                <p>By accessing and using Synergy Hackathon ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
+                <p>By accessing and using Synergy Hackathon (&quot;the Platform&quot;), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
             </section>
 
             <section>
@@ -55,7 +55,7 @@ export default function TermsOfService() {
 
             <section>
                 <h2 className="text-2xl font-semibold text-white mb-4">5. Limitation of Liability</h2>
-                <p>The Platform is provided "as is" without warranties of any kind. We are not liable for any damages arising from your use of our services or any content posted by users.</p>
+                <p>The Platform is provided &quot;as is&quot; without warranties of any kind. We are not liable for any damages arising from your use of our services or any content posted by users.</p>
             </section>
 
             <section>
