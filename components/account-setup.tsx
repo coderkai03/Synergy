@@ -38,6 +38,8 @@ import SkillsSection from "./slider-section";
 export function AccountSetupComponent() {
   const router = useRouter();
   const { user, isSignedIn, isLoaded } = useUser();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   const [formData, setFormData] = useState<User>({
     full_name: "",
@@ -87,6 +89,8 @@ export function AccountSetupComponent() {
         setFormData({
           ...(userDoc.data()) as User
         });
+        setFirstName(userDoc.data()?.full_name?.split(' ')[0] || "");
+        setLastName(userDoc.data()?.full_name?.split(' ')[1] || "");
         console.log('Loaded user: ',userDoc.data())
 
       } catch (error) {
@@ -136,6 +140,8 @@ export function AccountSetupComponent() {
 
       if (!userId) throw new Error("User ID is not available");
       if (!userEmail) throw new Error("User email is not available");
+
+      formData.full_name = `${firstName} ${lastName}`;
 
       const docRef = doc(db, 'users', userId);
       await setDoc(docRef, {
@@ -224,15 +230,21 @@ export function AccountSetupComponent() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">First Name</Label>
-                      <Input id="firstName" className="bg-zinc-700 border-amber-500/50" value={
-                        formData.full_name ? formData.full_name.split(' ')[0] : ""
-                      }/>
+                      <Input 
+                        id="firstName" 
+                        className="bg-zinc-700 border-amber-500/50" 
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastName">Last Name</Label>
-                      <Input id="lastName" className="bg-zinc-700 border-amber-500/50" value={
-                        formData.full_name ? formData.full_name.split(' ')[formData.full_name.split(' ').length-1] : ""
-                      }/>
+                      <Input 
+                        id="lastName" 
+                        className="bg-zinc-700 border-amber-500/50" 
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
