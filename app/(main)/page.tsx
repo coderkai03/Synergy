@@ -3,7 +3,6 @@
 import {
   useUser,
   SignInButton,
-  SignUpButton,
 } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
