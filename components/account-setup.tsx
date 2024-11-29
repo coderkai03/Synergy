@@ -37,7 +37,7 @@ import SkillsSection from "./slider-section";
 
 export function AccountSetupComponent() {
   const router = useRouter();
-  const { user, isSignedIn } = useUser();
+  const { user, isSignedIn, isLoaded } = useUser();
 
   const [formData, setFormData] = useState<User>({
     full_name: "",
@@ -66,7 +66,8 @@ export function AccountSetupComponent() {
   //const [isOptionalExpanded, setIsOptionalExpanded] = useState(false);
 
   useEffect(() => {
-    if (!isSignedIn) return;
+    if (!isLoaded) return;
+    if (!isSignedIn || !user) return;
     
     async function fetchUserData() {
       try {
@@ -87,7 +88,7 @@ export function AccountSetupComponent() {
           ...(userDoc.data()) as User
         });
         console.log('Loaded user: ',userDoc.data())
-        
+
       } catch (error) {
         console.error("Error getting user ID:", error)
         return
@@ -95,7 +96,7 @@ export function AccountSetupComponent() {
     }
 
     fetchUserData()
-  }, [user, isSignedIn]);
+  }, [user, isSignedIn, isLoaded]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -208,8 +209,10 @@ export function AccountSetupComponent() {
               enhance your experience.
             </CardDescription>
           </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-6 text-white">
+
+          {isLoaded ? (
+            <form onSubmit={handleSubmit}>
+              <CardContent className="space-y-6 text-white">
 
               {/* Personal Information section */}
               <Collapsible className="bg-zinc-800 rounded-lg">
@@ -410,8 +413,11 @@ export function AccountSetupComponent() {
                   Submit
                 </Button>
               </div>
-            </CardFooter>
-          </form>
+              </CardFooter>
+            </form>
+          ) : (
+            <div>Loading...</div>
+          )}
         </Card>
       </div>
     </div>
