@@ -37,7 +37,7 @@ import SkillsSection from "./slider-section";
 
 export function AccountSetupComponent() {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, isSignedIn } = useUser();
 
   const [formData, setFormData] = useState<User>({
     full_name: "",
@@ -66,10 +66,13 @@ export function AccountSetupComponent() {
   //const [isOptionalExpanded, setIsOptionalExpanded] = useState(false);
 
   useEffect(() => {
+    if (!isSignedIn) return;
+    
     async function fetchUserData() {
       try {
         const userId = user?.id
         const userEmail = user?.primaryEmailAddress?.emailAddress
+        console.log('User:', userId, userEmail)
 
         if (!userId) {
           throw new Error("User ID not found")
@@ -92,7 +95,7 @@ export function AccountSetupComponent() {
     }
 
     fetchUserData()
-  }, [user]);
+  }, [user, isSignedIn]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
