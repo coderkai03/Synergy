@@ -1,17 +1,17 @@
 import { initializeApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { clerkClient, createClerkClient } from '@clerk/clerk-sdk-node';
-import dotenv from 'dotenv';
 
-dotenv.config();
+// Initialize both dev and prod Clerk clients
+const devClerk = createClerkClient({ 
+  secretKey: 'sk_test_YhovjPl5LK4gXmkwCBsa9xiDBq9Z7MGSslMIZ4jSz5' 
+});
 
-const key = 'sk_live_yyZgT2lmdddXTx0sQReeG84OL0BCDMzmcb2EBigTEv';
-console.log("Clerk Secret Key Loaded:", key);
-const clerk = key ? 
-    createClerkClient({ key }) : 
-    clerkClient
+const prodClerk = createClerkClient({ 
+  secretKey: 'sk_live_yyZgT2lmdddXTx0sQReeG84OL0BCDMzmcb2EBigTEv' 
+});
 
-// Initialize Firebase Admin SDK
+// Initialize Firebase
 import serviceAccount from "../synergy-2a320-firebase-adminsdk-hwusn-b63b956bff.json" assert { type: "json" };
 initializeApp({
   credential: cert(serviceAccount),
@@ -19,61 +19,80 @@ initializeApp({
 const db = getFirestore();
 console.log("Firebase Admin SDK Initialized.");
 
-// Fetch Clerk Production User Data and Update Firestore
+async function fetchAllUsers(clerk) {
+  let allUsers = [];
+  let pageNumber = 1;
+  
+  while (true) {
+    const usersPage = await clerk.users.getUserList({
+      limit: 100,
+      offset: (pageNumber - 1) * 100,
+    });
+    
+    if (usersPage.data.length === 0) break;
+    
+    allUsers = [...allUsers, ...usersPage.data];
+    console.log(`Fetched page ${pageNumber} with ${usersPage.data.length} users`);
+    
+    if (usersPage.data.length < 100) break;
+    pageNumber++;
+  }
+  
+  return allUsers;
+}
+
 async function updateFirestoreDocIds() {
   try {
-    console.log("Fetching users from Clerk...");
-    // Fetch all users from Clerk production
-    let clerkUsers;
-    try {
-      clerkUsers = await clerk.users.getUserList();
-      console.log("Fetched Clerk Users:", clerkUsers.length);
-    } catch (error) {
-      console.error("Error fetching users from Clerk:", error.message);
-      throw error; // Re-throw to be caught by outer try-catch
-    }
+    // Fetch both dev and prod users
+    console.log("Fetching dev users from Clerk...");
+    const devUsers = await fetchAllUsers(devClerk);
+    console.log(`Fetched ${devUsers.length} dev users`);
 
+    console.log("Fetching prod users from Clerk...");
+    const prodUsers = await fetchAllUsers(prodClerk);
+    console.log(`Fetched ${prodUsers.length} prod users`);
+
+    // Create map of email to prod ID
     const emailToProdIdMap = {};
-
-    // Map emails to production user IDs
-    clerkUsers.forEach((user) => {
-      const email = user.primaryEmailAddress;
-      const prodId = user.id;
-      console.log(`Processing user: ${email} -> ${prodId}`);
-
-      if (email && email === 'riancorci@gmail.com') {
-        console.log(`Found matching email ${email} with production ID ${prodId}`);
-        emailToProdIdMap[email] = prodId;
+    prodUsers.forEach((user) => {
+      const email = user.emailAddresses[0]?.emailAddress;
+      if (email && email === 'audgeviolin07@gmail.com') {
+        emailToProdIdMap[email] = user.id;
       }
     });
 
-    console.log("Email to Production ID Map:", emailToProdIdMap);
+    // Create map of dev ID to prod ID
+    const devToProdIdMap = {};
+    devUsers.forEach((devUser) => {
+      const email = devUser.emailAddresses[0]?.emailAddress;
+      if (email && emailToProdIdMap[email]) {
+        devToProdIdMap[devUser.id] = emailToProdIdMap[email];
+        console.log(`Mapped dev ID ${devUser.id} to prod ID ${emailToProdIdMap[email]} for email ${email}`);
+      }
+    });
 
-    // Get all Firestore documents from the collection where user data is stored
-    const usersCollection = db.collection("users"); // Adjust the collection name as needed
+    // Update Firestore documents
+    const usersCollection = db.collection("users");
     const snapshot = await usersCollection.get();
     console.log("Fetched Firestore Documents:", snapshot.docs.length);
 
     for (const doc of snapshot.docs) {
-      const data = doc.data();
-      const email = data.email;
+      const currentId = doc.id; // This should be the dev ID
+      const prodId = devToProdIdMap[currentId];
+      
+      if (prodId) {
+        const data = doc.data();
+        console.log(`Updating document: ${currentId} -> ${prodId}`);
 
-      // Check if the user's email exists in the Clerk map
-      if (emailToProdIdMap[email]) {
-        const newProdId = emailToProdIdMap[email];
-        const oldData = data;
+        // Create new document with prod ID
+        await usersCollection.doc(prodId).set(data);
+        console.log(`Created new document with prod ID: ${prodId}`);
 
-        // Create a new document with the production ID
-        await usersCollection.doc(newProdId).set(oldData);
-        console.log(`Document created for new production ID: ${newProdId}`);
-
-        // Delete the old document
-        await usersCollection.doc(doc.id).delete();
-        console.log(`Document deleted: ${doc.id}`);
-
-        console.log(`Document updated: ${email} -> ${newProdId}`);
+        // Delete old document with dev ID
+        await usersCollection.doc(currentId).delete();
+        console.log(`Deleted old document with dev ID: ${currentId}`);
       } else {
-        console.warn(`No matching Clerk production user for email: ${email}`);
+        console.warn(`No matching prod ID found for dev ID: ${currentId}`);
       }
     }
 

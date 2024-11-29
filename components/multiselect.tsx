@@ -12,7 +12,7 @@ interface MultiSelectProps {
 
 export function Multiselect({
   options,
-  selectedItems,
+  selectedItems = [],
   setSelectedItems,
 }: MultiSelectProps) {
   const [isOpen, setIsOpen] = React.useState(false);
