@@ -249,7 +249,12 @@ export function AccountSetupComponent() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" className="bg-zinc-700 border-amber-500/50" value={formData.phone}/>
+                    <Input
+                      id="phone" 
+                      className="bg-zinc-700 border-amber-500/50" 
+                      value={formData.phone}
+                      onChange={handleChange}
+                    />
                   </div>
                 </CollapsibleContent>
               </Collapsible> 
@@ -289,7 +294,7 @@ export function AccountSetupComponent() {
                     <Select
                       name="graduatingClass"
                       value={formData.gradYear}
-                      onValueChange={handleSelectChange("graduatingClass")}
+                      onValueChange={handleSelectChange("gradYear")}
                     >
                       <SelectTrigger className="bg-zinc-700 border-amber-500/50 text-white-500">
                         <SelectValue placeholder="Select graduation year"/>
@@ -393,7 +398,7 @@ export function AccountSetupComponent() {
                         <Select
                           name="hackathonsAttended"
                           value={formData.number_of_hackathons}
-                          onValueChange={handleSelectChange("hackathonsAttended")}
+                          onValueChange={handleSelectChange("number_of_hackathons")}
                         >
                           <SelectTrigger className="bg-zinc-700 border-amber-500/50">
                             <SelectValue placeholder="Select number of hackathons" />
