@@ -232,6 +232,18 @@ export const hackathons: Hackathon[] = [
     participants: 27,
   },
   {
+    id: "40",
+    name: "brainrot jia.seed hackathon",
+    date: "2024-11-29",
+    endDate: "2024-12-01",
+    location: "Online",
+    website: "https://brainrot-jia-seed-hackathon.devpost.com/",
+    image:
+      "https://d112y698adiu2z.cloudfront.net/photos/production/challenge_photos/003/151/024/datas/full_width.png",
+    isOnline: true,
+    participants: 1130,
+  },
+  {
     id: "19",
     name: "Hack Western 11",
     date: "2024-11-29",

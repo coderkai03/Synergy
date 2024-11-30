@@ -21,12 +21,13 @@ import { useClerk } from "@clerk/nextjs"; // Importing Clerk components
 import { Multiselect } from "./multiselect";
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { addDoc, collection, getDocs } from "@firebase/firestore";
+import { db } from "@/firebaseConfig";
+import { Input } from "@/components/ui/input";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-import { addDoc, collection } from "@firebase/firestore";
-import { db } from "@/firebaseConfig";
 
 export function HackathonDetailComponent() {
   const router = useRouter();
@@ -41,12 +42,12 @@ export function HackathonDetailComponent() {
     alreadyInTeam: "",
     hasProjectIdea: "",
     projectIdea: "",
-    teamMembers: "",
     goals: [] as string[],
-    technologies: [] as string[],
     problemSpaces: [] as string[],
     teammates: [] as string[]
   });
+  const [usersList, setUsersList] = useState<Array<{id: string, username: string}>>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchHackathon = () => {
@@ -71,6 +72,21 @@ export function HackathonDetailComponent() {
       setHasSubmitted(true);
     }
   }, [id, router]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const usersSnapshot = await getDocs(collection(db, 'users'));
+      const users = usersSnapshot.docs.map(doc => ({
+        id: doc.id,
+        username: doc.data().username || doc.data().email?.split('@')[0] || 'Unknown'
+      }));
+      setUsersList(users);
+    };
+
+    if (formData.alreadyInTeam === "yes") {
+      fetchUsers();
+    }
+  }, [formData.alreadyInTeam]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -224,15 +240,70 @@ export function HackathonDetailComponent() {
 
               {formData.alreadyInTeam === "yes" && (
                 <div className="space-y-2">
-                  <Label htmlFor="teamMembers">Please list your existing team members:</Label>
-                  <Textarea
-                    id="teamMembers"
-                    name="teamMembers"
-                    value={formData.teamMembers}
-                    onChange={handleChange}
-                    placeholder="List the names of your team members..."
-                    className="min-h-[100px] text-white"
-                  />
+                  <Label htmlFor="teammates">Select your team members:</Label>
+                  <div className="space-y-2">
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        <Input
+                          type="text"
+                          placeholder="Search username..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="bg-zinc-700 border-amber-500/50"
+                        />
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            const foundUser = usersList.find(user => 
+                              user.username.toLowerCase() === searchTerm.toLowerCase()
+                            );
+                            
+                            if (foundUser) { // TODO: Check if user is already in team
+                              if (!formData.teammates.includes(foundUser.id)) {
+                                setFormData({
+                                  ...formData,
+                                  teammates: [...formData.teammates, foundUser.id]
+                                });
+                              }
+                              setSearchTerm('');
+                              console.log(`Added ${foundUser.username} to team`);
+                            } else {
+                              console.log('Username not found');
+                            }
+                          }}
+                          className="bg-amber-500 hover:bg-amber-600"
+                        >
+                          Add
+                        </Button>
+                      </div>
+                      
+                      {/* Show selected teammates */}
+                      <div className="mt-4 space-y-2">
+                        {formData.teammates.map(teamId => {
+                          const user = usersList.find(u => u.id === teamId);
+                          return user ? (
+                            <div key={teamId} className="flex items-center gap-2 bg-zinc-700 p-2 rounded">
+                              <span>{user.username}</span>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setFormData({
+                                    ...formData,
+                                    teammates: formData.teammates.filter(id => id !== teamId)
+                                  });
+                                }}
+                                className="text-red-500 hover:text-red-600 p-1"
+                              >
+                                ✕
+                              </Button>
+                            </div>
+                          ) : null;
+                        })}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 

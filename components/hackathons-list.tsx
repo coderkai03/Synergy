@@ -127,7 +127,9 @@ export function HackathonsListComponent() {
 
         {/* Hackathon Grid */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredHackathons.map((hackathon) => (
+          {filteredHackathons
+          .filter((hackathon) => hackathon.id === "40")
+          .map((hackathon) => (
             <Card
               key={hackathon.id}
               className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#4A4A4A] border-none"

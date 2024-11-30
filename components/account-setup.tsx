@@ -43,7 +43,8 @@ export function AccountSetupComponent() {
 
   const [formData, setFormData] = useState<User>({
     full_name: "",
-    // email: user?.primaryEmailAddress?.emailAddress || "",
+    email: user?.primaryEmailAddress?.emailAddress || "",
+    username: user?.primaryEmailAddress?.emailAddress?.split('@')[0] || "",
     phone: "",
     gradYear: "",
     school: "",
@@ -65,8 +66,6 @@ export function AccountSetupComponent() {
     // accessibilityNeeds: "",
   });
 
-  //const [isOptionalExpanded, setIsOptionalExpanded] = useState(false);
-
   useEffect(() => {
     if (!isLoaded) return;
     if (!isSignedIn || !user) return;
@@ -86,11 +85,14 @@ export function AccountSetupComponent() {
         }
 
         const userDoc = await getDoc(doc(db, 'users', userId))
+        const userData = userDoc.data() as User;
         setFormData({
-          ...(userDoc.data()) as User
+          ...userData,
+          email: userEmail, // Ensure email from auth takes precedence
+          username: userEmail.split('@')[0]
         });
-        setFirstName(userDoc.data()?.full_name?.split(' ')[0] || "");
-        setLastName(userDoc.data()?.full_name?.split(' ')[1] || "");
+        setFirstName(userData?.full_name?.split(' ')[0] || "");
+        setLastName(userData?.full_name?.split(' ')[1] || "");
         console.log('Loaded user: ',userDoc.data())
 
       } catch (error) {

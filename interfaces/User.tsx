@@ -1,5 +1,7 @@
 export default interface User {
   full_name: string;
+  email: string;
+  username: string;
   phone: string;
   gradYear: string;
   school: string;
