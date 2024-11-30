@@ -30,8 +30,8 @@ function SkillSlider({
         onValueChange={onValueChange}
         className={`
           [&_[role=slider]]:h-0 [&_[role=slider]]:w-0
-          [&_.relative]:h-2
-          [&_[data-orientation=horizontal]]:h-2
+          [&_.relative]:h-4
+          [&_[data-orientation=horizontal]]:h-4
           [&_.bg-primary]:bg-amber-500
           [&_[data-orientation=horizontal]]:rounded-full
         `}

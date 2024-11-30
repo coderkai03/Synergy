@@ -304,7 +304,7 @@ export function HackathonDetailComponent() {
 
               {formData.alreadyInTeam === "yes" && (
                 <div className="space-y-2">
-                  <Label htmlFor="teammates">Select your team members:</Label>
+                  <Label htmlFor="teammates">Enter your team emails:</Label>
                   <div className="space-y-2">
                     <div className="space-y-2">
                       <div className="flex gap-2">
@@ -321,9 +321,14 @@ export function HackathonDetailComponent() {
                           disabled={formData.teammates.length >= 3}
                           type="button"
                           onClick={() => {
-                            const foundUser = usersList.find(user => 
-                              user.email?.toLowerCase() === searchTerm.toLowerCase()
-                            );
+                            const foundUser = usersList.find(currentUser => {
+                              const currentEmail = currentUser.email?.toLowerCase();
+                              if (currentEmail === searchTerm.toLowerCase() &&
+                                currentEmail !== user?.primaryEmailAddress?.emailAddress
+                              ) {
+                                return true;
+                              }
+                            });
                             
                             if (foundUser) {
                               if (!formData.teammates.includes(foundUser.id)) {
@@ -335,7 +340,7 @@ export function HackathonDetailComponent() {
                               setSearchTerm('');
                               console.log(`Added ${foundUser.email} to team`);
                             } else {
-                              toast.error('Email not found');
+                              toast.error('Email invalid');
                             }
                           }}
                           className="bg-amber-500 hover:bg-amber-600"
@@ -361,9 +366,9 @@ export function HackathonDetailComponent() {
                                     teammates: formData.teammates.filter(id => id !== teamId)
                                   });
                                 }}
-                                className="text-red-500 hover:text-red-600 p-1"
+                                className="text-red-500 hover:bg-red-500 p-1 font-bold text-2xl w-8 h-8 flex items-center justify-center"
                               >
-                                ✕
+                                ×
                               </Button>
                             </div>
                           ) : null;
