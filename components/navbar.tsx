@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Users } from "lucide-react";
+import { Menu, Users } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/nextjs";
 import SynergyLogo from "./synergy-logo";
 
@@ -17,17 +17,36 @@ export default function Navbar() {
                 <SynergyLogo/>
 
                 <div className="flex items-center gap-4">
-                    <Link 
-                        href="/hackathons"
-                        className="text-white hover:text-amber-100"
-                    >
-                        Hackathons
-                    </Link>
-                <div className="w-4" />
+                    <div className="hidden md:block mx-10">
+                        <Link 
+                            href="/hackathons"
+                            className="text-white hover:text-amber-100"
+                        >
+                            Hackathons
+                        </Link>
+                    </div>
+                    <div className="md:hidden mt-2">
+                        <DropdownMenu.Root>
+                            <DropdownMenu.Trigger asChild>
+                                <button className="text-white hover:text-amber-100">
+                                    <Menu />
+                                </button>
+                            </DropdownMenu.Trigger>
+                            <DropdownMenu.Content className="w-48 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2">
+                                <DropdownMenu.Item asChild>
+                                    <Link
+                                        href="/hackathons"
+                                        className="flex items-center gap-2 p-2 rounded hover:bg-amber-100 hover:text-black"
+                                    >
+                                        <span>Hackathons</span>
+                                    </Link>
+                                </DropdownMenu.Item>
+                            </DropdownMenu.Content>
+                        </DropdownMenu.Root>
+                    </div>
                     <DropdownMenu.Root>
                         <DropdownMenu.Trigger asChild>
                         <div className="flex items-center gap-2 cursor-pointer">
-                            <span className="text-white font-semibold">{user?.fullName?.split(" ")[0] || ""}</span>
                             <UserButton />
                         </div>
                         </DropdownMenu.Trigger>

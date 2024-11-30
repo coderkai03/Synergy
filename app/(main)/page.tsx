@@ -9,27 +9,18 @@ export default function Home() {
   return (
     <div className="min-h-screen fglw-full bg-[#111119]">
       <div className="h-[75vh] w-full bg-cover bg-center">
-        <main className="flex items-center justify-center h-full p-20">
-          <div className="w-1/2 px-4 py-16 flex flex-col items-center overflow-hidden"> 
+        <main className="flex items-center justify-center h-full py-20">
+          <div className="w-full md:w-1/2 px-4 py-16 flex flex-col items-center overflow-hidden"> 
             <div className="scale-150">
               <SynergyLogo/>
             </div>
-            {/* <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-center mb-16"
-            >
-              <h1 className="text-5xl font-extrabold mb-6 text-blue-600">
-                Synergy
-              </h1> */}
-              <div className="flex items-center justify-center mt-8 text-white">
-                <p className="text-xl font-light leading-relaxed">
-                  Find your dream team for any hackathon.
-                </p>
-              </div>
-              
-              <GetStarted/>
+            <div className="flex items-center justify-center mt-8 text-white">
+              <p className="text-xl font-light leading-relaxed text-center">
+                Find your dream team for any hackathon.
+              </p>
+            </div>
+            
+            <GetStarted/>
           </div>
         </main>
       </div>

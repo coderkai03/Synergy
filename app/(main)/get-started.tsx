@@ -10,7 +10,7 @@ export default function GetStarted() {
   return (
     <div className="w-full">
       <main className="flex items-center justify-center h-full p-20">
-        <div className="w-1/2 px-4 py-16 flex flex-col items-center overflow-hidden">
+        <div className="w-full md:w-1/2 px-4 py-16 flex flex-col items-center overflow-hidden">
             {isLoaded && !isSignedIn ? (
                 <div className="flex gap-4">
                     <SignInButton
