@@ -410,8 +410,8 @@ export function AccountSetupComponent() {
                             <SelectValue placeholder="Select number of hackathons" />
                           </SelectTrigger>
                           <SelectContent className="bg-zinc-700 border-amber-500/50 text-white">
-                            {[0, 1, 2, 3, 4, "5+"].map((num) => (
-                              <SelectItem key={num} value={num.toString()}>
+                            {['0', '1', '2', '3', '4', '5+'].map((num) => (
+                              <SelectItem key={num} value={num}>
                                 {num}
                               </SelectItem>
                             ))}
