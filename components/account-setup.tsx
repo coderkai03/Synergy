@@ -466,6 +466,7 @@ export function AccountSetupComponent() {
                   disabled={
                     !firstName || 
                     !lastName ||
+                    !formData.phone ||
                     !formData.school ||
                     !formData.degree ||
                     !formData.gradYear ||
