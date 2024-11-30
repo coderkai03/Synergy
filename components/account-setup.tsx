@@ -447,7 +447,8 @@ export function AccountSetupComponent() {
                     !formData.github ||
                     !formData.programming_languages.length ||
                     !formData.frameworks_and_tools.length ||
-                    Object.values(formData.role_experience).some(value => value === -1)
+                    !formData.role_experience ||
+                    Object.values(formData.role_experience || {}).some(value => value === -1)
                   }
                 >
                   Submit
