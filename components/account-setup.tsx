@@ -460,7 +460,23 @@ export function AccountSetupComponent() {
             <CardFooter>
               {/* Submit Button */}
               <div className="flex justify-end">
-                <Button type="submit" className="bg-amber-500 hover:bg-amber-600">
+                <Button
+                  type="submit" 
+                  className="bg-amber-500 hover:bg-amber-600"
+                  disabled={
+                    !firstName || 
+                    !lastName ||
+                    !formData.school ||
+                    !formData.degree ||
+                    !formData.gradYear ||
+                    !formData.number_of_hackathons ||
+                    !formData.devpost ||
+                    !formData.github ||
+                    !formData.programming_languages.length ||
+                    !formData.frameworks_and_tools.length ||
+                    Object.values(formData.role_experience).some(value => value === -1)
+                  }
+                >
                   Submit
                 </Button>
               </div>
