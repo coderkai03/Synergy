@@ -62,6 +62,7 @@ export function AccountSetupComponent() {
       hardware: -1,
       uiux_design: -1,
     },
+    teams: [] as string[],
     // dietaryRestrictions: "",
     // accessibilityNeeds: "",
   });
@@ -293,9 +294,9 @@ export function AccountSetupComponent() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="degree">Degree</Label>
+                    <Label htmlFor="gradYear">Graduation Year</Label>
                     <Select
-                      name="graduatingClass"
+                      name="gradYear"
                       value={formData.gradYear}
                       onValueChange={handleSelectChange("gradYear")}
                     >

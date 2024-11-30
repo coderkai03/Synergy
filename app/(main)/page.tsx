@@ -1,27 +1,15 @@
 "use client";
 
-import {
-  useUser,
-  SignInButton,
-} from "@clerk/nextjs";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight, ClipboardList, Users, UserPlus, Zap } from "lucide-react";
-import betaPrev from "@/public/img/betapreview.png";
+import {Zap, Search, User } from "lucide-react";
 import SynergyLogo from "@/components/synergy-logo";
+import GetStarted from "./get-started";
 
 export default function Home() {
-  const { isLoaded, isSignedIn } = useUser();
-
   return (
     <div className="min-h-screen fglw-full bg-[#111119]">
-      <div className="min-h-screen w-full bg-cover bg-center">
-        {/* <Toaster position="top-center" /> */}
-        
-
-        <main className="flex items-center justify-center min-h-screen p-20">
+      <div className="h-[75vh] w-full bg-cover bg-center">
+        <main className="flex items-center justify-center h-full p-20">
           <div className="w-1/2 px-4 py-16 flex flex-col items-center overflow-hidden"> 
             <div className="scale-150">
               <SynergyLogo/>
@@ -37,40 +25,19 @@ export default function Home() {
               </h1> */}
               <div className="flex items-center justify-center mt-8 text-white">
                 <p className="text-xl font-light leading-relaxed">
-                  Hackathon team matching done for you.
+                  Find your dream team for any hackathon.
                 </p>
               </div>
               
-              {isLoaded && !isSignedIn ? (
-                <div className="flex gap-4">
-                  <SignInButton
-                    mode="modal"
-                    fallbackRedirectUrl={'/hackathons'}
-                    signUpForceRedirectUrl={'/account-setup'}
-                  >
-                    <Button className="group mt-8 inline-flex items-center gap-2 rounded-full border-2 border-white/80 px-6 py-3 text-xl font-medium text-white transition-all hover:bg-white hover:text-gray-900">
-                      Sign In
-                      <ArrowRight className="transition-transform group-hover:translate-x-1" />
-                    </Button>
-                  </SignInButton>
-                </div>
-              ) : (
-                <Link
-                  href='/hackathons'
-                  className="group mt-8 inline-flex items-center gap-2 rounded-full border-2 border-white/80 px-6 py-3 text-xl font-medium text-white transition-all hover:bg-white hover:text-gray-900"
-                >
-                  Get Started
-                  <ArrowRight className="transition-transform group-hover:translate-x-1" />
-                </Link>
-              )}
-            </div>
+              <GetStarted/>
+          </div>
         </main>
       </div>
 
       <section className="min--screen bg-[#111119] py-24 px-20">
           <div className="container px-4 mx-auto">
             <h2 className="text-center mb-16 text-4xl text-white">
-              What can <span className="italic">Synergy</span> bring to you...
+              Match with teams that synergize with you.
             </h2>
           </div>
       
@@ -83,21 +50,33 @@ export default function Home() {
             <div className="relative group mb-4 h-72">
               <div className="absolute -inset-1 bg-gradient-to-r from-yellow-600 to-zinc-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
               <div className="relative bg-black rounded-lg p-8 space-y-6 border-gradient-to-r from-pink-600 to-orange-600 h-full">
-                <Users className="h-12 w-12 text-white mb-4" />
-                <h3 className="text-2xl font-semibold text-white">Find Your Dream Team</h3>
+                <User className="h-12 w-12 text-white mb-4" />
+                <h3 className="text-2xl font-semibold text-white">Build your profile</h3>
                 <p className="text-gray-300">
-                  Connect with like-minded developers\, designers\, and innovators to form the perfect hackathon team.
+                  Create a hacker profile that flexes your skills and interests.
                 </p>
               </div>
             </div>
             
+            {/* TODO: BETA VERSION */}
+            {/* <div className="relative group mb-4 h-72">
+              <div className="absolute -inset-1 bg-gradient-to-r from-zinc-600 to-zinc-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
+              <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent h-full">
+                <Users className="h-12 w-12 text-white mb-4" />
+                <h3 className="text-2xl font-semibold text-white">Swipe through teams</h3>
+                <p className="text-gray-300">
+                  Browse hundreds of hackers and teams for your next hackathon.
+                </p>
+              </div>
+            </div> */}
+
             <div className="relative group mb-4 h-72">
               <div className="absolute -inset-1 bg-gradient-to-r from-zinc-600 to-zinc-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
               <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent h-full">
-                <Zap className="h-12 w-12 text-white mb-4" />
-                <h3 className="text-2xl font-semibold text-white">Boost Your Productivity</h3>
+                <Search className="h-12 w-12 text-white mb-4" />
+                <h3 className="text-2xl font-semibold text-white">Apply for teams</h3>
                 <p className="text-gray-300">
-                  Collaborate with your team members effortlessly and boost your productivity with our intuitive platform.
+                  Browse through hackathons and apply for teams.
                 </p>
               </div>
             </div>
@@ -106,16 +85,21 @@ export default function Home() {
               <div className="absolute -inset-1 bg-gradient-to-r from-zinc-600 to-yellow-600 rounded-lg opacity-100 group-hover:blur"></div>
               <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent h-full">
                 <Zap className="h-12 w-12 text-white mb-4" />
-                <h3 className="text-2xl font-semibold text-white">Accelerate Your Growth</h3>
+                <h3 className="text-2xl font-semibold text-white">Sit back and relax!</h3>
                 <p className="text-gray-300">
-                  Learn from peers, gain new skills, and expand your network in the tech community.
+                  Our matching algorithm will find the perfect team for you.
                 </p>
               </div>
             </div>
           </motion.div>
         </section>
 
-        <div className="grid lg:grid-cols-2 gap-8 items-start p-20 text-white">
+        <div className="-mt-20">
+          <GetStarted/>
+        </div>
+
+        {/* TODO: BETA VERSION */}
+        {/* <div className="grid lg:grid-cols-2 gap-8 items-start p-20 text-white">
           <div className="space-y-8">
             <div className="rounded-lg p-6 backdrop-blur hover:bg-zinc-900/50">
               <div className="flex gap-4 items-start">
@@ -178,26 +162,7 @@ export default function Home() {
               />
             </div>
           </div>
-        </div>
-
-      <footer className="mt-24 py-5 bg-[#111119]">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-600">
-            &copy; 2024 Synergy. All rights reserved.
-          </p>
-          <div className="mt-4 space-x-4">
-            <a href="#" className="text-gray-600 hover:underline">
-              Terms of Service
-            </a>
-            <a href="#" className="text-gray-600 hover:underline">
-              Privacy Policy
-            </a>
-            <a href="#" className="text-gray-600 hover:underline">
-              Contact Us
-            </a>
-          </div>
-        </div>
-      </footer>
+        </div> */}
     </div>
   );
 }

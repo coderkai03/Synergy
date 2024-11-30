@@ -18,12 +18,12 @@ export default function Navbar() {
 
                 <div className="flex items-center gap-4">
                     <Link 
-                        href="/legal"
+                        href="/hackathons"
                         className="text-white hover:text-amber-100"
                     >
-                        Legal
+                        Hackathons
                     </Link>
-                    <div className="w-4" />
+                <div className="w-4" />
                     <DropdownMenu.Root>
                         <DropdownMenu.Trigger asChild>
                         <div className="flex items-center gap-2 cursor-pointer">
@@ -33,23 +33,23 @@ export default function Navbar() {
                         </DropdownMenu.Trigger>
 
                         <DropdownMenu.Content className="w-48 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2">
-                        <DropdownMenu.Item asChild>
-                            <Link
-                            href="/account-setup"
-                            className="flex items-center gap-2 p-2 rounded hover:bg-amber-100 hover:text-black"
-                            >
-                            <Users className="h-4 w-4" />
-                            <span>Edit Profile</span>
-                            </Link>
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item asChild>
-                            <button
-                            onClick={() => signOut()}
-                            className="flex items-center gap-2 p-2 w-full text-left rounded hover:bg-amber-100 hover:text-black"
-                            >
-                            <span>Sign Out</span>
-                            </button>
-                        </DropdownMenu.Item>
+                            <DropdownMenu.Item asChild>
+                                <Link
+                                href="/account-setup"
+                                className="flex items-center gap-2 p-2 rounded hover:bg-amber-100 hover:text-black"
+                                >
+                                <Users className="h-4 w-4" />
+                                <span>Edit Profile</span>
+                                </Link>
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item asChild>
+                                <button
+                                onClick={() => signOut()}
+                                className="flex items-center gap-2 p-2 w-full text-left rounded hover:bg-amber-100 hover:text-black"
+                                >
+                                <span>Sign Out</span>
+                                </button>
+                            </DropdownMenu.Item>
                         </DropdownMenu.Content>
                     </DropdownMenu.Root>
                 </div>

@@ -17,4 +17,5 @@ export default interface User {
     hardware: number;
     uiux_design: number;
   }
+  teams: string[];
 }

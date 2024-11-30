@@ -1,49 +1,106 @@
 "use client";
 
-import * as React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-
-import { Calendar, Globe2, MapPin, Search } from "lucide-react";
+import { Calendar, Globe2, MapPin, Search, Users } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { hackathons as hackathonsList } from "@/constants/hackathonlist";
 import { Hackathon } from "@/constants/hackathonlist";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useUser } from "@clerk/nextjs";
+import User from "@/interfaces/User";
+import { collection, doc, getDoc, getDocs } from "@firebase/firestore";
+import { db } from "@/firebaseConfig";
 
 export function HackathonsListComponent() {
-  //currently pulling from constants, will need to pull from database
-  const [searchTerm, setSearchTerm] = React.useState("");
-  const [dateFilter] = React.useState("");
-  const [locationFilter, setLocationFilter] = React.useState("all");
+  const { user } = useUser();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dateFilter] = useState("");
+  const [locationFilter, setLocationFilter] = useState("all");
+  const [userdata, setUserdata] = useState<User | null>(null);
+  const [hasAccount, setHasAccount] = useState(false);
+  const [hackathonsList, setHackathonsList] = useState<Hackathon[]>([]);
+  const [userTeams, setUserTeams] = useState<string[]>([]);
 
-  const hackathons: Hackathon[] = React.useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time to start of day
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user) return;
 
-    return hackathonsList.filter((hackathon) => {
-      const hackathonDate = new Date(hackathon.endDate);
-      return hackathonDate >= today;
-    });
-  }, []);
+      try {
+        // Fetch user data
+        const userDocRef = doc(db, 'users', user.id);
+        const userDocSnap = await getDoc(userDocRef);
+        
+        if (userDocSnap.exists()) {
+          setUserdata(userDocSnap.data() as User);
+          setHasAccount(true);
+        }
 
-  const filteredHackathons = React.useMemo(() => {
-    return hackathons.filter((hackathon) => {
+        // Fetch hackathons
+        const hackathonsRef = collection(db, 'hackathons');
+        const hackathonsSnap = await getDocs(hackathonsRef);
+        const hackathonsData = hackathonsSnap.docs.map((doc: any) => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setHackathonsList(hackathonsData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  useEffect(() => {
+    const fetchTeamData = async () => {
+      if (!userdata?.teams) return;
+      
+      try {
+        const hackathonIds: string[] = [];
+        
+        // Check each team document
+        for (const teamId of userdata.teams) {
+          const teamDoc = await getDoc(doc(db, 'teams', teamId));
+          if (teamDoc.exists()) {
+            const teamData = teamDoc.data();
+            if (teamData.hackathonId) {
+              hackathonIds.push(teamData.hackathonId);
+            }
+          }
+        }
+        
+        setUserTeams(hackathonIds);
+      } catch (error) {
+        console.error("Error fetching team data:", error);
+      }
+    };
+
+    fetchTeamData();
+  }, [userdata?.teams]);
+
+  // Simple filtering without memoization
+  const filteredHackathons = hackathonsList
+    .filter((hackathon) => {
+      const today = new Date();
+      const hackathonEndDate = new Date(hackathon.endDate);
+      const isOngoingOrUpcoming = hackathonEndDate >= today;
+
       const matchesSearch = hackathon.name
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
       const matchesDate =
-        !dateFilter || new Date(hackathon.date) >= new Date(dateFilter);
+        !dateFilter || new Date(hackathon.date) <= new Date(dateFilter);
       const matchesLocation =
         locationFilter === "all" ||
         (locationFilter === "online" && hackathon.isOnline) ||
         (locationFilter === "in-person" && !hackathon.isOnline);
-      return matchesSearch && matchesDate && matchesLocation;
-    });
-  }, [hackathons, searchTerm, dateFilter, locationFilter]);
+      return matchesSearch && matchesDate && matchesLocation && isOngoingOrUpcoming;
+    })
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
     <div className="min-h-screen bg-zinc-800 p-4">
@@ -128,7 +185,6 @@ export function HackathonsListComponent() {
         {/* Hackathon Grid */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredHackathons
-          .filter((hackathon) => hackathon.id === "40")
           .map((hackathon) => (
             <Card
               key={hackathon.id}
@@ -178,18 +234,27 @@ export function HackathonsListComponent() {
                   )}
                   {hackathon.location}
                 </div>
-                {/* {hackathon.participants && (
-                  <div className="flex items-center gap-1.5 text-sm text-gray-600">
-                    <Users className="h-4 w-4 text-blue-500" />
-                    {`${hackathon.participants} want to match on Synergy`}
+                {hackathon.participants && (
+                  <div className="flex items-center gap-2 text-sm text-white">
+                    <Users className="h-4 w-4 text-white" />
+                    {`${Math.ceil(hackathon.participants / 10) * 10}+ hackers`}
                   </div>
-                )} */}
+                )}
                 <div className="mt-4 flex gap-3">
-                  <Button asChild className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-white hover:text-white">
-                    <Link href={`/hackathons/${hackathon.id}`}>
-                      Form Team
-                    </Link>
-                  </Button>
+                  {userTeams.includes(hackathon.id) ? (
+                    <Button disabled className="flex-1 bg-gray-500 font-bold text-white">
+                      Applied
+                    </Button>
+                  ) : (
+                    <Button 
+                      asChild 
+                      className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-white hover:text-white"
+                    >
+                      <Link href={hasAccount ? `/hackathons/${hackathon.id}` : '/account-setup'}>
+                        Form Team
+                      </Link>
+                    </Button>
+                  )}
                   <Button asChild variant="outline" className="flex-1 bg-[#4A4A4A] border-[#ffac4c] text-[#ffac4c] hover:bg-[#FFAD08]/10 hover:text-[#ffac4c]">
                     <Link
                       href={hackathon.website}

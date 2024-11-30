@@ -16,7 +16,7 @@ function SkillSlider({
   id: string;
 }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 mb-8">
       <div className="flex justify-between">
         <Label htmlFor={id}>{label}</Label>
         <span className="text-zinc-400 text-sm">{description}</span>
@@ -28,11 +28,19 @@ function SkillSlider({
         step={1}
         value={[value]}
         onValueChange={onValueChange}
-        className="[&_[role=slider]]:bg-amber-500"
+        className={`
+          [&_[role=slider]]:h-0 [&_[role=slider]]:w-0
+          [&_.relative]:h-2
+          [&_[data-orientation=horizontal]]:h-2
+          [&_.bg-primary]:bg-amber-500
+          [&_[data-orientation=horizontal]]:rounded-full
+        `}
       />
       <div className="flex justify-between text-xs text-zinc-400">
-        {[0, 1, 2, 3, 4].map((num) => (
-          <span key={num}>{num}</span>
+        {['Beginner', 'Intermediate', 'Advanced'].map((num) => (
+          <span key={num}>
+            {num}
+          </span>
         ))}
       </div>
     </div>

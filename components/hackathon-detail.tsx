@@ -21,7 +21,7 @@ import { useClerk } from "@clerk/nextjs"; // Importing Clerk components
 import { Multiselect } from "./multiselect";
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { addDoc, collection, getDocs } from "@firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, updateDoc, setDoc } from "@firebase/firestore";
 import { db } from "@/firebaseConfig";
 import { Input } from "@/components/ui/input";
 
@@ -133,8 +133,26 @@ export function HackathonDetailComponent() {
 
       const docRef = await addDoc(
         collection(db, 'teams'),
-        { ...formData }
+        { ...formData, name: hackathon?.name }
       )
+
+      // Add team ID to user's teams array in Firestore
+      const userRef = doc(db, 'users', userId);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const currentTeams = userDoc.data().teams || [];
+        await updateDoc(userRef, {
+          teams: [...currentTeams, docRef.id]
+        });
+      } else {
+        throw new Error("User not signed in");
+      }
+      console.log("User data:", {
+        id: userId,
+        teams: userDoc.exists() ? userDoc.data().teams : [],
+      });
+
       console.log("Team created with ID:", docRef.id);
       console.log("Team details:", formData);
       toast.success("Team created successfully!");
@@ -197,6 +215,18 @@ export function HackathonDetailComponent() {
     "Samba Nova",
   ];
 
+  if (hackathon.id !== "40") {
+    return <div className="min-h-screen bg-zinc-800 p-4 py-8 text-white">
+      <Card className="max-w-2xl mx-auto my-9 text-white bg-zinc-800">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">
+            <div className="text-center">Hackathon not found</div>
+          </CardTitle>
+        </CardHeader>
+      </Card>
+    </div>;
+  }
+
   return (
     <div className="min-h-screen bg-zinc-800 p-4 py-8 text-white">
       <Card className="max-w-2xl mx-auto my-9 text-white bg-zinc-800">
@@ -245,6 +275,8 @@ export function HackathonDetailComponent() {
                     <div className="space-y-2">
                       <div className="flex gap-2">
                         <Input
+                          maxLength={50}
+                          disabled={formData.teammates.length >= 4}
                           type="text"
                           placeholder="Search username..."
                           value={searchTerm}
@@ -252,6 +284,7 @@ export function HackathonDetailComponent() {
                           className="bg-zinc-700 border-amber-500/50"
                         />
                         <Button
+                          disabled={formData.teammates.length >= 3}
                           type="button"
                           onClick={() => {
                             const foundUser = usersList.find(user => 
@@ -268,7 +301,7 @@ export function HackathonDetailComponent() {
                               setSearchTerm('');
                               console.log(`Added ${foundUser.username} to team`);
                             } else {
-                              console.log('Username not found');
+                              toast.error('Username not found');
                             }
                           }}
                           className="bg-amber-500 hover:bg-amber-600"
@@ -336,15 +369,21 @@ export function HackathonDetailComponent() {
               {formData.hasProjectIdea === "yes" && (
                 <div className="space-y-2">
                   <Label htmlFor="projectIdea">If Yes, Please Describe Your Project Idea:</Label>
-                  <Textarea
-                    id="projectIdea"
-                    name="projectIdea"
-                    value={formData.projectIdea}
-                    onChange={handleChange}
-                    placeholder="Describe your project idea..."
-                    className="min-h-[100px]"
-                    required
-                  />
+                  <div className="relative">
+                    <Textarea
+                      id="projectIdea"
+                      name="projectIdea"
+                      value={formData.projectIdea}
+                      onChange={handleChange}
+                      placeholder="Describe your project idea..."
+                      className="min-h-[100px]"
+                      required
+                      maxLength={1500}
+                    />
+                    <div className="absolute bottom-2 right-2 text-sm text-gray-400">
+                      {formData.projectIdea.length}/1500
+                    </div>
+                  </div>
                 </div>
               )}
 
