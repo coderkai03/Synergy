@@ -250,7 +250,8 @@ export function AccountSetupComponent() {
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
                     <Input
-                      id="phone" 
+                      id="phone"
+                      name="phone"
                       className="bg-zinc-700 border-amber-500/50" 
                       value={formData.phone}
                       onChange={handleChange}
