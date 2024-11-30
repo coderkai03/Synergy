@@ -331,26 +331,11 @@ export function AccountSetupComponent() {
                       options={programming_languages}
                       selectedItems={formData.programming_languages}
                       setSelectedItems={(items) => {
-                        if (items.includes("None")) {
-                          setFormData((prev) => ({
-                            ...prev,
-                            programming_languages: ["None"],
-                          }));
-                        } else if (formData.programming_languages.includes("None")) {
-                          setFormData((prev) => ({
-                            ...prev,
-                            programming_languages: items.filter(item => item !== "None"),
-                          }));
-                        } else {
-                          setFormData((prev) => ({
-                            ...prev,
-                            programming_languages: items,
-                          }));
-                        }
+                        setFormData((prev) => ({
+                          ...prev,
+                          programming_languages: items,
+                        }));
                       }}
-                      isOptionDisabled={(option: string) => 
-                        formData.programming_languages.includes("None") && option !== "None"
-                      }
                     />
                   </div>
 
@@ -360,28 +345,11 @@ export function AccountSetupComponent() {
                       options={frameworks_and_tools}
                       selectedItems={formData.frameworks_and_tools}
                       setSelectedItems={(items) => {
-                        if (items.includes("None")) {
-                          setFormData((prev) => ({
-                            ...prev,
-                            frameworks_and_tools: ["None"],
-                          }));
-                        }
-                        else if (formData.frameworks_and_tools.includes("None")) {
-                          setFormData((prev) => ({
-                            ...prev,
-                            frameworks_and_tools: items.filter(item => item !== "None"),
-                          }));
-                        }
-                        else {
-                          setFormData((prev) => ({
-                            ...prev,
-                            frameworks_and_tools: items,
-                          }));
-                        }
+                        setFormData((prev) => ({
+                          ...prev,
+                          frameworks_and_tools: items,
+                        }));
                       }}
-                      isOptionDisabled={(option: string) => 
-                        formData.frameworks_and_tools.includes("None") && option !== "None"
-                      }
                     />
                   </div>
                   </CollapsibleContent>
