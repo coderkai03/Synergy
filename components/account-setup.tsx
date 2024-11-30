@@ -212,7 +212,7 @@ export function AccountSetupComponent() {
       <div className="flex justify-center">
         <Card className="felx fex-col items-center space-y-6 w-3/4 bg-[#111119] text-white border-none pt-5">
           <CardHeader>
-            <CardTitle>Synergy: Hackathon Account Setup</CardTitle>
+            <CardTitle>Account Setup</CardTitle>
             <CardDescription>
               Complete your profile to find the perfect hackathon partners and
               enhance your experience.

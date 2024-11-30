@@ -8,6 +8,7 @@ interface MultiSelectProps {
   options: string[];
   selectedItems: string[];
   setSelectedItems: (items: string[]) => void;
+  required?: boolean;
 }
 
 export function Multiselect({

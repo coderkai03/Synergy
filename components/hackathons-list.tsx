@@ -112,7 +112,7 @@ export function HackathonsListComponent() {
           transition={{ duration: 0.5 }}
           className="text-4xl md:text-5xl font-bold mb-4 text-center"
         >
-          <span className="bg-gradient-to-r from-yellow-500 to-zinc-300 text-transparent bg-clip-text">2024</span>
+          <span className="bg-gradient-to-r from-yellow-500 to-zinc-300 text-transparent bg-clip-text">2024-25</span>
           <span className="text-white"> Hackathon Season</span>
         </motion.h1>
         <motion.p
@@ -122,7 +122,7 @@ export function HackathonsListComponent() {
           className="text-center mx-auto mt-4 max-w-2xl text-lg text-zinc-400 mb-12"
         >
           Find and compete with your dream team at the largest, most diverse
-          hacker events in the world.
+          hacker events <span className="italic">in the world.</span>
         </motion.p>
 
         {/* Search and Filter */}

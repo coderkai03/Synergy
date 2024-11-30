@@ -31,6 +31,7 @@ export function cn(...inputs: ClassValue[]) {
 interface Hackathon {
   id: string;
   name: string;
+  image: string;
   // ... add other fields you need
 }
 
@@ -51,7 +52,10 @@ export function HackathonDetailComponent() {
     problemSpaces: [] as string[],
     teammates: [] as string[]
   });
-  const [usersList, setUsersList] = useState<Array<{id: string, username: string}>>([]);
+  const [usersList, setUsersList] = useState<Array<{
+    email: string;
+    id: string;
+  }>>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -97,15 +101,14 @@ export function HackathonDetailComponent() {
       const usersSnapshot = await getDocs(collection(db, 'users'));
       const users = usersSnapshot.docs.map(doc => ({
         id: doc.id,
-        username: doc.data().username || doc.data().email?.split('@')[0] || 'Unknown'
+        email: doc.data().email,
       }));
       setUsersList(users);
+      console.log(users);
     };
 
-    if (formData.alreadyInTeam === "yes") {
-      fetchUsers();
-    }
-  }, [formData.alreadyInTeam]);
+    fetchUsers();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -152,7 +155,11 @@ export function HackathonDetailComponent() {
 
       const docRef = await addDoc(
         collection(db, 'teams'),
-        { ...formData, name: hackathon?.name }
+        {
+          ...formData,
+          name: hackathon?.name,
+          hackathonId: hackathon?.id
+        }
       )
 
       // Add team ID to user's teams array in Firestore
@@ -251,9 +258,16 @@ export function HackathonDetailComponent() {
       <Card className="max-w-2xl mx-auto my-9 text-white bg-zinc-800">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
-            Team Formation for {hackathon.name}
+            {hackathon.name}: Team Formation
           </CardTitle>
         </CardHeader>
+        <CardContent className="flex justify-center">
+          <img 
+            src={hackathon.image} 
+            alt={hackathon.name}
+            className="rounded-lg max-h-[150px] object-cover" 
+          />
+        </CardContent>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-6">
             <div className="space-y-4">
@@ -262,11 +276,12 @@ export function HackathonDetailComponent() {
               </div>
 
               <div className="space-y-2">
-                <Label>Are you in a team already?</Label>
+                <Label>Do you have teammates?</Label>
                 <RadioGroup
                   name="alreadyInTeam"
                   value={formData.alreadyInTeam}
                   onValueChange={(value) => handleRadioChange("alreadyInTeam", value)}
+                  required
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
@@ -297,7 +312,7 @@ export function HackathonDetailComponent() {
                           maxLength={50}
                           disabled={formData.teammates.length >= 4}
                           type="text"
-                          placeholder="Search username..."
+                          placeholder="Search email..."
                           value={searchTerm}
                           onChange={(e) => setSearchTerm(e.target.value)}
                           className="bg-zinc-700 border-amber-500/50"
@@ -307,10 +322,10 @@ export function HackathonDetailComponent() {
                           type="button"
                           onClick={() => {
                             const foundUser = usersList.find(user => 
-                              user.username.toLowerCase() === searchTerm.toLowerCase()
+                              user.email?.toLowerCase() === searchTerm.toLowerCase()
                             );
                             
-                            if (foundUser) { // TODO: Check if user is already in team
+                            if (foundUser) {
                               if (!formData.teammates.includes(foundUser.id)) {
                                 setFormData({
                                   ...formData,
@@ -318,9 +333,9 @@ export function HackathonDetailComponent() {
                                 });
                               }
                               setSearchTerm('');
-                              console.log(`Added ${foundUser.username} to team`);
+                              console.log(`Added ${foundUser.email} to team`);
                             } else {
-                              toast.error('Username not found');
+                              toast.error('Email not found');
                             }
                           }}
                           className="bg-amber-500 hover:bg-amber-600"
@@ -335,7 +350,7 @@ export function HackathonDetailComponent() {
                           const user = usersList.find(u => u.id === teamId);
                           return user ? (
                             <div key={teamId} className="flex items-center gap-2 bg-zinc-700 p-2 rounded">
-                              <span>{user.username}</span>
+                              <span>{user.email}</span>
                               <Button
                                 type="button"
                                 variant="ghost"
@@ -365,6 +380,7 @@ export function HackathonDetailComponent() {
                   name="hasProjectIdea"
                   value={formData.hasProjectIdea}
                   onValueChange={(value) => handleRadioChange("hasProjectIdea", value)}
+                  required
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
@@ -410,7 +426,7 @@ export function HackathonDetailComponent() {
                 <div className="text-lg font-semibold">Goals and Expectations:</div>
 
                 <div className="space-y-2">
-                  <Label>What Are Your Goals for This Hackathon?</Label>
+                  <Label>What Are Your Goals for This Hackathon? (Select at least one)</Label>
                   <div className="space-y-2">
                     {["Learning new technologies", "Networking", "Winning prizes"].map(
                       (goal) => (
@@ -422,6 +438,7 @@ export function HackathonDetailComponent() {
                               handleCheckboxChange(goal, checked as boolean)
                             }
                             className="w-4 h-4 border border-white rounded bg-transparent"
+                            required={formData.goals.length === 0}
                           />
                           <Label htmlFor={goal}>{goal}</Label>
                         </div>
@@ -431,23 +448,9 @@ export function HackathonDetailComponent() {
                 </div>
               </div>
 
-
-              {/* <div className="space-y-2">
-                <Label htmlFor="technologies">
-                  Which Technologies or Skills Are You Interested in Exploring?
-                </Label>
-                <Multiselect
-                  options={technologyOptions}
-                  selectedItems={formData.technologies}
-                  setSelectedItems={(items) =>
-                    setFormData({ ...formData, technologies: items })
-                  }
-                />
-              </div> */}
-
               <div className="space-y-2">
                 <Label htmlFor="problemSpaces" className="text-white">
-                  What Categories Are You Passionate About?
+                  What Categories Are You Passionate About? (Select at least one)
                 </Label>
                 <Multiselect
                   options={problemSpaceOptions}
@@ -460,7 +463,19 @@ export function HackathonDetailComponent() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-white" disabled={isSubmitting}>
+            <Button 
+              type="submit" 
+              className="w-full bg-amber-500 hover:bg-amber-600 text-white" 
+              disabled={
+                isSubmitting || 
+                formData.goals.length === 0 || 
+                formData.problemSpaces.length === 0 || 
+                !formData.alreadyInTeam || 
+                (formData.alreadyInTeam === "yes" && formData.teammates.length === 0) ||
+                !formData.hasProjectIdea || 
+                (formData.hasProjectIdea === "yes" && !formData.projectIdea)
+              }
+            >
               {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </CardFooter>
