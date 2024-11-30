@@ -12,7 +12,7 @@ import { Hackathon } from "@/constants/hackathonlist";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from "@clerk/nextjs";
 import User from "@/interfaces/User";
-import { collection, doc, getDoc, getDocs } from "@firebase/firestore";
+import { collection, doc, DocumentData, getDoc, getDocs } from "@firebase/firestore";
 import { db } from "@/firebaseConfig";
 
 export function HackathonsListComponent() {
@@ -42,7 +42,7 @@ export function HackathonsListComponent() {
         // Fetch hackathons
         const hackathonsRef = collection(db, 'hackathons');
         const hackathonsSnap = await getDocs(hackathonsRef);
-        const hackathonsData = hackathonsSnap.docs.map((doc: any) => ({
+        const hackathonsData = hackathonsSnap.docs.map((doc: DocumentData) => ({
           id: doc.id,
           ...doc.data()
         }));

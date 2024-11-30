@@ -21,7 +21,7 @@ import { useClerk } from "@clerk/nextjs"; // Importing Clerk components
 import { Multiselect } from "./multiselect";
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { addDoc, collection, doc, getDoc, getDocs, updateDoc, setDoc } from "@firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "@firebase/firestore";
 import { db } from "@/firebaseConfig";
 import { Input } from "@/components/ui/input";
 
