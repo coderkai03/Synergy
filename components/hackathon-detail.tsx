@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { Hackathon, hackathons } from "@/constants/hackathonlist";
 import {
   Card,
   CardContent,
@@ -29,6 +28,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+interface Hackathon {
+  id: string;
+  name: string;
+  // ... add other fields you need
+}
+
 export function HackathonDetailComponent() {
   const router = useRouter();
   const params = useParams();
@@ -48,23 +53,37 @@ export function HackathonDetailComponent() {
   });
   const [usersList, setUsersList] = useState<Array<{id: string, username: string}>>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchHackathon = () => {
-      const foundHackathon = hackathons.find((h) => h.id === id);
-      if (foundHackathon) {
-        setHackathon(foundHackathon);
-      } else {
-        toast.error("Hackathon not found");
-        router.push("/hackathons");
+    const fetchHackathon = async () => {
+      if (!id) return;
+      
+      try {
+        setLoading(true);
+        const hackathonRef = doc(db, 'hackathons', id);
+        const hackathonSnap = await getDoc(hackathonRef);
+        
+        if (hackathonSnap.exists()) {
+          setHackathon({
+            id: hackathonSnap.id,
+            ...hackathonSnap.data()
+          } as Hackathon);
+        } else {
+          toast.error("Hackathon not found");
+          router.push("/hackathons");
+        }
+      } catch (error) {
+        console.error("Error fetching hackathon:", error);
+        toast.error("Error loading hackathon details");
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (id) {
-      fetchHackathon();
-    }
+    fetchHackathon();
 
-    // Check if the user has already submitted for this hackathon
+    // Check if user has already submitted
     const submittedHackathons = JSON.parse(
       localStorage.getItem("submittedHackathons") || "[]"
     );
@@ -164,7 +183,7 @@ export function HackathonDetailComponent() {
     }
   };
 
-  if (!hackathon) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -174,6 +193,18 @@ export function HackathonDetailComponent() {
 
   if (hasSubmitted) {
     return <HackathonWait />;
+  }
+
+  if (!hackathon) {
+    return <div className="min-h-screen bg-zinc-800 p-4 py-8 text-white">
+      <Card className="max-w-2xl mx-auto my-9 text-white bg-zinc-800">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">
+            <div className="text-center">Hackathon not found</div>
+          </CardTitle>
+        </CardHeader>
+      </Card>
+    </div>;
   }
 
   // const technologyOptions = [
@@ -214,18 +245,6 @@ export function HackathonDetailComponent() {
     "Hardware",
     "Samba Nova",
   ];
-
-  if (hackathon.id !== "40") {
-    return <div className="min-h-screen bg-zinc-800 p-4 py-8 text-white">
-      <Card className="max-w-2xl mx-auto my-9 text-white bg-zinc-800">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">
-            <div className="text-center">Hackathon not found</div>
-          </CardTitle>
-        </CardHeader>
-      </Card>
-    </div>;
-  }
 
   return (
     <div className="min-h-screen bg-zinc-800 p-4 py-8 text-white">
