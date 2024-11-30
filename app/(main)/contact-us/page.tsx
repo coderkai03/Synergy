@@ -22,7 +22,7 @@ export default function ContactUsPage() {
                 href="mailto:hello@synergy-hackathon.com"
                 className="text-amber-500 hover:text-amber-400 text-xl font-medium"
               >
-                hello@synergy-hackathon.com
+                riancorci@gmail.com
               </a>
             </div>
           </motion.div>

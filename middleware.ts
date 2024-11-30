@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 const publicRoutes = createRouteMatcher([
   // Public routes that don't require authentication
   "/",
+  "/contact-us",
   "/legal",
   // Static files and Next.js internals
   "/_next(.*)",
