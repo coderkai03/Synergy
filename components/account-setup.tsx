@@ -336,20 +336,21 @@ export function AccountSetupComponent() {
                             ...prev,
                             programming_languages: ["None"],
                           }));
-                        }
-                        else if (formData.programming_languages.includes("None")) {
+                        } else if (formData.programming_languages.includes("None")) {
                           setFormData((prev) => ({
                             ...prev,
                             programming_languages: items.filter(item => item !== "None"),
                           }));
-                        }
-                        else {
+                        } else {
                           setFormData((prev) => ({
                             ...prev,
                             programming_languages: items,
                           }));
                         }
                       }}
+                      isOptionDisabled={(option: string) => 
+                        formData.programming_languages.includes("None") && option !== "None"
+                      }
                     />
                   </div>
 
@@ -378,6 +379,9 @@ export function AccountSetupComponent() {
                           }));
                         }
                       }}
+                      isOptionDisabled={(option: string) => 
+                        formData.frameworks_and_tools.includes("None") && option !== "None"
+                      }
                     />
                   </div>
                   </CollapsibleContent>

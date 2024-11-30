@@ -8,13 +8,14 @@ interface MultiSelectProps {
   options: string[];
   selectedItems: string[];
   setSelectedItems: (items: string[]) => void;
-  required?: boolean;
+  isOptionDisabled?: (option: string) => boolean;
 }
 
 export function Multiselect({
   options,
   selectedItems = [],
   setSelectedItems,
+  isOptionDisabled,
 }: MultiSelectProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -22,7 +23,7 @@ export function Multiselect({
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const addItem = (item: string) => {
-    if (!selectedItems.includes(item)) {
+    if (!selectedItems.includes(item) && (!isOptionDisabled || !isOptionDisabled(item))) {
       const newSelectedItems = [...selectedItems, item];
       setSelectedItems(newSelectedItems);
     }
