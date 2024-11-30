@@ -170,6 +170,7 @@ export function AccountSetupComponent() {
     "Kotlin",
     "PHP",
     "TypeScript",
+    "None"
   ];
 
   const frameworks_and_tools = [
@@ -183,6 +184,7 @@ export function AccountSetupComponent() {
     "Express.js",
     "TensorFlow",
     "PyTorch",
+    "None"
   ];
 
   // const category_experience = [
@@ -329,10 +331,24 @@ export function AccountSetupComponent() {
                       options={programming_languages}
                       selectedItems={formData.programming_languages}
                       setSelectedItems={(items) => {
-                        setFormData((prev) => ({
-                          ...prev,
-                          programming_languages: items,
-                        }));
+                        if (items.includes("None")) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            programming_languages: ["None"],
+                          }));
+                        }
+                        else if (formData.programming_languages.includes("None")) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            programming_languages: items.filter(item => item !== "None"),
+                          }));
+                        }
+                        else {
+                          setFormData((prev) => ({
+                            ...prev,
+                            programming_languages: items,
+                          }));
+                        }
                       }}
                     />
                   </div>
@@ -343,10 +359,24 @@ export function AccountSetupComponent() {
                       options={frameworks_and_tools}
                       selectedItems={formData.frameworks_and_tools}
                       setSelectedItems={(items) => {
-                        setFormData((prev) => ({
-                          ...prev,
-                          frameworks_and_tools: items,
-                        }));
+                        if (items.includes("None")) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            frameworks_and_tools: ["None"],
+                          }));
+                        }
+                        else if (formData.frameworks_and_tools.includes("None")) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            frameworks_and_tools: items.filter(item => item !== "None"),
+                          }));
+                        }
+                        else {
+                          setFormData((prev) => ({
+                            ...prev,
+                            frameworks_and_tools: items,
+                          }));
+                        }
                       }}
                     />
                   </div>
