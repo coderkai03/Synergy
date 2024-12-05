@@ -23,6 +23,7 @@ import { twMerge } from "tailwind-merge"
 import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "@firebase/firestore";
 import { db } from "@/firebaseConfig";
 import { Input } from "@/components/ui/input";
+import { problemSpaceOptions } from "@/constants/hackathonlist";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -214,47 +215,8 @@ export function HackathonDetailComponent() {
     </div>;
   }
 
-  // const technologyOptions = [
-  //   "JavaScript",
-  //   "Python",
-  //   "React",
-  //   "Node.js",
-  //   "Machine Learning",
-  //   "Product Management",
-  //   "UI/UX Design",
-  //   "Data Science",
-  //   "Mobile Development",
-  //   "Cloud Computing",
-  // ];
-
-  const problemSpaceOptions = [
-    "Healthcare",
-    "Education",
-    "Fintech",
-    "Sustainability",
-    "Social Impact",
-    "AI/ML",
-    "Developer Tools",
-    "Entertainment",
-    "E-commerce",
-    "Productivity",
-    "PNC",
-    "Piñata",
-    "EOG Resources",
-    "Goldman Sachs",
-    "Infosys",
-    "CBRE",
-    "Frontier",
-    "Veolia",
-    "Toyota",
-    "Design",
-    "Beginner",
-    "Hardware",
-    "Samba Nova",
-  ];
-
   return (
-    <div className="min-h-screen bg-zinc-800 p-4 py-8 text-white">
+    <div className="min-h-screen bg-[#111119] p-4 py-8 text-white">
       <Card className="max-w-2xl mx-auto my-9 text-white bg-zinc-800">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
@@ -308,15 +270,49 @@ export function HackathonDetailComponent() {
                   <div className="space-y-2">
                     <div className="space-y-2">
                       <div className="flex gap-2">
-                        <Input
-                          maxLength={50}
-                          disabled={formData.teammates.length >= 4}
-                          type="text"
-                          placeholder="Search email..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="bg-zinc-700 border-amber-500/50"
-                        />
+                        <div className="relative">
+                          <Input
+                            maxLength={50}
+                            disabled={formData.teammates.length >= 4}
+                            type="text"
+                            placeholder="Search email..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="bg-zinc-700 border-amber-500/50"
+                          />
+                          {searchTerm && usersList
+                            .filter(u => 
+                              u.email &&
+                              u.email.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                              u.email !== user?.primaryEmailAddress?.emailAddress &&
+                              !formData.teammates.includes(u.id)
+                            ).length > 0 && (
+                              <div className="absolute z-10 w-full bg-zinc-800 border border-amber-500/50 rounded-md mt-1 max-h-40 overflow-y-auto">
+                                {usersList
+                                  .filter(u => 
+                                    u.email.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                                    u.email !== user?.primaryEmailAddress?.emailAddress &&
+                                    !formData.teammates.includes(u.id)
+                                  )
+                                  .slice(0, 5)
+                                  .map(u => (
+                                    <div
+                                      key={u.id}
+                                      className="p-2 hover:bg-zinc-700 cursor-pointer"
+                                      onClick={() => {
+                                        setFormData({
+                                          ...formData,
+                                          teammates: [...formData.teammates, u.id]
+                                        });
+                                        setSearchTerm('');
+                                      }}
+                                    >
+                                      {u.email}
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                        </div>
                         <Button
                           disabled={formData.teammates.length >= 3}
                           type="button"

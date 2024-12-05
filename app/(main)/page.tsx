@@ -2,27 +2,24 @@
 
 import { motion } from "framer-motion";
 import {Zap, Search, User } from "lucide-react";
-import SynergyLogo from "@/components/synergy-logo";
 import GetStarted from "./get-started";
+import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
+import { schools } from "@/constants/schoollist";
 
 export default function Home() {
   return (
-    <div className="min-h-screen fglw-full bg-[#111119]">
-      <div className="h-[75vh] w-full bg-cover bg-center">
-        <main className="flex items-center justify-center h-full py-20">
-          <div className="w-full md:w-1/2 px-4 py-16 flex flex-col items-center overflow-hidden"> 
-            <div className="scale-150">
-              <SynergyLogo/>
-            </div>
-            <div className="flex items-center justify-center mt-8 text-white">
-              <p className="text-xl font-light leading-relaxed text-center">
-                Find your dream team for any hackathon.
-              </p>
-            </div>
-            
-            <GetStarted/>
-          </div>
-        </main>
+    <div className="min-h-screen flex flex-col w-full bg-[#111119]">
+      <div className="h-[100vh] w-full bg-cover bg-center flex flex-col items-center justify-center space-y-12 text-center">
+        <p className="text-2xl md:text-4xl font-bold leading-relaxed text-white">
+          Find your dream team<br/>for any hackathon.
+        </p>
+        <p className="text-zinc-400 text-xl">
+          Used by students at
+        </p>
+        <InfiniteMovingCards
+          items={schools}
+        />
+        <GetStarted/>
       </div>
 
       <section className="min--screen bg-[#111119] py-24 px-20">
@@ -85,7 +82,7 @@ export default function Home() {
           </motion.div>
         </section>
 
-        <div className="-mt-20">
+        <div className="mt-10 mb-20">
           <GetStarted/>
         </div>
 
