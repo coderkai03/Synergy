@@ -227,7 +227,7 @@ export function AccountSetupComponent() {
 
               {/* Personal Information section */}
               <Collapsible className="bg-zinc-800 rounded-lg">
-                <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
+                <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
                   <h2 className="text-lg font-semibold text-white">Personal Information</h2>
                   <ChevronDown className="w-5 h-5 text-zinc-400" />
                 </CollapsibleTrigger>
@@ -267,8 +267,8 @@ export function AccountSetupComponent() {
 
               {/* Educational Background section */}
               <Collapsible className="bg-zinc-800 rounded-lg">
-              <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
-                <h2 className="text-lg font-semibold text-white">Educational Background</h2>
+              <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
+                <h2 className="text-lg font-semibold text-white">Education</h2>
                 <ChevronDown className="w-5 h-5 text-zinc-400" />
               </CollapsibleTrigger>
               <CollapsibleContent className="p-4 pt-0 space-y-4">
@@ -320,7 +320,7 @@ export function AccountSetupComponent() {
 
               {/* Technical Skills section */}
               <Collapsible className="bg-zinc-800 rounded-lg">
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
                     <h2 className="text-lg font-semibold text-white">Technical Skills</h2>
                     <ChevronDown className="w-5 h-5 text-zinc-400" />
                   </CollapsibleTrigger>
@@ -357,7 +357,7 @@ export function AccountSetupComponent() {
 
               {/* Online Profiles section */}
               <Collapsible className="bg-zinc-800 rounded-lg">
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
                     <h2 className="text-lg font-semibold text-white">Online Profiles</h2>
                     <ChevronDown className="w-5 h-5 text-zinc-400" />
                   </CollapsibleTrigger>
@@ -393,8 +393,8 @@ export function AccountSetupComponent() {
 
               {/* Hackathon Experience section */}
               <Collapsible className="bg-zinc-800 rounded-lg">
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4">
-                    <h2 className="text-lg font-semibold text-white">Hackathons Experience and Preferred Roles</h2>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
+                    <h2 className="text-lg font-semibold text-white">Hackathon Experience</h2>
                     <ChevronDown className="w-5 h-5 text-zinc-400" />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="p-4 pt-0 space-y-6">
