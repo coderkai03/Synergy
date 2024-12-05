@@ -8,11 +8,12 @@ export const schools = [
     name: "Stanford University",
     title: "Top university in the US"
   },
-  {
-    image: CSUF,
-    name: "California State University, Fullerton",
-    title: "Top public university in California"
-  },
+  // TODO: Add CSUF
+  // {
+  //   image: CSUF,
+  //   name: "California State University, Fullerton",
+  //   title: "Top public university in California"
+  // },
   {
     image: UTD,
     name: "University of Texas, Dallas",
