@@ -31,41 +31,29 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import { db } from '@/firebaseConfig'
-import { doc, setDoc, getDoc } from '@firebase/firestore'
-import User from "@/interfaces/User";
+import { doc, setDoc } from '@firebase/firestore'
+import { defaultUser, frameworks_and_tools, programming_languages, User } from "@/interfaces/User";
 import SkillsSection from "./slider-section";
+import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 
 export function AccountSetupComponent() {
   const router = useRouter();
   const { user, isSignedIn, isLoaded } = useUser();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-
+  const { userData } = useFirebaseUser(user?.id);
   const [formData, setFormData] = useState<User>({
-    full_name: "",
+    ...defaultUser,
     email: user?.primaryEmailAddress?.emailAddress || "",
-    username: user?.primaryEmailAddress?.emailAddress?.split('@')[0] || "",
-    phone: "",
-    gradYear: "",
-    school: "",
-    degree: "",
-    programming_languages: [] as string[],
-    frameworks_and_tools: [] as string[],
-    devpost: "",
-    github: "",
-    number_of_hackathons: "",
-    // achievements: "",
-    // objectives: "",
-    role_experience: {
-      product_management: -1,
-      software: -1,
-      hardware: -1,
-      uiux_design: -1,
-    },
-    teams: [] as string[],
-    // dietaryRestrictions: "",
-    // accessibilityNeeds: "",
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
   });
+  
+  useEffect(() => {
+    console.log('Current userData:', userData);
+    setFormData({
+      ...formData,
+      ...userData,
+    });
+  }, [userData]);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -84,18 +72,6 @@ export function AccountSetupComponent() {
         if (!userEmail) {
           throw new Error("User email not found")
         }
-
-        const userDoc = await getDoc(doc(db, 'users', userId))
-        const userData = userDoc.data() as User;
-        setFormData({
-          ...userData,
-          email: userEmail, // Ensure email from auth takes precedence
-          username: userEmail.split('@')[0]
-        });
-        setFirstName(userData?.full_name?.split(' ')[0] || "");
-        setLastName(userData?.full_name?.split(' ')[1] || "");
-        console.log('Loaded user: ',userDoc.data())
-
       } catch (error) {
         console.error("Error getting user ID:", error)
         return
@@ -138,18 +114,10 @@ export function AccountSetupComponent() {
     e.preventDefault();
     try {
       console.log("Submitting formData:", formData);
-      const userId = user?.id;
-      const userEmail = user?.primaryEmailAddress?.emailAddress
-
-      if (!userId) throw new Error("User ID is not available");
-      if (!userEmail) throw new Error("User email is not available");
-
-      formData.full_name = `${firstName} ${lastName}`;
-
-      const docRef = doc(db, 'users', userId);
-      await setDoc(docRef, {
-        ...formData
-      });
+      if (!user?.id) return;
+      const userDoc = doc(db, 'users', user.id);
+      await setDoc(userDoc, formData);
+      console.log("User data updated successfully");
 
       // Navigate to the next page
       router.push("/hackathons");
@@ -158,56 +126,6 @@ export function AccountSetupComponent() {
       toast.error("Failed to save your profile. Please try again.");
     }
   };
-
-  const programming_languages = [
-    "JavaScript",
-    "Python",
-    "Java",
-    "C++",
-    "Ruby",
-    "Go",
-    "Swift",
-    "Kotlin",
-    "PHP",
-    "TypeScript",
-    "None"
-  ];
-
-  const frameworks_and_tools = [
-    "React",
-    "Angular",
-    "Vue.js",
-    "Node.js",
-    "Django",
-    "Flask",
-    "Spring",
-    "Express.js",
-    "TensorFlow",
-    "PyTorch",
-    "None"
-  ];
-
-  // const category_experience = [
-  //   "Web Development",
-  //   "Mobile Development",
-  //   "AI/Machine Learning",
-  //   "Data Science",
-  //   "IoT",
-  //   "Blockchain",
-  //   "Cybersecurity",
-  //   "Cloud Computing",
-  //   "AR/VR",
-  //   "Game Development",
-  // ];
-
-  // const createRandomDoc = async (data: any) => {
-  //   try {
-  //     const docRef = await addDoc(collection(db, 'users'), data); // Automatically generates a random ID
-  //     console.log("Document written with ID: ", docRef.id);
-  //   } catch (error) {
-  //     console.error("Error adding document: ", error);
-  //   }
-  // };
 
   return (
     <div className="justify-center min-h-screen bg-[#111119] p-4">
@@ -238,8 +156,8 @@ export function AccountSetupComponent() {
                       <Input 
                         id="firstName" 
                         className="bg-zinc-700 border-amber-500/50" 
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
+                        value={formData.firstName}
+                        onChange={(e) => setFormData({...formData, firstName: e.target.value})}
                       />
                     </div>
                     <div className="space-y-2">
@@ -247,8 +165,8 @@ export function AccountSetupComponent() {
                       <Input 
                         id="lastName" 
                         className="bg-zinc-700 border-amber-500/50" 
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
+                        value={formData.lastName}
+                        onChange={(e) => setFormData({...formData, lastName: e.target.value})}
                       />
                     </div>
                   </div>
@@ -436,8 +354,8 @@ export function AccountSetupComponent() {
                   type="submit" 
                   className="bg-amber-500 hover:bg-amber-600"
                   disabled={
-                    !firstName || 
-                    !lastName ||
+                    !formData.firstName || 
+                    !formData.lastName ||
                     !formData.phone ||
                     !formData.school ||
                     !formData.degree ||

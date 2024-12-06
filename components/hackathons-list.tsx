@@ -12,77 +12,24 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Hackathon } from "@/constants/hackathonlist";
 import { Checkbox } from "@/components/ui/checkbox";
-import { db } from "@/firebaseConfig";
-import User from "@/interfaces/User";
-import { doc, getDoc, collection, getDocs } from "@firebase/firestore";
 import { useUser } from "@clerk/nextjs";
 import { useMemo, useState } from "react";
 import { useEffect } from "react";
+import { useUserExists, useUserHackathons } from "@/hooks/useFirebaseUsers";
+import { useHackathons } from "@/hooks/useHackathons";
+import { doc } from "firebase/firestore";
+import { db } from "@/firebaseConfig";
 
 export function HackathonsListComponent() {
   //currently pulling from constants, will need to pull from database
   const { user } = useUser();
-  const [userdata, setUserdata] = useState<User | null>(null);
-  const [hackathonsList, setHackathonsList] = useState<Hackathon[]>([]);
-  const [userTeams, setUserTeams] = useState<string[]>([]);
+  const { hackathonIds } = useUserHackathons(user?.id);
+  const { hackathonsList } = useHackathons();
+  const { exists } = useUserExists(user?.id);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("all");
-  const [hasAccount, setHasAccount] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user) return;
-
-      try {
-        const userDocRef = doc(db, "users", user.id);
-        const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists()) {
-          setUserdata(userDocSnap.data() as User);
-          setHasAccount(true);
-        }
-
-        const hackathonsRef = collection(db, "hackathons");
-        const hackathonsSnap = await getDocs(hackathonsRef);
-        const hackathonsData = hackathonsSnap.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setHackathonsList(hackathonsData as Hackathon[]);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, [user]);
-
-  useEffect(() => {
-    const fetchTeamData = async () => {
-      if (!userdata?.teams) return;
-      
-      try {
-        const hackathonIds: string[] = [];
-        
-        // Check each team document
-        for (const teamId of userdata.teams) {
-          const teamDoc = await getDoc(doc(db, 'teams', teamId));
-          if (teamDoc.exists()) {
-            const teamData = teamDoc.data();
-            if (teamData.hackathonId) {
-              hackathonIds.push(teamData.hackathonId);
-            }
-          }
-        }
-        
-        setUserTeams(hackathonIds);
-      } catch (error) {
-        console.error("Error fetching team data:", error);
-      }
-    };
-
-    fetchTeamData();
-  }, [userdata?.teams]);
 
   const hackathons: Hackathon[] = useMemo(() => {
     const today = new Date();
@@ -245,11 +192,11 @@ export function HackathonsListComponent() {
                 {hackathon.participants && (
                   <div className="flex items-center gap-2 text-sm text-white">
                     <Users className="h-4 w-4 text-white" />
-                    {`${Math.ceil(hackathon.participants / 10) * 10}+ hackers`}
+                    {`${hackathon.participants} hackers`}
                   </div>
                 )}
                 <div className="mt-4 flex gap-3">
-                  {userTeams.includes(hackathon.id) ? (
+                  {hackathonIds.includes(hackathon.id) ? (
                     <Button disabled className="flex-1 bg-gray-500 font-bold text-white">
                       Applied
                     </Button>
@@ -258,7 +205,7 @@ export function HackathonsListComponent() {
                       asChild 
                       className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-white hover:text-white"
                     >
-                      <Link href={hasAccount ? `/hackathons/${hackathon.id}` : '/account-setup'}>
+                      <Link href={exists ? `/hackathons/${hackathon.id}` : '/account-setup'}>
                         Form Team
                       </Link>
                     </Button>
