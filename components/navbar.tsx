@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Menu, Users } from "lucide-react";
-import { useClerk, UserButton, useUser } from "@clerk/nextjs";
+import { useClerk, UserButton } from "@clerk/nextjs";
 import SynergyLogo from "./synergy-logo";
 
 export default function Navbar() {
