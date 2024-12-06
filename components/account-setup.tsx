@@ -226,7 +226,7 @@ export function AccountSetupComponent() {
               <CardContent className="space-y-6 text-white">
 
               {/* Personal Information section */}
-              <Collapsible className="bg-zinc-800 rounded-lg">
+              <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
                 <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
                   <h2 className="text-lg font-semibold text-white">Personal Information</h2>
                   <ChevronDown className="w-5 h-5 text-zinc-400" />
@@ -263,7 +263,7 @@ export function AccountSetupComponent() {
                     />
                   </div>
                 </CollapsibleContent>
-              </Collapsible> 
+              </Collapsible>
 
               {/* Educational Background section */}
               <Collapsible className="bg-zinc-800 rounded-lg">
