@@ -1,4 +1,4 @@
-import User from "@/interfaces/User";
+import { User } from "@/interfaces/User";
 import SkillSlider from "./skill-slider";
 
 type SliderChangeHandler = (role: string) => (value: number[]) => void;
