@@ -14,11 +14,8 @@ import { Hackathon } from "@/constants/hackathonlist";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from "@clerk/nextjs";
 import { useMemo, useState } from "react";
-import { useEffect } from "react";
 import { useUserExists, useUserHackathons } from "@/hooks/useFirebaseUsers";
 import { useHackathons } from "@/hooks/useHackathons";
-import { doc } from "firebase/firestore";
-import { db } from "@/firebaseConfig";
 
 export function HackathonsListComponent() {
   //currently pulling from constants, will need to pull from database
