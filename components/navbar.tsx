@@ -8,7 +8,6 @@ import { useClerk, UserButton, useUser } from "@clerk/nextjs";
 import SynergyLogo from "./synergy-logo";
 
 export default function Navbar() {
-    const { user } = useUser();
     const { signOut } = useClerk();
 
     return (
