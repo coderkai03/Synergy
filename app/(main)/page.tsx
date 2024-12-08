@@ -9,7 +9,7 @@ import { schools } from "@/constants/schoollist";
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col w-full bg-[#111119]">
-      <div className="h-[100vh] w-full bg-cover bg-center flex flex-col items-center justify-center space-y-12 text-center">
+      <div className="h-[100vh] w-full bg-cover bg-center flex flex-col items-center justify-center space-y-5 text-center -mt-10">
         <p className="text-2xl md:text-4xl font-bold leading-relaxed text-white">
           Find your dream team<br/>for any hackathon.
         </p>
