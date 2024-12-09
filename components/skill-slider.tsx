@@ -1,6 +1,6 @@
 import React from 'react';
 import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 function SkillSlider({ 
   label, 
@@ -16,32 +16,35 @@ function SkillSlider({
   id: string;
 }) {
   return (
-    <div className="space-y-4 mb-8">
-      <div className="flex justify-between">
-        <Label htmlFor={id}>{label}</Label>
-        <span className="text-zinc-400 text-sm">{description}</span>
-      </div>
-      <Slider
-        id={id}
-        min={0}
-        max={4}
-        step={1}
-        value={[value]}
-        onValueChange={onValueChange}
-        className={`
-          [&_[role=slider]]:h-0 [&_[role=slider]]:w-0
-          [&_.relative]:h-4
-          [&_[data-orientation=horizontal]]:h-4
-          [&_.bg-primary]:bg-amber-500
-          [&_[data-orientation=horizontal]]:rounded-full
-        `}
-      />
-      <div className="flex justify-between text-xs text-zinc-400">
-        {['Beginner', 'Intermediate', 'Advanced'].map((num) => (
-          <span key={num}>
-            {num}
-          </span>
-        ))}
+    <div className="mb-8">
+      <div className="flex items-center w-full">
+        <div className="flex items-center gap-2 w-1/5">
+          <Label htmlFor={id}>{label}</Label>
+          <div className="relative group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-400 cursor-help">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4"/>
+              <path d="M12 8h.01"/>
+            </svg>
+            <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-zinc-800 text-zinc-200 text-sm rounded-md py-1 px-2 w-48">
+              {description}
+            </div>
+          </div>
+        </div>
+        <RadioGroup
+          defaultValue={value.toString()}
+          onValueChange={(val) => onValueChange([parseInt(val)])}
+          className="flex justify-evenly flex-1"
+        >
+          {[1, 2, 3].map((index) => (
+            <RadioGroupItem 
+              key={index}
+              value={index.toString()} 
+              id={`${id}-${index}`}
+              className="border-amber-500 text-amber-500 data-[state=checked]:bg-amber-500 h-5 w-5"
+            />
+          ))}
+        </RadioGroup>
       </div>
     </div>
   );

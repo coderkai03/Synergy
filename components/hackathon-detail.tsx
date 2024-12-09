@@ -22,8 +22,8 @@ import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "@firebase/firestore";
 import { db } from "@/firebaseConfig";
-import { Input } from "@/components/ui/input";
 import { problemSpaceOptions } from "@/constants/hackathonlist";
+import { ItemSelect } from "@/components/item-select";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -191,6 +191,11 @@ export function HackathonDetailComponent() {
     }
   };
 
+  const userItems = usersList.map(user => ({
+    id: user.id,
+    label: user.email
+  }));
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -265,79 +270,24 @@ export function HackathonDetailComponent() {
               </div>
 
               {formData.alreadyInTeam === "yes" && (
-                <div className="space-y-2">
-                  <Label htmlFor="teammates">Enter your team emails:</Label>
-                  <div className="space-y-4">
-                    <div className="flex flex-col relative">
-                        <Input
-                          maxLength={50}
-                          disabled={formData.teammates.length === 3}
-                          type="text"
-                          placeholder="Search email..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="w-1/2 bg-zinc-700 border-amber-500/50"
-                        />
-                        {searchTerm && usersList
-                          .filter(u => 
-                            u.email &&
-                            u.email.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                            u.email !== user?.primaryEmailAddress?.emailAddress &&
-                            !formData.teammates.includes(u.id)
-                          ).length > 0 && (
-                            <div className="absolute top-full z-10 w-1/2 bg-zinc-800 border border-amber-500/50 rounded-md mt-1 max-h-40 overflow-y-auto">
-                              {usersList
-                                .filter(u => 
-                                  u.email.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                                  u.email !== user?.primaryEmailAddress?.emailAddress &&
-                                  !formData.teammates.includes(u.id)
-                                )
-                                .slice(0, 5)
-                                .map(u => (
-                                  <div
-                                    key={u.id}
-                                    className="p-2 hover:bg-zinc-700 cursor-pointer"
-                                    onClick={() => {
-                                      setFormData({
-                                        ...formData,
-                                        teammates: [...formData.teammates, u.id]
-                                      });
-                                      setSearchTerm('');
-                                    }}
-                                  >
-                                    {u.email}
-                                  </div>
-                                ))}
-                            </div>
-                          )}
-                      </div>
-                    </div>
-                    
-                    {/* Show selected teammates */}
-                    <div className="flex flex-wrap gap-2">
-                      {formData.teammates.map(teamId => {
-                        const user = usersList.find(u => u.id === teamId);
-                        return user ? (
-                          <div key={teamId} className="flex items-center gap-1 bg-zinc-700 rounded px-2">
-                            <span>{user.email}</span>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              onClick={() => {
-                                setFormData({
-                                  ...formData,
-                                  teammates: formData.teammates.filter(id => id !== teamId)
-                                });
-                              }}
-                              className="text-red-500 hover:bg-red-500 p-0.5 font-bold text-lg w-6 h-6 flex items-center justify-center flex-shrink-0"
-                            >
-                              ×
-                            </Button>
-                          </div>
-                        ) : null;
-                      })}
-                    </div>
-                  </div>
+                <ItemSelect
+                  itemList={userItems}
+                  currentItem={user?.primaryEmailAddress?.emailAddress}
+                  selectedItems={formData.teammates}
+                  onItemAdd={(teammateId) => {
+                    setFormData({
+                      ...formData,
+                      teammates: [...formData.teammates, teammateId]
+                    });
+                  }}
+                  onItemRemove={(teammateId) => {
+                    setFormData({
+                      ...formData,
+                      teammates: formData.teammates.filter(id => id !== teammateId)
+                    });
+                  }}
+                  placeholder="Search email..."
+                />
               )}
 
               <div className="space-y-2">
