@@ -3,8 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Menu, Users } from "lucide-react";
-import { useClerk, UserButton } from "@clerk/nextjs";
+import { Menu, User } from "lucide-react";
+import { useClerk } from "@clerk/nextjs";
 import SynergyLogo from "./synergy-logo";
 
 export default function Navbar() {
@@ -16,7 +16,13 @@ export default function Navbar() {
                 <SynergyLogo/>
 
                 <div className="flex items-center gap-4">
-                    <div className="hidden md:block mx-10">
+                    <div className="hidden md:block mx-10 space-x-4">
+                        <Link 
+                            href="/account-setup"
+                            className="text-white hover:text-amber-100"
+                        >
+                            Profile
+                        </Link>
                         <Link 
                             href="/hackathons"
                             className="text-white hover:text-amber-100"
@@ -31,45 +37,35 @@ export default function Navbar() {
                                     <Menu />
                                 </button>
                             </DropdownMenu.Trigger>
-                            <DropdownMenu.Content className="w-48 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2">
+                            <DropdownMenu.Content className="w-32 space-y-2 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2" align="end" sideOffset={20}>
+                                <DropdownMenu.Item asChild>
+                                    <Link
+                                        href="/account-setup"
+                                        className="flex items-center gap-2 rounded hover:bg-amber-100 hover:text-black justify-end"
+                                    >
+                                        <User className="h-4 w-4" />
+                                        <span>Profile</span>
+                                    </Link>
+                                </DropdownMenu.Item>
                                 <DropdownMenu.Item asChild>
                                     <Link
                                         href="/hackathons"
-                                        className="flex items-center gap-2 p-2 rounded hover:bg-amber-100 hover:text-black"
+                                        className="flex items-center gap-2 rounded hover:bg-amber-100 hover:text-black justify-end"
                                     >
                                         <span>Hackathons</span>
                                     </Link>
                                 </DropdownMenu.Item>
+                                <DropdownMenu.Item asChild>
+                                    <button
+                                        onClick={() => signOut()}
+                                        className="flex items-center gap-2 rounded hover:bg-amber-100 hover:text-black justify-end w-full"
+                                    >
+                                        <span>Sign Out</span>
+                                    </button>
+                                </DropdownMenu.Item>
                             </DropdownMenu.Content>
                         </DropdownMenu.Root>
                     </div>
-                    <DropdownMenu.Root>
-                        <DropdownMenu.Trigger asChild>
-                        <div className="flex items-center gap-2 cursor-pointer">
-                            <UserButton />
-                        </div>
-                        </DropdownMenu.Trigger>
-
-                        <DropdownMenu.Content className="w-48 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2">
-                            <DropdownMenu.Item asChild>
-                                <Link
-                                href="/account-setup"
-                                className="flex items-center gap-2 p-2 rounded hover:bg-amber-100 hover:text-black"
-                                >
-                                <Users className="h-4 w-4" />
-                                <span>Edit Profile</span>
-                                </Link>
-                            </DropdownMenu.Item>
-                            <DropdownMenu.Item asChild>
-                                <button
-                                onClick={() => signOut()}
-                                className="flex items-center gap-2 p-2 w-full text-left rounded hover:bg-amber-100 hover:text-black"
-                                >
-                                <span>Sign Out</span>
-                                </button>
-                            </DropdownMenu.Item>
-                        </DropdownMenu.Content>
-                    </DropdownMenu.Root>
                 </div>
             </div>
         </header>

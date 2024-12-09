@@ -268,7 +268,7 @@ export function HackathonDetailComponent() {
                 <div className="space-y-2">
                   <Label htmlFor="teammates">Enter your team emails:</Label>
                   <div className="space-y-4">
-                    <div className="flex relative">
+                    <div className="flex flex-col relative">
                         <Input
                           maxLength={50}
                           disabled={formData.teammates.length === 3}
@@ -285,7 +285,7 @@ export function HackathonDetailComponent() {
                             u.email !== user?.primaryEmailAddress?.emailAddress &&
                             !formData.teammates.includes(u.id)
                           ).length > 0 && (
-                            <div className="absolute z-10 w-full bg-zinc-800 border border-amber-500/50 rounded-md mt-1 max-h-40 overflow-y-auto">
+                            <div className="absolute top-full z-10 w-1/2 bg-zinc-800 border border-amber-500/50 rounded-md mt-1 max-h-40 overflow-y-auto">
                               {usersList
                                 .filter(u => 
                                   u.email.toLowerCase().includes(searchTerm.toLowerCase()) &&
