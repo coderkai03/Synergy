@@ -30,8 +30,8 @@ export function useFirebaseUser(clerkUserId?: string): {
         } else {
           setUserData({
             ...querySnapshot.data(),
-            firstName: querySnapshot.data().full_name.split(' ')[0],
-            lastName: querySnapshot.data().full_name.split(' ')[1],
+            firstName: querySnapshot.data().firstName,
+            lastName: querySnapshot.data().lastName,
           } as User);
         }
       } catch (err) {
