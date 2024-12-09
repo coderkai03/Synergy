@@ -57,7 +57,6 @@ export function HackathonDetailComponent() {
     email: string;
     id: string;
   }>>([]);
-  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

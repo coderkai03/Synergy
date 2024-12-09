@@ -127,22 +127,6 @@ export function AccountSetupComponent() {
     }
   };
 
-  const formDataIsComplete = () => {
-    return formData.firstName &&
-    formData.lastName &&
-    formData.phone &&
-    formData.school &&
-    formData.degree &&
-    formData.gradYear &&
-    formData.number_of_hackathons &&
-    formData.devpost &&
-    formData.github &&
-    formData.programming_languages.length &&
-    formData.category_experience.length &&
-    formData.role_experience &&
-    Object.values(formData.role_experience || {}).every(value => value !== -1);
-  }
-
   return (
     <div className="justify-center min-h-screen bg-[#111119] p-4">
       <div className="flex justify-center">
