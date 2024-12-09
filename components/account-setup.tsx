@@ -26,20 +26,20 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
-import { Multiselect } from "./multiselect";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import { db } from '@/firebaseConfig'
 import { doc, setDoc } from '@firebase/firestore'
-import { defaultUser, frameworks_and_tools, programming_languages, User } from "@/interfaces/User";
+import { defaultUser, programming_languages, category_experience, User } from "@/interfaces/User";
 import SkillsSection from "./slider-section";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
+import { ItemSelect } from "./item-select";
 
 export function AccountSetupComponent() {
   const router = useRouter();
   const { user, isSignedIn, isLoaded } = useUser();
-  const { userData } = useFirebaseUser(user?.id);
+  const { userData, loading: isFirebaseLoading } = useFirebaseUser(user?.id);
   const [formData, setFormData] = useState<User>({
     ...defaultUser,
     email: user?.primaryEmailAddress?.emailAddress || "",
@@ -139,7 +139,7 @@ export function AccountSetupComponent() {
             </CardDescription>
           </CardHeader>
 
-          {isLoaded ? (
+          {isLoaded && !isFirebaseLoading ? (
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-6 text-white">
 
@@ -243,31 +243,53 @@ export function AccountSetupComponent() {
                     <ChevronDown className="w-5 h-5 text-zinc-400" />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="p-4 pt-0 space-y-4">
-                  <div className="space-y-2 text-black">
+                  <div className="space-y-2">
                     <Label htmlFor="programming_languages" className="text-white">Programming Languages</Label>
-                    <Multiselect
-                      options={programming_languages}
+                    <ItemSelect
+                      itemList={programming_languages.map(lang => ({
+                        id: lang,
+                        label: lang
+                      }))}
                       selectedItems={formData.programming_languages}
-                      setSelectedItems={(items) => {
-                        setFormData((prev) => ({
+                      onItemAdd={(langId) => {
+                        setFormData(prev => ({
                           ...prev,
-                          programming_languages: items,
+                          programming_languages: [...prev.programming_languages, langId]
                         }));
                       }}
+                      onItemRemove={(langId) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          programming_languages: prev.programming_languages.filter(id => id !== langId)
+                        }));
+                      }}
+                      placeholder="Search languages..."
+                      maxItems={10}
                     />
                   </div>
 
-                  <div className="space-y-2 text-black">
-                    <Label htmlFor="frameworks_and_tools" className="text-white">Frameworks and Tools</Label>
-                    <Multiselect
-                      options={frameworks_and_tools}
-                      selectedItems={formData.frameworks_and_tools}
-                      setSelectedItems={(items) => {
-                        setFormData((prev) => ({
+                  <div className="space-y-2">
+                    <Label htmlFor="category_experience" className="text-white">Category Experience</Label>
+                    <ItemSelect
+                      itemList={category_experience.map(item => ({
+                        id: item,
+                        label: item
+                      }))}
+                      selectedItems={formData.category_experience}
+                      onItemAdd={(itemId) => {
+                        setFormData(prev => ({
                           ...prev,
-                          frameworks_and_tools: items,
+                          category_experience: [...prev.category_experience, itemId]
                         }));
                       }}
+                      onItemRemove={(itemId) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          category_experience: prev.category_experience.filter(id => id !== itemId)
+                        }));
+                      }}
+                      placeholder="Search categories..."
+                      maxItems={10}
                     />
                   </div>
                   </CollapsibleContent>
@@ -339,7 +361,15 @@ export function AccountSetupComponent() {
                     </div>
 
                     <div className="space-y-8">
-                      <h3 className="text-sm text-zinc-400">Rate your experience level in each role from 0 to 5</h3>
+                      <div className="flex items-center w-full">
+                        <h3 className="flex w-1/5 text-sm text-zinc-400">Rate your experience level in each role</h3>
+                        <div className="flex flex-row space-x-1 justify-evenly flex-1 text-sm text-zinc-400">
+                          <span>Beginner</span>
+                          <span>Intermediate</span>
+                          <span>Advanced</span>
+                        </div>
+                      </div>
+                      <div className="border-t border-zinc-700 my-4"></div>
 
                       <SkillsSection formData={formData} handleSliderChange={handleSliderChange}/>
                     </div>
@@ -364,7 +394,7 @@ export function AccountSetupComponent() {
                     !formData.devpost ||
                     !formData.github ||
                     !formData.programming_languages.length ||
-                    !formData.frameworks_and_tools.length ||
+                    !formData.category_experience.length ||
                     !formData.role_experience ||
                     Object.values(formData.role_experience || {}).some(value => value === -1)
                   }
@@ -375,7 +405,9 @@ export function AccountSetupComponent() {
               </CardFooter>
             </form>
           ) : (
-            <div>Loading...</div>
+            <div className="flex justify-center p-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-amber-500"></div>
+            </div>
           )}
         </Card>
       </div>
