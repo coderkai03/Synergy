@@ -57,7 +57,10 @@ export function Multiselect({
       <div className="w-full px-4">
         <div className="flex flex-col items-center relative">
           <div className="w-full">
-            <div className="my-2 p-1 flex border border-gray-200 bg-[#111119] rounded">
+            <div
+              className="my-2 p-1 flex border border-gray-200 bg-[#111119] rounded"
+              onClick={toggleDropdown}
+            >
               <div className="flex flex-auto flex-wrap">
                 {selectedItems.map((item) => (
                   <div
@@ -83,7 +86,6 @@ export function Multiselect({
                 <button
                   type="button"
                   className="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none"
-                  onClick={toggleDropdown}
                   aria-haspopup="listbox"
                   aria-expanded={isOpen}
                 >
