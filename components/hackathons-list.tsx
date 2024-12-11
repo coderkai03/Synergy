@@ -6,16 +6,15 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Calendar, Globe2, MapPin, Search, Users } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Hackathon } from "@/constants/hackathonlist";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from "@clerk/nextjs";
 import { useMemo, useState } from "react";
 import { useUserExists, useUserHackathons } from "@/hooks/useFirebaseUsers";
 import { useHackathons } from "@/hooks/useHackathons";
+import { SearchBar } from "@/components/ui/SearchBar";
+import { Hackathon } from "@/types/hackathonlist";
 
 export function HackathonsListComponent() {
   //currently pulling from constants, will need to pull from database
@@ -81,15 +80,7 @@ export function HackathonsListComponent() {
         {/* Search and Filter */}
         <div className="mb-8 space-y-6">
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-grow">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <Input
-                placeholder="Search hackathons..."
-                className="pl-10 h-12 flex-1 bg-[#E4E4E4] border-amber-500/20"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>

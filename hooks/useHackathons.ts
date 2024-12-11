@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs } from '@firebase/firestore';
 import { db } from '@/firebaseConfig';
-import { Hackathon } from '@/constants/hackathonlist';
+import { Hackathon } from '@/types/hackathonlist';
 
 export function useHackathons() {
   const [hackathonsList, setHackathonsList] = useState<Hackathon[]>([]);

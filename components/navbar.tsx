@@ -16,12 +16,18 @@ export default function Navbar() {
                 <SynergyLogo/>
 
                 <div className="flex items-center gap-4">
-                    <div className="hidden md:block mx-10 space-x-4">
+                    <div className="hidden md:block mx-10 space-x-10">
                         <Link 
                             href="/account-setup"
                             className="text-white hover:text-amber-100"
                         >
                             Profile
+                        </Link>
+                        <Link 
+                            href="/teams"
+                            className="text-white hover:text-amber-100"
+                        >
+                            Teams
                         </Link>
                         <Link 
                             href="/hackathons"
@@ -45,6 +51,14 @@ export default function Navbar() {
                                     >
                                         <User className="h-4 w-4" />
                                         <span>Profile</span>
+                                    </Link>
+                                </DropdownMenu.Item>
+                                <DropdownMenu.Item asChild>
+                                    <Link
+                                        href="/teams"
+                                        className="flex items-center gap-2 rounded hover:bg-amber-100 hover:text-black justify-end"
+                                    >
+                                        <span>Teams</span>
                                     </Link>
                                 </DropdownMenu.Item>
                                 <DropdownMenu.Item asChild>

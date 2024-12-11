@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from '@firebase/firestore';
 import { db } from '@/firebaseConfig';
-import { User } from '@/interfaces/User';
+import { User } from '@/types/User';
 
 export function useFirebaseUser(clerkUserId?: string): {
   userData: User | null, 

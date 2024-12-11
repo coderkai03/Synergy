@@ -31,7 +31,7 @@ import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import { db } from '@/firebaseConfig'
 import { doc, setDoc } from '@firebase/firestore'
-import { defaultUser, programming_languages, category_experience, User } from "@/interfaces/User";
+import { defaultUser, programming_languages, category_experience, User } from "@/types/User";
 import SkillsSection from "./slider-section";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { ItemSelect } from "./item-select";

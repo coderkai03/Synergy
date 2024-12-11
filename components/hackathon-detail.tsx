@@ -22,18 +22,11 @@ import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "@firebase/firestore";
 import { db } from "@/firebaseConfig";
-import { problemSpaceOptions } from "@/constants/hackathonlist";
+import { Hackathon, problemSpaceOptions } from "@/types/hackathonlist";
 import { ItemSelect } from "@/components/item-select";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
-}
-
-interface Hackathon {
-  id: string;
-  name: string;
-  image: string;
-  // ... add other fields you need
 }
 
 export function HackathonDetailComponent() {
