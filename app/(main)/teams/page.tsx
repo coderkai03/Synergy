@@ -8,6 +8,7 @@ import { useTeams } from "@/hooks/useTeams"
 import { useHackathons } from "@/hooks/useHackathons"
 import { Team } from "@/types/Teams"
 import { useUser } from "@clerk/nextjs"
+import { InviteDialog } from "@/components/invite-dialog"
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()
@@ -41,7 +42,10 @@ export default function HackathonTeamsScreen() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Hackathon Teams</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Hackathon Teams</h1>
+        <InviteDialog />
+      </div>
       <SearchBar searchTerm={searchQuery} setSearchTerm={setSearchQuery} />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredTeams.map((team) => {
