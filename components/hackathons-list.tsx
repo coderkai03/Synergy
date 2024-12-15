@@ -6,41 +6,45 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Calendar, Globe2, MapPin, Search, Users } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Hackathon } from "@/constants/hackathonlist";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from "@clerk/nextjs";
-import { useMemo, useState } from "react";
-import { useUserExists, useUserHackathons } from "@/hooks/useFirebaseUsers";
+import { useMemo, useState, useEffect } from "react";
 import { useHackathons } from "@/hooks/useHackathons";
+import { SearchBar } from "@/components/ui/SearchBar";
+import { Hackathon } from "@/types/Hackathons";
+import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
+import { useTeams } from "@/hooks/useTeams";
+import { Team } from "@/types/Teams";
+import { User } from "@/types/User";
 
 export function HackathonsListComponent() {
   //currently pulling from constants, will need to pull from database
   const { user } = useUser();
-  const { hackathonIds } = useUserHackathons(user?.id);
-  const { hackathonsList } = useHackathons();
-  const { exists } = useUserExists(user?.id);
+  const { userData } = useFirebaseUser();
+  const { hackathons } = useHackathons();
+  const { userTeams } = useTeams();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("all");
 
-  const hackathons: Hackathon[] = useMemo(() => {
+  // Simple function to filter hackathons by date
+  const getActiveHackathons = (hackathons: Hackathon[]) => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time to start of day
+    today.setHours(0, 0, 0, 0);
 
-    return hackathonsList
+    return hackathons
       .filter((hackathon) => {
         const hackathonDate = new Date(hackathon.endDate);
         return hackathonDate >= today;
       })
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, [hackathonsList]);
+  };
 
-  const filteredHackathons = useMemo(() => {
+  // Simple function to apply all filters
+  const filterHackathons = (hackathons: Hackathon[]) => {
     return hackathons.filter((hackathon) => {
       const matchesSearch = hackathon.name
         .toLowerCase()
@@ -53,7 +57,15 @@ export function HackathonsListComponent() {
         (locationFilter === "in-person" && !hackathon.isOnline);
       return matchesSearch && matchesDate && matchesLocation;
     });
-  }, [hackathons, searchTerm, dateFilter, locationFilter]);
+  };
+
+  // Use these functions directly in your JSX
+  const activeHackathons = getActiveHackathons(hackathons);
+  const filteredHackathons = filterHackathons(activeHackathons);
+
+  useEffect(() => {
+    console.log('userTeams:', userTeams);
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#111119] p-4">
@@ -81,15 +93,7 @@ export function HackathonsListComponent() {
         {/* Search and Filter */}
         <div className="mb-8 space-y-6">
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-grow">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <Input
-                placeholder="Search hackathons..."
-                className="pl-10 h-12 flex-1 bg-[#E4E4E4] border-amber-500/20"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
@@ -139,7 +143,7 @@ export function HackathonsListComponent() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredHackathons.map((hackathon) => (
             <Card
-              key={hackathon.id}
+              key={hackathon.name}
               className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#4A4A4A] border-none"
             >
               <CardHeader className="p-0">
@@ -172,11 +176,6 @@ export function HackathonsListComponent() {
                       day: "numeric",
                     })}
                   </time>
-                  {hackathon.daysLeft && (
-                    <span className="ml-auto rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-600">
-                      {hackathon.daysLeft} days left
-                    </span>
-                  )}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-white">
                   {hackathon.isOnline ? (
@@ -193,7 +192,7 @@ export function HackathonsListComponent() {
                   </div>
                 )}
                 <div className="mt-4 flex gap-3">
-                  {hackathonIds.includes(hackathon.id) ? (
+                  {userTeams.some(team => team.hackathonId === hackathon.id) ? (
                     <Button disabled className="flex-1 bg-gray-500 font-bold text-white">
                       Applied
                     </Button>
@@ -202,7 +201,7 @@ export function HackathonsListComponent() {
                       asChild 
                       className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-white hover:text-white"
                     >
-                      <Link href={exists ? `/hackathons/${hackathon.id}` : '/account-setup'}>
+                      <Link href={userData ? `/hackathons/${hackathon.id}` : '/account-setup'}>
                         Form Team
                       </Link>
                     </Button>

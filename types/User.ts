@@ -1,4 +1,7 @@
-export interface User {
+import { Invite } from "./Teams";
+
+export type User = {
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -19,9 +22,11 @@ export interface User {
     uiux_design: number;
   }
   teams: string[];
+  invites: Invite[];
 }
 
 export const defaultUser: User = {
+  id: "",
   firstName: "",
   lastName: "",
   email: "",
@@ -42,6 +47,7 @@ export const defaultUser: User = {
     uiux_design: 0,
   },
   teams: [],
+  invites: [],
 }
 
 export const programming_languages = [

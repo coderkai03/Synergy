@@ -2,7 +2,13 @@ import Stanford from "@/public/assets/stanford-logo.png";
 //import CSUF from "@/public/assets/csuf-logo.png";
 import UTD from "@/public/assets/utd-logo.png";
 
-export const schools = [
+export type School = {
+  image: any;
+  name: string;
+  title: string;
+}
+
+export const schools: School[] = [
   {
     image: Stanford,
     name: "Stanford University",

@@ -38,10 +38,8 @@ export default function RootLayout({
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         </head>
-        <Toaster position="top-center" />
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <Toaster position="top-center" />
           <Navbar />
           {children}
           <Footer />
