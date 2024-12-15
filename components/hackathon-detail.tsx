@@ -22,8 +22,11 @@ import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "@firebase/firestore";
 import { db } from "@/firebaseConfig";
-import { Hackathon, problemSpaceOptions } from "@/types/hackathonlist";
+import { Hackathon, problemSpaceOptions } from "@/types/Hackathons";
 import { ItemSelect } from "@/components/item-select";
+import { useTeams } from "@/hooks/useTeams";
+import { Input } from "./ui/input";
+import { Invite } from "@/types/Teams";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -38,7 +41,9 @@ export function HackathonDetailComponent() {
   const [hackathon, setHackathon] = useState<Hackathon | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const { updateTeamInvites } = useTeams();
   const [formData, setFormData] = useState({
+    name: "",
     alreadyInTeam: "",
     hasProjectIdea: "",
     projectIdea: "",
@@ -144,14 +149,13 @@ export function HackathonDetailComponent() {
 
       if (!userId) throw new Error("User ID is not available");
 
-      formData.teammates.push(userId)
-
       const docRef = await addDoc(
         collection(db, 'teams'),
         {
           ...formData,
-          name: hackathon?.name,
-          hackathonId: hackathon?.id
+          teammates: [userId],
+          hackathonId: hackathon?.id,
+          hostId: userId
         }
       )
 
@@ -171,6 +175,13 @@ export function HackathonDetailComponent() {
         id: userId,
         teams: userDoc.exists() ? userDoc.data().teams : [],
       });
+
+      // Update team invites
+      const newInvite: Invite = {
+        inviterId: userId,
+        teamId: docRef.id,
+      }
+      await updateTeamInvites(formData.teammates, userId, newInvite);
 
       console.log("Team created with ID:", docRef.id);
       console.log("Team details:", formData);
@@ -229,11 +240,20 @@ export function HackathonDetailComponent() {
         </CardContent>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="name">Team Name</Label>
+              <Input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full bg-zinc-700 border-amber-500/50"
+                placeholder="Enter your team name"
+                required
+              />
+            </div>
             <div className="space-y-4">
-              <div className="text-lg font-semibold">
-                Project Ideas and Interests:
-              </div>
-
               <div className="space-y-2">
                 <Label>Do you have teammates?</Label>
                 <RadioGroup
@@ -262,24 +282,34 @@ export function HackathonDetailComponent() {
               </div>
 
               {formData.alreadyInTeam === "yes" && (
-                <ItemSelect
-                  itemList={userItems}
-                  currentItem={user?.primaryEmailAddress?.emailAddress}
-                  selectedItems={formData.teammates}
-                  onItemAdd={(teammateId) => {
-                    setFormData({
-                      ...formData,
-                      teammates: [...formData.teammates, teammateId]
-                    });
-                  }}
-                  onItemRemove={(teammateId) => {
-                    setFormData({
-                      ...formData,
-                      teammates: formData.teammates.filter(id => id !== teammateId)
-                    });
-                  }}
-                  placeholder="Search email..."
-                />
+                <div className="space-y-2">
+                  <Label>{'Teammates '}
+                    <span
+                      className={`${formData.teammates.length >= 3 ? 'text-gray-500' : ''}`}>
+                        ({formData.teammates.length}/3)
+                    </span>
+                  </Label>
+                  <ItemSelect
+                    itemList={userItems}
+                    currentItem={user?.primaryEmailAddress?.emailAddress}
+                    selectedItems={formData.teammates}
+                    onItemAdd={(teammateId) => {
+                      if (formData.teammates.length < 3) {
+                        setFormData({
+                          ...formData,
+                          teammates: [...formData.teammates, teammateId]
+                        });
+                      }
+                    }}
+                    onItemRemove={(teammateId) => {
+                      setFormData({
+                        ...formData,
+                        teammates: formData.teammates.filter(id => id !== teammateId)
+                      });
+                    }}
+                    placeholder="Search email..."
+                  />
+                </div>
               )}
 
               <div className="space-y-2">

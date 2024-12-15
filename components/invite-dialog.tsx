@@ -1,33 +1,68 @@
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Mail, X } from 'lucide-react'
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { Invite, Team } from "@/types/Teams"
+import { useRouter } from "next/navigation"
+import { useFirebaseUser } from "@/hooks/useFirebaseUsers"
+import { useUser } from "@clerk/nextjs"
+import { useTeams } from "@/hooks/useTeams"
+import { User } from "@/types/User"
 
-interface Invite {
-  id: number
-  inviter: string
-  teamName: string
-}
+export function InviteDialog({ invites }: { invites: Invite[] }) {
+  const { user } = useUser();
+  const { updateTeammates } = useTeams();
+  const { getUsers, updateUserInvites } = useFirebaseUser();
+  const { getTeams } = useTeams();
 
-export function InviteDialog() {
-  const [invites, setInvites] = useState<Invite[]>([
-    { id: 1, inviter: "Alice", teamName: "Team Alpha" },
-    { id: 2, inviter: "Bob", teamName: "Team Beta" },
-    { id: 3, inviter: "Charlie", teamName: "Team Gamma" },
-  ])
+  const [isOpen, setIsOpen] = useState(false);
+  const [inviters, setInviters] = useState<User[]>([]);
+  const [teamInvites, setTeamInvites] = useState<Team[]>([]);
+
+  useEffect(() => {
+    const fetchInviters = async () => {
+      if (!invites?.length) return;
+      console.log('invites:', invites);
+
+      const inviterIds = invites.map(invite => invite.inviterId);
+      const users = await getUsers(inviterIds);
+      setInviters(users);
+      console.log('inviters:', users);
+
+      const teamIds = invites.map(invite => invite.teamId);
+      const teams = await getTeams(teamIds);
+      setTeamInvites(teams);
+      console.log('teamInvites:', teams);
+    };
+
+    fetchInviters();
+    
+  }, [invites]);
 
   const handleJoin = (inviteId: number) => {
-    // Logic to join the team
+    if (!user?.id) return;
+
+    const teamId = invites[inviteId].teamId;
+    updateTeammates(teamId, user.id);
+    updateUserInvites(inviteId, invites, true);
+
     console.log(`Joined team from invite ${inviteId}`)
-    setInvites(invites.filter(invite => invite.id !== inviteId))
+    setIsOpen(false);
   }
 
   const handleDecline = (inviteId: number) => {
-    setInvites(invites.filter(invite => invite.id !== inviteId))
+    if (!user?.id) return;
+
+    updateUserInvites(inviteId, invites, false);
+
+    console.log(`Declined invite ${inviteId}`)
+    setIsOpen(false);
   }
 
+  if (!invites || !inviters || !teamInvites) return null;
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="icon">
           <Mail className="h-4 w-4" />
@@ -38,19 +73,19 @@ export function InviteDialog() {
           <DialogTitle>Team Invitations</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          {invites.map((invite) => (
-            <div key={invite.id} className="flex items-center justify-between p-2 border rounded">
-              <span>{invite.inviter} invited you to join {invite.teamName}</span>
-              <div>
-                <Button variant="ghost" size="sm" onClick={() => handleDecline(invite.id)}>
+          {invites ? invites.map((invite, index) => (
+            <div key={invite.inviterId} className="flex items-center justify-between p-2 border rounded">
+              <span>{inviters[index]?.firstName || ''} invited you to join {teamInvites[index]?.name}</span>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm" onClick={() => handleDecline(index)}>
                   <X className="h-4 w-4" />
                 </Button>
-                <Button variant="default" size="sm" onClick={() => handleJoin(invite.id)}>
+                <Button variant="default" size="sm" onClick={() => handleJoin(index)}>
                   Join
                 </Button>
               </div>
             </div>
-          ))}
+          )) : <div>No invites</div>}
         </div>
       </DialogContent>
     </Dialog>

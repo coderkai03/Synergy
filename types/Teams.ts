@@ -1,12 +1,19 @@
 export type Team = {
-  name: string;
+  id: string;
+  name: string; // Team Name
   hackathonId: string;
   alreadyInTeam: string;
   hasProjectIdea: string;
   projectIdea: string;
-  problemSpace: string[];
+  problemSpaces: string[];
   teamDescription: string;
   goals: string[];
   teammates: string[];
   status: string;
+  hostId: string;
+}
+
+export type Invite = {
+  inviterId: string;
+  teamId: string;
 }

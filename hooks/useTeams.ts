@@ -1,49 +1,88 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
-import { Team } from '@/types/Teams';
+import { Invite, Team } from '@/types/Teams';
+import { User } from '@/types/User';
+import { useUser } from '@clerk/nextjs';
+
 
 export function useTeams() {
-  const [teams, setTeams] = useState<Team[]>([]);
+  const { user } = useUser()
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userTeams, setUserTeams] = useState<Team[]>([]);
 
   useEffect(() => {
     async function fetchTeams() {
-      try {
-        const teamsCollection = collection(db, 'teams');
-        const teamsSnapshot = await getDocs(teamsCollection);
-        const teamsData = teamsSnapshot.docs.map(doc => ({
-          hackathonId: doc.id,
-          status: Math.random() > 0.5 ? 'active' : 'pending',
-          ...doc.data()
-        })) as Team[];
-        console.log(teamsData);
-        setTeams(teamsData);
-        setLoading(false);
+      console.log('fetching teams for user:', user?.id)
 
+      if (!user?.id) return;
+
+      try {
+        const userRef = doc(db, 'users', user?.id);
+        const userDoc = await getDoc(userRef);
+        const teamsData = userDoc.exists() ? userDoc.data()?.teams || [] : [];
+        const teams = await getTeams(teamsData);
+        console.log('teams', teams)
+        setUserTeams(teams);
+        setLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch teams');
         setLoading(false);
       }
     }
-
     fetchTeams();
-  }, []);
+  }, [user]);
+  
 
-  return { teams, loading, error };
-}
+  const updateTeamInvites = async (teammateIds: string[], userId: string, invite: Invite) => {
+    try {
+      // Update each team document
+      await Promise.all(teammateIds.map(async (teammateId) => {
+        const inviteeRef = doc(db, 'users', teammateId);
+        const inviteeDoc = await getDoc(inviteeRef);
+        
+        if (inviteeDoc.exists()) {
+          const currentInvites = inviteeDoc.data().invites || [];
+          // Only add if not already invited
+          if (!currentInvites.includes(userId)) {
+            await updateDoc(inviteeRef, {
+              invites: [...currentInvites, invite]
+            });
+          }
+        }
+      }));
+      
+      return true;
+    } catch (error) {
+      console.error('Error updating team invites:', error);
+      return false;
+    }
+  };
 
-export function useUserTeams(teams: Team[], userId: string) {
-  const [userTeams, setUserTeams] = useState<Team[]>([]);
+  const updateTeammates = async (teamId: string, teammateId: string) => {
+    const teamRef = doc(db, 'teams', teamId);
+    const teamDoc = await getDoc(teamRef);
+    const currentTeammates = teamDoc.exists() ? teamDoc.data().teammates || [] : [];
+    await updateDoc(teamRef, {
+      teammates: [...currentTeammates, teammateId]
+    });
+  }
 
-  useEffect(() => {
-    const filteredTeams = teams.filter(team => 
-      team.teammates.includes(userId)
-    );
-    setUserTeams(filteredTeams);
-  }, [teams, userId]);
+  const getTeams = async (teamIds: string[]) => {
+    console.log('teamIds', teamIds)
+    const teams = await Promise.all(teamIds.map(async (teamId) => {
+      const teamRef = doc(db, 'teams', teamId);
+      const teamDoc = await getDoc(teamRef);
+      console.log('teamDoc', teamDoc.data())
+      return {
+        ...teamDoc.data(),
+        id: teamId
+      } as Team;
+    }));
+    return teams;
+  }
 
-  return { userTeams };
+  return { userTeams, loading, error, updateTeamInvites, updateTeammates, getTeams };
 }
 

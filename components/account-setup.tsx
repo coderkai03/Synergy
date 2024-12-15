@@ -39,7 +39,7 @@ import { ItemSelect } from "./item-select";
 export function AccountSetupComponent() {
   const router = useRouter();
   const { user, isSignedIn, isLoaded } = useUser();
-  const { userData, loading: isFirebaseLoading } = useFirebaseUser(user?.id);
+  const { userData } = useFirebaseUser();
   const [formData, setFormData] = useState<User>({
     ...defaultUser,
     email: user?.primaryEmailAddress?.emailAddress || "",
@@ -116,7 +116,10 @@ export function AccountSetupComponent() {
       console.log("Submitting formData:", formData);
       if (!user?.id) return;
       const userDoc = doc(db, 'users', user.id);
-      await setDoc(userDoc, formData);
+      await setDoc(userDoc, {
+        ...formData, 
+        email: user?.primaryEmailAddress?.emailAddress,
+      });
       console.log("User data updated successfully");
 
       // Navigate to the next page
@@ -139,7 +142,7 @@ export function AccountSetupComponent() {
             </CardDescription>
           </CardHeader>
 
-          {isLoaded && !isFirebaseLoading ? (
+          {isLoaded ? (
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-6 text-white">
 

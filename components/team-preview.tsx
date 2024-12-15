@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar } from 'lucide-react'
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Hackathon } from "@/types/hackathonlist"
+import { Hackathon } from "@/types/Hackathons"
 
 interface TeamPreviewProps {
   team: Team;
@@ -11,6 +11,8 @@ interface TeamPreviewProps {
 }
 
 export function TeamPreview({ team, hackathon }: TeamPreviewProps) {
+  if (!team || !hackathon) return null;
+  
   return (
     <Card className="w-full hover:bg-accent transition-colors cursor-pointer">
       <CardHeader>

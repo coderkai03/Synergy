@@ -3,12 +3,13 @@
 import * as React from "react";
 import Link from "next/link";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Menu, User } from "lucide-react";
-import { useClerk } from "@clerk/nextjs";
+import { LogOut, Menu, User } from "lucide-react";
+import { useClerk, useUser, SignInButton } from "@clerk/nextjs";
 import SynergyLogo from "./synergy-logo";
 
 export default function Navbar() {
     const { signOut } = useClerk();
+    const { user } = useUser();
 
     return (
         <header className="sticky top-0 z-10 bg-[#111119] px-4 shadow-sm">
@@ -35,6 +36,26 @@ export default function Navbar() {
                         >
                             Hackathons
                         </Link>
+                        {user ? (
+                            <Link 
+                                href="#"
+                                onClick={() => signOut()}
+                                className="inline-flex items-center gap-2 text-white hover:text-amber-100"
+                            >
+                                <span>Sign out</span>
+                                <LogOut className="h-4 w-4" />
+                            </Link>
+                        ) : (
+                            <button className="inline-flex items-center gap-2 text-white hover:text-amber-100">
+                                <SignInButton
+                                    mode="modal"
+                                    fallbackRedirectUrl={'/hackathons'}
+                                    signUpForceRedirectUrl={'/account-setup'}
+                                >
+                                    <span>Sign in</span>
+                                </SignInButton>
+                            </button>
+                        )}
                     </div>
                     <div className="md:hidden mt-2">
                         <DropdownMenu.Root>

@@ -1,30 +1,44 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { collection, getDocs } from '@firebase/firestore';
+import { collection, getDoc, doc, getDocs } from '@firebase/firestore';
 import { db } from '@/firebaseConfig';
-import { Hackathon } from '@/types/hackathonlist';
+import { Hackathon } from '@/types/Hackathons';
 
 export function useHackathons() {
-  const [hackathonsList, setHackathonsList] = useState<Hackathon[]>([]);
+  const [hackathons, setHackathons] = useState<Hackathon[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchHackathons = async () => {
       try {
         const hackathonsRef = collection(db, "hackathons");
         const hackathonsSnap = await getDocs(hackathonsRef);
         const hackathonsData = hackathonsSnap.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setHackathonsList(hackathonsData as Hackathon[]);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        ...doc.data(),
+        id: doc.id
+      }));
+      setHackathons(hackathonsData as Hackathon[]);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  fetchHackathons()
+  }, [])
+
+  const getHackathons = async (ids: string[]) => {
+    const hackathons = await Promise.all(ids.map(async (id) => {
+      try {
+        const hackathonRef = doc(db, 'hackathons', id);
+        const hackathon = await getDoc(hackathonRef);
+        return {...hackathon.data(), id} as Hackathon;
+      } catch (err) {
+        console.error("Error fetching hackathon:", err);
+        return null;
       }
-    };
+    }));
 
-    fetchData();
-  }, []);
+    return hackathons as Hackathon[];
+  }
 
-  return { hackathonsList };
+  return { hackathons, getHackathons };
 }

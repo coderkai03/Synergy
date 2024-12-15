@@ -86,9 +86,9 @@ export function Multiselect({
                     </div>
                   ))}
                 </div>
-                <div className="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200">
+                <div className="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200 justify-center">
                   <div
-                    className="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none"
+                    className="flex items-center justify-center cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none"
                   >
                     {isOpen ? (
                       <ChevronUp className="w-4 h-4" />

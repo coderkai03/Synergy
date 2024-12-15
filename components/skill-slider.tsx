@@ -32,7 +32,7 @@ function SkillSlider({
           </div>
         </div>
         <RadioGroup
-          defaultValue={value.toString()}
+          value={value.toString()}
           onValueChange={(val) => onValueChange([parseInt(val)])}
           className="flex justify-evenly flex-1"
         >
@@ -41,7 +41,7 @@ function SkillSlider({
               key={index}
               value={index.toString()} 
               id={`${id}-${index}`}
-              className="border-amber-500 text-amber-500 data-[state=checked]:bg-amber-500 h-5 w-5"
+              className={`border-amber-500 text-amber-500 ${value === index ? 'bg-amber-500' : ''} h-5 w-5`}
             />
           ))}
         </RadioGroup>
