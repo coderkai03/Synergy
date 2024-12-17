@@ -19,6 +19,12 @@ export default function Navbar() {
                 <div className="flex items-center gap-4">
                     <div className="hidden md:block mx-10 space-x-10">
                         <Link 
+                            href="/home"
+                            className="text-white hover:text-amber-100"
+                        >
+                            Home
+                        </Link>
+                        <Link 
                             href="/account-setup"
                             className="text-white hover:text-amber-100"
                         >

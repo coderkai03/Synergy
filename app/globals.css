@@ -10,6 +10,9 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  .shadow-text {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
 }
 
 @layer base {
@@ -74,6 +77,7 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+    @apply bg-blue-50 text-blue-900;
   }
 }
 

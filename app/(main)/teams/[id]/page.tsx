@@ -146,9 +146,6 @@ export default function TeamDetailPage() {
                 {teammates.map((teammate, index) => (
                   <div key={index} className="p-4 bg-zinc-900 rounded-lg">
                     <div className="flex items-center gap-2">
-                      {index === 0 && (
-                        <span className="text-yellow-500" title="Team Host">👑</span>
-                      )}
                       <p className="font-semibold">{teammate.firstName} {teammate.lastName}</p>
                     </div>
                     <p className="text-gray-400">{teammate.email}</p>
