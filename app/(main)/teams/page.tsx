@@ -1,6 +1,6 @@
 "use client"
 
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { SearchBar } from "@/components/ui/SearchBar"
 import { TeamPreview } from "@/components/team-preview"
 import { useRouter } from 'next/navigation'
@@ -10,7 +10,7 @@ import { Invite, Team } from "@/types/Teams"
 import { useUser } from "@clerk/nextjs"
 import { InviteDialog } from "@/components/invite-dialog"
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers"
-import { getDoc } from "firebase/firestore"
+import { collection, getDoc, onSnapshot, query, where, documentId } from "firebase/firestore"
 import { doc } from "firebase/firestore"
 import { db } from "@/firebaseConfig"
 import { User } from "@/types/User"
@@ -25,47 +25,83 @@ export default function HackathonTeamsScreen() {
 
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [userHackathons, setUserHackathons] = useState<Hackathon[]>([])
+  const [teams, setTeams] = useState<Team[]>([])
+  const [hackathons, setHackathons] = useState<Hackathon[]>([])
+  const [invites, setInvites] = useState<Invite[]>([])
+
+  const subscribeToInvites = () => {
+    if (!user?.id) return;
+
+    // Create query for invites where the user is the invitee
+    const invitesQuery = query(
+      collection(db, "users"), 
+      where(documentId(), "==", user.id)
+    );
+
+    // Set up realtime listener
+    const unsubInvites = onSnapshot(invitesQuery, async (snapshot) => {
+      snapshot.forEach((doc) => {
+        const userData = doc.data() as User;
+        if (userData.invites) {
+          setInvites(userData.invites);
+        }
+      });
+    });
+
+    return unsubInvites;
+  };
 
   useEffect(() => {
-    console.log('found userTeams:', userTeams);
-    const fetchHackathons = async () => {
-      const hackathons = await getHackathons(userTeams.map(team => team.hackathonId))
-      setUserHackathons(hackathons as Hackathon[])
-      console.log(userHackathons)
+    subscribeToInvites();
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!userTeams?.length) {
+      console.log("No userTeams found, returning early");
+      return;
     }
-    fetchHackathons()
-    console.log('userData:', userData)
+
+    setTeams(userTeams);
+
+    const fetchHackathons = async () => {
+      const hackathonIds = userTeams.map(team => team.hackathonId);
+      const hackathons = await getHackathons(hackathonIds);
+      setHackathons(hackathons as Hackathon[]);
+    };
+    fetchHackathons();
     
-  }, [userTeams, userData])
+    return () => {
+      // unsubTeams();
+      // unsubHackathons();
+      // unsubInvites();
+    };
+  }, [userTeams]);
 
   const handleTeamClick = (teamId: string) => {
     router.push(`/teams/${teamId}`)
-  }
-
-  if (userTeams.length === 0) {
-    return <div>Loading...</div>
-  }
-
-  if (!userData) {
-    return <div>Loading...</div>
   }
 
   return (
     <div className="container mx-auto py-8 h-screen">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">My Teams</h1>
-        <InviteDialog invites={userData?.invites || []} />
+        <InviteDialog
+          invites={invites || []} 
+          teams={teams}
+          hackathons={hackathons}
+          setTeams={setTeams} 
+          setHackathons={setHackathons} 
+        />
       </div>
       <SearchBar
         searchTerm={searchQuery}
         setSearchTerm={setSearchQuery}
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {userHackathons && userTeams?.map((team, index) => {
+        {hackathons && teams?.map((team, index) => {
           return (
             <div key={team.id} onClick={() => handleTeamClick(team.id)}>
-              <TeamPreview team={team} hackathon={userHackathons[index]} />
+              <TeamPreview team={team} hackathon={hackathons[index]} />
             </div>
           )
         })}

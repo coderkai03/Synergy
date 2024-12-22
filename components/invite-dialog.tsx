@@ -8,12 +8,28 @@ import { useFirebaseUser } from "@/hooks/useFirebaseUsers"
 import { useUser } from "@clerk/nextjs"
 import { useTeams } from "@/hooks/useTeams"
 import { User } from "@/types/User"
+import { Hackathon } from "@/types/Hackathons"
+import { useHackathons } from "@/hooks/useHackathons"
+import { toast } from "react-hot-toast"
 
-export function InviteDialog({ invites }: { invites: Invite[] }) {
+export function InviteDialog({
+  invites,
+  teams,
+  hackathons,
+  setTeams, 
+  setHackathons 
+}: { 
+  invites: Invite[], 
+  teams: Team[],
+  hackathons: Hackathon[],
+  setTeams: (teams: Team[]) => void, 
+  setHackathons: (hackathons: Hackathon[]) => void 
+}) {
   const { user } = useUser();
   const { updateTeammates } = useTeams();
   const { getUsers, updateUserInvites } = useFirebaseUser();
   const { getTeams } = useTeams();
+  const { getHackathons } = useHackathons();
 
   const [isOpen, setIsOpen] = useState(false);
   const [inviters, setInviters] = useState<User[]>([]);
@@ -39,12 +55,25 @@ export function InviteDialog({ invites }: { invites: Invite[] }) {
     
   }, [invites]);
 
-  const handleJoin = (inviteId: number) => {
+  const handleJoin = async (inviteId: number) => {
     if (!user?.id) return;
 
     const teamId = invites[inviteId].teamId;
     updateTeammates(teamId, user.id);
     updateUserInvites(inviteId, invites, true);
+
+    const team = await getTeams([teamId]);
+    
+    if (team[0].teammates.length < 4) {
+      setTeams([...teams, team[0]]);
+    } else {
+      toast.error("Team is already full");
+      return;
+    }
+
+    const hackathonId = team[0].hackathonId;
+    const hackathon = await getHackathons([hackathonId]);
+    setHackathons([...hackathons, hackathon[0]]);
 
     console.log(`Joined team from invite ${inviteId}`)
     setIsOpen(false);
@@ -64,8 +93,13 @@ export function InviteDialog({ invites }: { invites: Invite[] }) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" className="relative">
           <Mail className="h-4 w-4" />
+          {invites?.length > 0 && (
+            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {invites.length}
+            </div>
+          )}
         </Button>
       </DialogTrigger>
       <DialogContent>
