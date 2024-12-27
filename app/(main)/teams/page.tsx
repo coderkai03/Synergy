@@ -10,11 +10,12 @@ import { Invite, Team } from "@/types/Teams"
 import { useUser } from "@clerk/nextjs"
 import { InviteDialog } from "@/components/invite-dialog"
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers"
-import { collection, getDoc, onSnapshot, query, where, documentId } from "firebase/firestore"
-import { doc } from "firebase/firestore"
+import { collection, onSnapshot, query, where, documentId } from "firebase/firestore"
 import { db } from "@/firebaseConfig"
 import { User } from "@/types/User"
 import { Hackathon } from "@/types/Hackathons"
+import { Button } from "@/components/ui/button"
+import { TeamListSection } from "@/components/team-list-section"
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()
@@ -23,23 +24,22 @@ export default function HackathonTeamsScreen() {
   const { getHackathons } = useHackathons();
   const { userTeams } = useTeams();
 
-  const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
   const [teams, setTeams] = useState<Team[]>([])
   const [hackathons, setHackathons] = useState<Hackathon[]>([])
   const [invites, setInvites] = useState<Invite[]>([])
+  const [filteredActiveTeams, setFilteredActiveTeams] = useState<Team[]>([...userTeams]);
+  const [filteredPendingTeams, setFilteredPendingTeams] = useState<Team[]>([...userTeams]);
+
 
   const subscribeToInvites = () => {
     if (!user?.id) return;
 
-    // Create query for invites where the user is the invitee
     const invitesQuery = query(
       collection(db, "users"), 
       where(documentId(), "==", user.id)
     );
 
-    // Set up realtime listener
-    const unsubInvites = onSnapshot(invitesQuery, async (snapshot) => {
+    const unsubInvites = onSnapshot(invitesQuery, (snapshot) => {
       snapshot.forEach((doc) => {
         const userData = doc.data() as User;
         if (userData.invites) {
@@ -52,7 +52,8 @@ export default function HackathonTeamsScreen() {
   };
 
   useEffect(() => {
-    subscribeToInvites();
+    const unsubscribe = subscribeToInvites();
+    if (unsubscribe) return unsubscribe();
   }, [user?.id]);
 
   useEffect(() => {
@@ -62,6 +63,15 @@ export default function HackathonTeamsScreen() {
     }
 
     setTeams(userTeams);
+    setFilteredActiveTeams(userTeams)
+      // .filter(team => team.status === 'active')
+      // .sort((a, b) => a.name.localeCompare(b.name)));
+    setFilteredPendingTeams(userTeams)
+      // .filter(team => team.status === 'pending')
+      // .sort((a, b) => a.name.localeCompare(b.name)));
+
+    console.log('filteredActiveTeams', filteredActiveTeams);
+    console.log('filteredPendingTeams', filteredPendingTeams);
 
     const fetchHackathons = async () => {
       const hackathonIds = userTeams.map(team => team.hackathonId);
@@ -69,12 +79,6 @@ export default function HackathonTeamsScreen() {
       setHackathons(hackathons as Hackathon[]);
     };
     fetchHackathons();
-    
-    return () => {
-      // unsubTeams();
-      // unsubHackathons();
-      // unsubInvites();
-    };
   }, [userTeams]);
 
   const handleTeamClick = (teamId: string) => {
@@ -82,30 +86,36 @@ export default function HackathonTeamsScreen() {
   }
 
   return (
-    <div className="container mx-auto py-8 h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">My Teams</h1>
-        <InviteDialog
-          invites={invites || []} 
-          teams={teams}
-          hackathons={hackathons}
-          setTeams={setTeams} 
-          setHackathons={setHackathons} 
-        />
-      </div>
-      <SearchBar
-        searchTerm={searchQuery}
-        setSearchTerm={setSearchQuery}
-      />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {hackathons && teams?.map((team, index) => {
-          return (
-            <div key={team.id} onClick={() => handleTeamClick(team.id)}>
-              <TeamPreview team={team} hackathon={hackathons[index]} />
-            </div>
-          )
-        })}
-      </div>
+    <div className="p-4 min-h-screen bg-[#111119]">
+      <main className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-white">My Teams</h1>
+          <InviteDialog
+            invites={invites}
+            teams={teams}
+            hackathons={hackathons}
+            setTeams={setTeams}
+            setHackathons={setHackathons}
+          />
+        </div>
+        <div className="space-y-8">
+          <TeamListSection
+            title="Active Teams"
+            teams={filteredActiveTeams}
+            hackathons={hackathons}
+            viewAllPath="/teams/active"
+            onTeamClick={handleTeamClick}
+          />
+
+          <TeamListSection
+            title="Pending Teams"
+            teams={filteredPendingTeams}
+            hackathons={hackathons}
+            viewAllPath="/teams/pending"
+            onTeamClick={handleTeamClick}
+          />
+        </div>
+      </main>
     </div>
   )
 }

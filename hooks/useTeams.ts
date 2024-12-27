@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, updateDoc, arrayRemove, deleteDoc } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { Invite, Team } from '@/types/Teams';
 import { User } from '@/types/User';
@@ -69,6 +69,13 @@ export function useTeams() {
     });
   }
 
+  const updateTeamHost = async (teamId: string, hostId: string) => {
+    const teamRef = doc(db, 'teams', teamId);
+    await updateDoc(teamRef, {
+      hostId: hostId
+    });
+  }
+
   const getTeams = async (teamIds: string[]) => {
     console.log('teamIds', teamIds)
     const teams = await Promise.all(teamIds.map(async (teamId) => {
@@ -83,6 +90,48 @@ export function useTeams() {
     return teams;
   }
 
-  return { userTeams, loading, error, updateTeamInvites, updateTeammates, getTeams };
+  const leaveTeam = async (teamId: string, userId: string) => {
+    const teamRef = doc(db, 'teams', teamId);
+    // remove userId from team
+    await updateDoc(teamRef, {
+      teammates: arrayRemove(userId)
+    });
+
+    // remove teamId from user's teams object
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      const currentTeams = userDoc.data().teams || {};
+      const { [teamId]: _, ...remainingTeams } = currentTeams; // Remove the specific team
+      await updateDoc(userRef, {
+        teams: remainingTeams
+      });
+    }
+  }
+
+  const deleteTeam = async (teamId: string, hostId: string) => {
+    // delete team
+    const teamRef = doc(db, 'teams', teamId);
+    await deleteDoc(teamRef);
+
+    // remove teamId from user
+    const userRef = doc(db, 'users', hostId);
+    await updateDoc(userRef, {
+      teams: arrayRemove(teamId)
+    });
+  }
+
+  return {
+    userTeams,
+    loading,
+    error,
+    updateTeamInvites,
+    updateTeammates,
+    getTeams,
+    leaveTeam,
+    updateTeamHost,
+    deleteTeam
+  };
 }
+
 
