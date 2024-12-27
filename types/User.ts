@@ -21,7 +21,7 @@ export type User = {
     hardware: number;
     uiux_design: number;
   }
-  teams: string[];
+  teams: { [teamId: string]: string };
   invites: Invite[];
 }
 
@@ -46,7 +46,7 @@ export const defaultUser: User = {
     hardware: 0,
     uiux_design: 0,
   },
-  teams: [],
+  teams: {},
   invites: [],
 }
 

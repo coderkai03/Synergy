@@ -57,18 +57,24 @@ export default function HackathonTeamsScreen() {
   }, [user?.id]);
 
   useEffect(() => {
+    console.log('userTeams', userTeams)
+
     if (!userTeams?.length) {
       console.log("No userTeams found, returning early");
       return;
     }
 
+    console.log('checked userTeams', userTeams)
+
     setTeams(userTeams);
-    setFilteredActiveTeams(userTeams)
-      // .filter(team => team.status === 'active')
-      // .sort((a, b) => a.name.localeCompare(b.name)));
-    setFilteredPendingTeams(userTeams)
-      // .filter(team => team.status === 'pending')
-      // .sort((a, b) => a.name.localeCompare(b.name)));
+
+    setFilteredActiveTeams(userTeams
+      .filter(team => userData?.teams[team.id] === 'active')
+      .sort((a, b) => a.name.localeCompare(b.name)));
+      
+    setFilteredPendingTeams(userTeams
+      .filter(team => userData?.teams[team.id] === 'pending')
+      .sort((a, b) => a.name.localeCompare(b.name)));
 
     console.log('filteredActiveTeams', filteredActiveTeams);
     console.log('filteredPendingTeams', filteredPendingTeams);
@@ -79,10 +85,14 @@ export default function HackathonTeamsScreen() {
       setHackathons(hackathons as Hackathon[]);
     };
     fetchHackathons();
-  }, [userTeams]);
+  }, [userTeams?.length]);
 
   const handleTeamClick = (teamId: string) => {
     router.push(`/teams/${teamId}`)
+  }
+
+  if (!userTeams?.length) {
+    return <div>No teams found</div>
   }
 
   return (

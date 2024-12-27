@@ -5,6 +5,7 @@ import { Calendar, MapPin, Users, Crown } from 'lucide-react'
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Hackathon } from "@/types/Hackathons"
 import { useUser } from "@clerk/nextjs"
+import { useFirebaseUser } from "@/hooks/useFirebaseUsers"
 
 interface TeamPreviewProps {
   team: Team;
@@ -13,6 +14,9 @@ interface TeamPreviewProps {
 
 export function TeamPreview({ team, hackathon }: TeamPreviewProps) {
   const { user } = useUser();
+  const { userData } = useFirebaseUser();
+
+  const teamStatus = userData?.teams[team.id];
   const isHost = user?.id === team.hostId;
 
   if (!team || !hackathon) return null;
@@ -28,10 +32,10 @@ export function TeamPreview({ team, hackathon }: TeamPreviewProps) {
             <span>{team.name}</span>
           </div>
           <Badge
-            variant={team.status === 'active' ? 'default' : 'outline'}
-            className={team.status === 'active' ? 'bg-green-500/80 text-white' : 'bg-gray-500/80 text-white'}
+            variant={teamStatus === 'active' ? 'default' : 'outline'}
+            className={teamStatus === 'active' ? 'bg-green-500/80 text-white' : 'bg-gray-500/80 text-white'}
           >
-            {team.status}
+            {teamStatus}
           </Badge>
         </CardTitle>
       </CardHeader>

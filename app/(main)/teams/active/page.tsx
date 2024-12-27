@@ -15,26 +15,27 @@ export default function AllActiveTeamsScreen() {
   const { getHackathons } = useHackathons();
 
   const [activeTeams, setActiveTeams] = useState<Team[]>([])
-  const [hackathons, setHackathons] = useState<Hackathon[]>([])
+  const [userHackathons, setUserHackathons] = useState<Hackathon[]>([])
   const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     if (!userTeams?.length) return;
 
-    const active = userTeams.filter(team => team.status === 'active');
+    const active = userTeams//.filter(team => team.status === 'active');
     setActiveTeams(active);
 
     const fetchHackathons = async () => {
       const hackathonIds = active.map(team => team.hackathonId);
       const hackathons = await getHackathons(hackathonIds);
-      setHackathons(hackathons as Hackathon[]);
+      setUserHackathons(hackathons as Hackathon[]);
+      console.log('hackathons', hackathons)
     };
     fetchHackathons();
-  }, [userTeams, getHackathons]);
+  }, [userTeams]);
 
   const filteredTeams = activeTeams.filter(team => {
     const teamNameMatch = team.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const hackathon = hackathons.find(h => h.id === team.hackathonId);
+    const hackathon = userHackathons.find(h => h.id === team.hackathonId);
     const hackathonNameMatch = hackathon?.name.toLowerCase().includes(searchQuery.toLowerCase());
     return teamNameMatch || hackathonNameMatch;
   });
@@ -52,8 +53,8 @@ export default function AllActiveTeamsScreen() {
           setSearchTerm={setSearchQuery}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {hackathons && filteredTeams.map((team) => {
-            const hackathon = hackathons.find(h => h.id === team.hackathonId);
+          {userHackathons && filteredTeams.map((team) => {
+            const hackathon = userHackathons.find(h => h.id === team.hackathonId);
             return hackathon ? (
               <div key={team.id} onClick={() => handleTeamClick(team.id)}>
                 <TeamPreview team={team} hackathon={hackathon} />

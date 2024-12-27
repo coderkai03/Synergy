@@ -17,13 +17,18 @@ export function useTeams() {
       console.log('fetching teams for user:', user?.id)
 
       if (!user?.id) return;
+      console.log('user?.id', user?.id)
 
       try {
         const userRef = doc(db, 'users', user?.id);
         const userDoc = await getDoc(userRef);
-        const teamsData = userDoc.exists() ? userDoc.data()?.teams || [] : [];
-        const teams = await getTeams(teamsData);
-        console.log('teams', teams)
+        console.log('userDoc', userDoc.data())
+
+        const teamsData: { [teamId: string]: string } = userDoc.exists() ? userDoc.data()?.teams || {} : {};
+        const teamIds = Object.keys(teamsData);
+        const teams = await getTeams(teamIds);
+        console.log('teamsData', teamsData)
+
         setUserTeams(teams);
         setLoading(false);
       } catch (err) {
@@ -78,16 +83,34 @@ export function useTeams() {
 
   const getTeams = async (teamIds: string[]) => {
     console.log('teamIds', teamIds)
-    const teams = await Promise.all(teamIds.map(async (teamId) => {
-      const teamRef = doc(db, 'teams', teamId);
-      const teamDoc = await getDoc(teamRef);
-      console.log('teamDoc', teamDoc.data())
-      return {
-        ...teamDoc.data(),
-        id: teamId
-      } as Team;
-    }));
-    return teams;
+    
+    try {
+      console.log('Starting Promise.all')
+      const teams = await Promise.all(teamIds.map(async (teamId) => {
+        console.log('fetching teamId', teamId)
+        const teamRef = doc(db, 'teams', teamId);
+        const teamDoc = await getDoc(teamRef);
+        console.log('teamDoc', teamDoc.data())
+
+        if (!teamDoc.exists()) {
+          console.log(`Team ${teamId} not found`);
+          return null;
+        }
+        
+        const data = teamDoc.data();
+        console.log(`Team ${teamId} data:`, data);
+        
+        return {
+          ...data,
+          id: teamId
+        } as Team;
+      }));
+      console.log('Promise.all completed', teams);
+      return teams.filter(team => team !== null) as Team[];
+    } catch (error) {
+      console.error('Error in getTeams:', error);
+      throw error;
+    }
   }
 
   const leaveTeam = async (teamId: string, userId: string) => {
