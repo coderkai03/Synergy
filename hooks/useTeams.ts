@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, updateDoc } from '@firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { Invite, Team } from '@/types/Teams';
 import { User } from '@/types/User';
@@ -82,6 +82,11 @@ export function useTeams() {
     }));
     return teams;
   }
+
+  const getAllHackathons = async () => {
+      const teams = await getDocs(collection(db, "teams"));
+      return teams.docs.map((doc) => ({id: doc.id, ...doc.data()}) as Team);
+    }
 
   return { userTeams, loading, error, updateTeamInvites, updateTeammates, getTeams };
 }

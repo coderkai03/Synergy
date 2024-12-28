@@ -11,6 +11,8 @@ export type Team = {
   teammates: string[];
   status: string;
   hostId: string;
+  members: string[]; //adding for search-interface + cards
+  project?: string; //adding for serach-interface + cards
 }
 
 export type Invite = {

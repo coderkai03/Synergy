@@ -12,7 +12,7 @@
   "dependencies": {
     "@clerk/clerk-sdk-node": "^5.0.65",
     "@clerk/nextjs": "^6.5.1",
-    "@firebase/firestore": "^4.7.4",
+    "@firebase/firestore": "^4.7.5",
     "@preline/select": "^2.5.1",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.2",
