@@ -1,28 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/firebaseConfig";
+import { useParams, useRouter } from "next/navigation";
 import { Team } from "@/types/Teams";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useHackathons } from "@/hooks/useHackathons";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
-import clsx, { ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 import { useTeams } from "@/hooks/useTeams";
 import { Hackathon } from "@/types/Hackathons";
 import { User } from "@/types/User";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Calendar, MapPin, Users, LogOut } from 'lucide-react';
+import Image from "next/image";
+import { LeaveTeamDialog } from "@/components/leave-team-dialog";
 
 export default function TeamDetailPage() {
   const params = useParams();
-  const { getTeams } = useTeams();
+  const router = useRouter();
+  const { getTeams, leaveTeam, updateTeamHost } = useTeams();
   const { getHackathons } = useHackathons();
-  const { getUsers } = useFirebaseUser();
+  const { getUsers, userData } = useFirebaseUser();
 
   const id = params.id as string;
   const [team, setTeam] = useState<Team | null>(null);
@@ -50,133 +50,210 @@ export default function TeamDetailPage() {
 
   useEffect(() => {
     const fetchHackathonAndTeammates = async () => {
-    if (team) {
+      if (team) {
         if (team.hackathonId) {
-            const hackathons = await getHackathons([team.hackathonId]);
-            console.log('hackathons', hackathons)
-            setHackathon(hackathons[0]);
-          }
-  
-          if (team.teammates) {
-            const teammates = await getUsers([
-                team.hostId, // Host first
-                ...(team.teammates.filter(id => id !== team.hostId)) // Then remaining teammates
-            ]);
-            console.log('teammates', teammates)
-            setTeammates(teammates);
-          }
+          const hackathons = await getHackathons([team.hackathonId]);
+          setHackathon(hackathons[0]);
         }
-    }
+
+        if (team.teammates) {
+          const teammates = await getUsers([
+            team.hostId,
+            ...team.teammates.filter(id => id !== team.hostId)
+          ]);
+          setTeammates(teammates);
+        }
+      }
+    };
     fetchHackathonAndTeammates();
   }, [team]);
 
+  const handleLeaveTeam = async (newHostId?: string) => {
+    if (!team || !userData) return;
+    try {
+      if (newHostId) {
+        // First update the host
+        await updateTeamHost(team.id, newHostId);
+      }
+      // Then leave the team
+      await leaveTeam(team.id, userData.id);
+      router.push('/teams');
+    } catch (error) {
+      console.error("Error leaving team:", error);
+    }
+  };
+
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <LoadingSkeleton />;
   }
 
-  if (!team || !hackathon || !teammates) {
-    console.log('team', team)
-    console.log('hackathon', hackathon)
-    console.log('teammates', teammates)
-
-    return (
-      <div className="container mx-auto py-8">
-        <Card className="bg-zinc-800 text-white">
-          <CardHeader>
-            <CardTitle>Team not found</CardTitle>
-          </CardHeader>
-        </Card>
-      </div>
-    );
+  if (!team || !hackathon || !teammates.length) {
+    return <TeamNotFound />;
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <Card className="bg-zinc-800 text-white">
+    <div className="mx-auto py-8 px-4 bg-[#111119] text-white min-h-screen">
+      <div className="container mx-auto px-4 py-8">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">{team.name}</CardTitle>
-          {hackathon && (
-            <div className="text-gray-400">
-              <p>Hackathon: {hackathon.name}</p>
-              <p>Date: {hackathon.date}</p>
-              <p>Location: {hackathon.isOnline ? 'Online' : hackathon.location}</p>
-            </div>
-          )}
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Project Details</h3>
-              <p><span className="font-medium">Has Project Idea:</span> {team.hasProjectIdea ? 'Yes' : 'No'}</p>
-              {team.projectIdea && (
-                <p><span className="font-medium">Project Idea:</span> {team.projectIdea}</p>
-              )}
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Problem Space</h3>
-              <ul className="list-disc list-inside">
-                {team.problemSpaces.map((problem, index) => (
-                  <li key={index}>{problem}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Team Description</h3>
-              <p>{team.teamDescription}</p>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Goals</h3>
-              <ul className="list-disc list-inside">
-                {team.goals.map((goal, index) => (
-                  <li key={index}>{goal}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Team Members</h3>
-              <div className="space-y-4">
-                {teammates.map((teammate, index) => (
-                  <div key={index} className="p-4 bg-zinc-900 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      {index === 0 && (
-                        <span className="text-yellow-500" title="Team Host">👑</span>
-                      )}
-                      <p className="font-semibold">{teammate.firstName} {teammate.lastName}</p>
-                    </div>
-                    <p className="text-gray-400">{teammate.email}</p>
-                    <div className="mt-2">
-                      <p className="text-sm"><span className="font-medium">School:</span> {teammate.school}</p>
-                      <p className="text-sm"><span className="font-medium">Major:</span> {teammate.degree}</p>
-                      <p className="text-sm"><span className="font-medium">Year:</span> {teammate.gradYear}</p>
-                      {teammate.programming_languages && teammate.programming_languages.length > 0 && (
-                        <div className="mt-1">
-                          <span className="text-sm font-medium">Programming Languages:</span>
-                          <ul className="list-disc list-inside text-sm">
-                            {teammate.programming_languages.map((lang, i) => (
-                              <li key={i}>{lang}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
+          <div className="flex items-start gap-6">
+            <div className="flex items-start gap-6">
+              <div className="w-32 h-32 rounded-lg overflow-hidden">
+                <Image
+                  src={hackathon.image}
+                  alt={`${hackathon.name} image`}
+                  width={128}
+                  height={128}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              <div className="flex-1">
+                <CardTitle className="text-3xl font-bold mb-2 text-white">{team.name}</CardTitle>
+                {hackathon && (
+                  <div className="text-gray-300 space-y-1">
+                    <p className="flex items-center">
+                      <Users className="w-4 h-4 mr-2" />
+                      {hackathon.name}
+                    </p>
+                    <p className="flex items-center">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      {hackathon.date}
+                    </p>
+                    <p className="flex items-center">
+                      <MapPin className="w-4 h-4 mr-2" />
+                      {hackathon.isOnline ? 'Online' : hackathon.location}
+                    </p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Team Status</h3>
-              <p className="capitalize">{team.status}</p>
+            <div className="flex flex-col gap-2">
+              <Badge variant={team.status === 'active' ? 'default' : 'secondary'} className="text-sm">
+                active {/* {team.status} */}
+              </Badge>
+              {userData && team.teammates.includes(userData.id) && (
+                <LeaveTeamDialog
+                  team={team}
+                  userData={userData}
+                  teammates={teammates}
+                  onLeaveTeam={handleLeaveTeam}
+                />
+              )}
             </div>
           </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-8">
+            <TeamSection title="Team Members">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {teammates.map((teammate, index) => (
+                  <TeamMemberCard
+                    key={index}
+                    teammate={teammate}
+                    isHost={index === 0}
+                    isCurrentUser={userData?.id === teammate.id}
+                  />
+                ))}
+              </div>
+            </TeamSection>
+          </div>
+        </CardContent>
+      </div>
+    </div>
+  );
+}
+
+function TeamSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section>
+      <h3 className="text-xl font-semibold mb-3 text-white">{title}</h3>
+      {children}
+    </section>
+  );
+}
+
+function TeamMemberCard({ teammate, isHost, isCurrentUser }: { 
+  teammate: User; 
+  isHost: boolean;
+  isCurrentUser: boolean;
+}) {
+  return (
+    <Card className='bg-gray-900 border-gray-700'>
+      <CardContent className="p-4">
+        <div className="flex items-center gap-3 mb-3">
+          <Avatar>
+            <AvatarFallback className="bg-gray-700 text-white">
+              {teammate.firstName[0]}{teammate.lastName[0]}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="font-semibold text-white">
+              {teammate.firstName} {teammate.lastName}
+              {isCurrentUser && <span className="ml-2 text-gray-400">(You)</span>}
+            </p>
+            <p className="text-sm text-gray-300">{teammate.email}</p>
+          </div>
+          {isHost && (
+            <Badge variant="outline" className="ml-auto border-gray-500 text-gray-300">Host</Badge>
+          )}
+        </div>
+        <div className="space-y-1 text-sm text-gray-300">
+          <p><span className="font-medium text-white">School:</span> {teammate.school}</p>
+          <p><span className="font-medium text-white">Major:</span> {teammate.degree}</p>
+          <p><span className="font-medium text-white">Year:</span> {teammate.gradYear}</p>
+        </div>
+        {teammate.programming_languages && teammate.programming_languages.length > 0 && (
+          <div className="mt-2">
+            <p className="text-sm font-medium mb-1 text-white">Programming Languages:</p>
+            <div className="flex flex-wrap gap-1">
+              {teammate.programming_languages.map((lang, i) => (
+                <Badge key={i} variant="secondary" className="text-xs bg-gray-800 text-gray-200">
+                  {lang}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="mx-auto py-8 px-4 bg-[#111119]">
+      <Card className="bg-gray-900">
+        <CardHeader>
+          <Skeleton className="h-8 w-1/3 mb-2 bg-gray-800" />
+          <Skeleton className="h-4 w-1/4 mb-1 bg-gray-800" />
+          <Skeleton className="h-4 w-1/4 mb-1 bg-gray-800" />
+          <Skeleton className="h-4 w-1/4 bg-gray-800" />
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-8">
+            {[...Array(5)].map((_, i) => (
+              <div key={i}>
+                <Skeleton className="h-6 w-1/4 mb-3 bg-gray-800" />
+                <Skeleton className="h-4 w-full mb-2 bg-gray-800" />
+                <Skeleton className="h-4 w-full mb-2 bg-gray-800" />
+                <Skeleton className="h-4 w-3/4 bg-gray-800" />
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function TeamNotFound() {
+  return (
+    <div className="mx-auto py-8 px-4 bg-[#111119] min-h-screen">
+      <Card className="bg-gray-900">
+        <CardHeader>
+          <CardTitle className="text-white">Team not found</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-gray-300">Sorry, we couldn't find the team you're looking for. It may have been removed or you may have entered an incorrect URL.</p>
         </CardContent>
       </Card>
     </div>

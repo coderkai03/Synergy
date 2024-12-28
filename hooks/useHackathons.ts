@@ -42,8 +42,8 @@ export function useHackathons() {
 
   const getAllHackathons = async () => {
     const hackathons = await getDocs(collection(db, "hackathons"));
-    return hackathons.docs.map((doc) => ({id: doc.id, ...doc.data()}) as Hackathon);
+    return hackathons.docs.map((doc) => doc.data() as Hackathon);
   }
 
-  return { hackathons, getHackathons, getAllHackathons }; //add getAllHackathons to be returned by hook
+  return { hackathons, getHackathons, getAllHackathons };
 }

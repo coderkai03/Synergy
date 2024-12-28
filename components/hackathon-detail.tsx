@@ -145,7 +145,6 @@ export function HackathonDetailComponent() {
     try {
       console.log("Submitting formData:", formData);
       const userId = user?.id;
-      //const userEmail = user?.primaryEmailAddress?.emailAddress
 
       if (!userId) throw new Error("User ID is not available");
 
@@ -155,7 +154,7 @@ export function HackathonDetailComponent() {
           ...formData,
           teammates: [userId],
           hackathonId: hackathon?.id,
-          hostId: userId
+          hostId: userId,
         }
       )
 
@@ -166,7 +165,10 @@ export function HackathonDetailComponent() {
       if (userDoc.exists()) {
         const currentTeams = userDoc.data().teams || [];
         await updateDoc(userRef, {
-          teams: [...currentTeams, docRef.id]
+          teams: {
+            ...currentTeams,
+            [docRef.id]: 'active'
+          }
         });
       } else {
         throw new Error("User not signed in");

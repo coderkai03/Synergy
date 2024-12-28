@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { LogOut, Menu, User } from "lucide-react";
+import { LogIn, LogOut, Menu, User } from "lucide-react";
 import { useClerk, useUser, SignInButton } from "@clerk/nextjs";
 import SynergyLogo from "./synergy-logo";
 
@@ -52,7 +52,10 @@ export default function Navbar() {
                                     fallbackRedirectUrl={'/hackathons'}
                                     signUpForceRedirectUrl={'/account-setup'}
                                 >
-                                    <span>Sign in</span>
+                                    <span className="inline-flex items-center gap-2">
+                                        <span>Sign in</span>
+                                        <LogIn className="h-4 w-4" />
+                                    </span>
                                 </SignInButton>
                             </button>
                         )}
