@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Team } from "@/types/Teams";
+import { Invite, Team } from "@/types/Teams";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useHackathons } from "@/hooks/useHackathons";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
@@ -16,11 +16,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Users, LogOut } from 'lucide-react';
 import Image from "next/image";
 import { LeaveTeamDialog } from "@/components/leave-team-dialog";
+import { AddTeammateDialog } from "@/components/add-teammate-dialog";
+import { subscribeToDoc } from "@/hooks/useDocSubscription";
 
 export default function TeamDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { getTeams, leaveTeam, updateTeamHost } = useTeams();
+  const { getTeams, leaveTeam, updateTeamHost, updateTeamInvitesByEmail } = useTeams();
   const { getHackathons } = useHackathons();
   const { getUsers, userData } = useFirebaseUser();
 
@@ -29,6 +31,48 @@ export default function TeamDetailPage() {
   const [hackathon, setHackathon] = useState<Hackathon | null>(null);
   const [teammates, setTeammates] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribeTeams = subscribeToDoc<Team>({
+      collectionName: 'teams',
+      docId: id,
+      onUpdate: (teamData) => {
+        setTeam(teamData);
+      },
+      enabled: !!id
+    });
+
+    const unsubscribeUsers = subscribeToDoc<User[]>({
+      collectionName: 'users',
+      docId: team?.teammates?.join(',') || '',
+      onUpdate: (usersData) => {
+        setTeammates(usersData);
+      },
+      enabled: !!team?.teammates?.length
+    });
+
+    return () => {
+      if (unsubscribeTeams) unsubscribeTeams();
+      if (unsubscribeUsers) unsubscribeUsers();
+    };
+  }, [id]);
+
+  const handleAddTeammate = async (email: string) => {
+    if (!team || !userData) return;
+    try {
+      // You'll need to implement this function in your useTeams hook
+      const invite: Invite = {
+        teamId: team.id,
+        inviterId: userData.id,
+      };
+      await updateTeamInvitesByEmail([email], userData.id, invite);
+      // Refresh the team data
+      const updatedTeam = await getTeams([team.id]);
+      setTeam(updatedTeam[0]);
+    } catch (error) {
+      throw new Error("Failed to add teammate");
+    }
+  };
 
   useEffect(() => {
     const fetchTeam = async () => {
@@ -144,6 +188,16 @@ export default function TeamDetailPage() {
         <CardContent>
           <div className="space-y-8">
             <TeamSection title="Team Members">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold text-white">Team Members</h3>
+                {userData && userData.id === team.hostId && (
+                  <AddTeammateDialog
+                    teamId={team.id}
+                    isHost={userData.id === team.hostId}
+                    onAddTeammate={handleAddTeammate}
+                  />
+                )}
+              </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {teammates.map((teammate, index) => (
                   <TeamMemberCard
@@ -151,7 +205,7 @@ export default function TeamDetailPage() {
                     teammate={teammate}
                     isHost={index === 0}
                     isCurrentUser={userData?.id === teammate.id}
-                  />
+                />
                 ))}
               </div>
             </TeamSection>
@@ -165,7 +219,6 @@ export default function TeamDetailPage() {
 function TeamSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h3 className="text-xl font-semibold mb-3 text-white">{title}</h3>
       {children}
     </section>
   );

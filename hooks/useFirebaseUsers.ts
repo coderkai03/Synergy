@@ -36,7 +36,7 @@ export function useFirebaseUser() {
       invites: invites.filter((_, i) => i !== index),
       teams: accepted ? {
         ...(userData?.teams || {}), // Spread existing teams
-        [invites[index].teamId]: invites[index].teamId // Add new team
+        [invites[index].teamId]: 'active' // Add new team
       } : userData?.teams // Keep existing teams if not accepted
     });
     console.log(`Updated user invites: ${accepted ? 'accepted' : 'declined'} invite to ${invites[index].teamId}`)

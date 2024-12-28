@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, doc, getDoc, updateDoc, arrayRemove, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, updateDoc, arrayRemove, deleteDoc, where, query } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { Invite, Team } from '@/types/Teams';
 import { User } from '@/types/User';
@@ -62,6 +62,51 @@ export function useTeams() {
     } catch (error) {
       console.error('Error updating team invites:', error);
       return false;
+    }
+  };
+
+  const updateTeamInvitesByEmail = async (teammateEmails: string[], userId: string, invite: Invite) => {
+    try {
+      // Get all users matching the emails
+      const usersRef = collection(db, 'users');
+      const emailQueries = teammateEmails.map(email => 
+        query(usersRef, where('email', '==', email))
+      );
+
+      const userSnapshots = await Promise.all(
+        emailQueries.map(q => getDocs(q))
+      );
+
+      // Flatten and get user IDs
+      const userIds = userSnapshots
+        .flatMap(snapshot => snapshot.docs)
+        .map(doc => doc.id)
+        .filter(id => id !== userId);
+
+      if (userIds.length === 0) {
+        throw new Error('No users found with the provided emails');
+      }
+
+      // Update invites for each found user
+      await Promise.all(userIds.map(async (teammateId) => {
+        const inviteeRef = doc(db, 'users', teammateId);
+        const inviteeDoc = await getDoc(inviteeRef);
+        
+        if (inviteeDoc.exists()) {
+          const currentInvites = inviteeDoc.data().invites || [];
+          // Only add if not already invited
+          if (!currentInvites.some((inv: Invite) => inv.teamId === invite.teamId)) {
+            await updateDoc(inviteeRef, {
+              invites: [...currentInvites, invite]
+            });
+          }
+        }
+      }));
+      
+      return true;
+    } catch (error) {
+      console.error('Error updating team invites:', error);
+      throw error;
     }
   };
 
@@ -149,6 +194,7 @@ export function useTeams() {
     loading,
     error,
     updateTeamInvites,
+    updateTeamInvitesByEmail,
     updateTeammates,
     getTeams,
     leaveTeam,

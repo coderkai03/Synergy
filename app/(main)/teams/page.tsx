@@ -16,6 +16,7 @@ import { User } from "@/types/User"
 import { Hackathon } from "@/types/Hackathons"
 import { Button } from "@/components/ui/button"
 import { TeamListSection } from "@/components/team-list-section"
+import { subscribeToDoc } from "@/hooks/useDocSubscription"
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()
@@ -30,42 +31,29 @@ export default function HackathonTeamsScreen() {
   const [filteredActiveTeams, setFilteredActiveTeams] = useState<Team[]>([...userTeams]);
   const [filteredPendingTeams, setFilteredPendingTeams] = useState<Team[]>([...userTeams]);
 
-
-  const subscribeToInvites = (): (() => void) | undefined => {
-    if (!user?.id) return;
-    console.log('invites to ID:', user.id);
-
-    const userRef = doc(db, "users", user.id);
-
-    const unsubInvites = onSnapshot(userRef, (docSnapshot) => {
-      if (docSnapshot.exists()) {
-        const userData = docSnapshot.data() as User;
+  useEffect(() => {
+    const unsubscribe = subscribeToDoc<User>({
+      collectionName: 'users',
+      docId: user?.id || '',
+      onUpdate: (userData) => {
         const newInvites = userData.invites || [];
-        console.log('newInvites:', newInvites);
-        
         // Only update if there are more invites than before
         setInvites(prevInvites => {
-          if (newInvites.length > prevInvites.length) {
+          if (JSON.stringify(newInvites) !== JSON.stringify(prevInvites)) {
             console.log('New invite received:', newInvites);
             return newInvites;
           }
           return prevInvites;
         });
-      }
+      },
+      enabled: !!user?.id
     });
-    console.log('unsubInvites:', unsubInvites);
 
-    return unsubInvites;
-  };
-
-  useEffect(() => {
-    const unsubscribe = subscribeToInvites();
-    
-    // Cleanup function
     return () => {
       if (unsubscribe) unsubscribe();
     };
   }, [user?.id]);
+
 
   useEffect(() => {
     console.log('userTeams', userTeams)

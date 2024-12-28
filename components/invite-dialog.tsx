@@ -108,15 +108,27 @@ export function InviteDialog({
         </DialogHeader>
         <div className="space-y-4">
           {invites ? invites.map((invite, index) => (
-            <div key={invite.inviterId} className="flex items-center justify-between p-2 border rounded">
-              <span>{inviters[index]?.firstName || ''} invited you to join {teamInvites[index]?.name}</span>
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" onClick={() => handleDecline(index)}>
-                  <X className="h-4 w-4" />
-                </Button>
-                <Button variant="default" size="sm" onClick={() => handleJoin(index)}>
-                  Join
-                </Button>
+            <div key={index} className="flex flex-col p-3 border rounded">
+              <div className="text-sm text-muted-foreground mb-1">
+                from {inviters[index]?.firstName || 'Unknown'}
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium">
+                    Invited you to join {teamInvites[index]?.name}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {hackathons.find(h => h.id === teamInvites[index]?.hackathonId)?.name || 'Unknown Hackathon'}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="sm" onClick={() => handleDecline(index)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                  <Button variant="default" size="sm" onClick={() => handleJoin(index)}>
+                    Join
+                  </Button>
+                </div>
               </div>
             </div>
           )) : <div>No invites</div>}

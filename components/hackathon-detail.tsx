@@ -303,6 +303,7 @@ export function HackathonDetailComponent() {
                     selectedItems={formData.teammates}
                     onItemAdd={(teammateId) => {
                       if (formData.teammates.length < 3) {
+                        console.log('Adding teammate:', teammateId);
                         setFormData({
                           ...formData,
                           teammates: [...formData.teammates, teammateId]

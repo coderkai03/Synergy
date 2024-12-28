@@ -31,6 +31,12 @@ export default function Navbar() {
                             Teams
                         </Link>
                         <Link 
+                            href="/search"
+                            className="text-white hover:text-amber-100"
+                        >
+                            Search
+                        </Link>
+                        <Link 
                             href="/hackathons"
                             className="text-white hover:text-amber-100"
                         >
