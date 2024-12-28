@@ -243,7 +243,12 @@ export function HackathonDetailComponent() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="name">Team Name</Label>
+              <Label htmlFor="name">
+                {'Team Name'}
+                <span className="text-gray-400 text-xs ml-2">
+                  {formData.name?.length || 0}/20
+                </span>
+              </Label>
               <Input
                 type="text"
                 id="name"
@@ -252,6 +257,7 @@ export function HackathonDetailComponent() {
                 onChange={handleChange}
                 className="w-full bg-zinc-700 border-amber-500/50"
                 placeholder="Enter your team name"
+                maxLength={20}
                 required
               />
             </div>
@@ -285,10 +291,10 @@ export function HackathonDetailComponent() {
 
               {formData.alreadyInTeam === "yes" && (
                 <div className="space-y-2">
-                  <Label>{'Teammates '}
+                  <Label>{'Teammates'}
                     <span
-                      className={`${formData.teammates.length >= 3 ? 'text-gray-500' : ''}`}>
-                        ({formData.teammates.length}/3)
+                      className='text-gray-400 text-xs ml-2'>
+                        {formData.teammates.length}/3
                     </span>
                   </Label>
                   <ItemSelect
@@ -408,6 +414,7 @@ export function HackathonDetailComponent() {
               className="w-full bg-amber-500 hover:bg-amber-600 text-white" 
               disabled={
                 isSubmitting || 
+                !formData.name?.trim() || 
                 formData.goals.length === 0 || 
                 formData.problemSpaces.length === 0 || 
                 !formData.alreadyInTeam || 

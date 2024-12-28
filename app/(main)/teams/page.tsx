@@ -10,7 +10,7 @@ import { Invite, Team } from "@/types/Teams"
 import { useUser } from "@clerk/nextjs"
 import { InviteDialog } from "@/components/invite-dialog"
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers"
-import { collection, onSnapshot, query, where, documentId } from "firebase/firestore"
+import { collection, onSnapshot, query, where, documentId, doc } from "firebase/firestore"
 import { db } from "@/firebaseConfig"
 import { User } from "@/types/User"
 import { Hackathon } from "@/types/Hackathons"
@@ -31,29 +31,40 @@ export default function HackathonTeamsScreen() {
   const [filteredPendingTeams, setFilteredPendingTeams] = useState<Team[]>([...userTeams]);
 
 
-  const subscribeToInvites = () => {
+  const subscribeToInvites = (): (() => void) | undefined => {
     if (!user?.id) return;
+    console.log('invites to ID:', user.id);
 
-    const invitesQuery = query(
-      collection(db, "users"), 
-      where(documentId(), "==", user.id)
-    );
+    const userRef = doc(db, "users", user.id);
 
-    const unsubInvites = onSnapshot(invitesQuery, (snapshot) => {
-      snapshot.forEach((doc) => {
-        const userData = doc.data() as User;
-        if (userData.invites) {
-          setInvites(userData.invites);
-        }
-      });
+    const unsubInvites = onSnapshot(userRef, (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const userData = docSnapshot.data() as User;
+        const newInvites = userData.invites || [];
+        console.log('newInvites:', newInvites);
+        
+        // Only update if there are more invites than before
+        setInvites(prevInvites => {
+          if (newInvites.length > prevInvites.length) {
+            console.log('New invite received:', newInvites);
+            return newInvites;
+          }
+          return prevInvites;
+        });
+      }
     });
+    console.log('unsubInvites:', unsubInvites);
 
     return unsubInvites;
   };
 
   useEffect(() => {
     const unsubscribe = subscribeToInvites();
-    if (unsubscribe) return unsubscribe();
+    
+    // Cleanup function
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [user?.id]);
 
   useEffect(() => {
@@ -66,6 +77,7 @@ export default function HackathonTeamsScreen() {
 
     console.log('checked userTeams', userTeams)
 
+    setInvites(userData?.invites || []);
     setTeams(userTeams);
 
     setFilteredActiveTeams(userTeams
@@ -90,11 +102,7 @@ export default function HackathonTeamsScreen() {
   const handleTeamClick = (teamId: string) => {
     router.push(`/teams/${teamId}`)
   }
-
-  if (!userTeams?.length) {
-    return <div>No teams found</div>
-  }
-
+  
   return (
     <div className="p-4 min-h-screen bg-[#111119]">
       <main className="container mx-auto px-4 py-8">

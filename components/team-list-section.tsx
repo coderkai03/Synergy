@@ -35,14 +35,17 @@ export function TeamListSection({
         )}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {hackathons && teams.slice(0, 3).map((team) => {
-          const hackathon = hackathons.find(h => h.id === team.hackathonId);
-          return hackathon ? (
-            <div key={team.id} onClick={() => onTeamClick(team.id)}>
+        {hackathons && teams.length > 0 ? (
+          teams.slice(0, 3).map((team) => {
+            const hackathon = hackathons.find(h => h.id === team.hackathonId);
+            return hackathon ? (
+              <div key={team.id} onClick={() => onTeamClick(team.id)}>
               <TeamPreview team={team} hackathon={hackathon} />
             </div>
           ) : null;
-        })}
+        })) : (
+          <div className="col-span-3 text-center text-gray-400">No teams found</div>
+        )}
       </div>
     </div>
   );
