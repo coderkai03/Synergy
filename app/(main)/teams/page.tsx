@@ -106,7 +106,7 @@ export default function HackathonTeamsScreen() {
         </div>
         <div className="space-y-8">
           <TeamListSection
-            title="Active Teams"
+            title="Active"
             teams={filteredActiveTeams}
             hackathons={hackathons}
             viewAllPath="/teams/active"
@@ -114,7 +114,7 @@ export default function HackathonTeamsScreen() {
           />
 
           <TeamListSection
-            title="Pending Teams"
+            title="Pending"
             teams={filteredPendingTeams}
             hackathons={hackathons}
             viewAllPath="/teams/pending"
