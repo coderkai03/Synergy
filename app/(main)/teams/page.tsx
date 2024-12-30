@@ -17,6 +17,8 @@ import { Hackathon } from "@/types/Hackathons"
 import { Button } from "@/components/ui/button"
 import { TeamListSection } from "@/components/team-list-section"
 import { subscribeToDoc } from "@/hooks/useDocSubscription"
+import { HackathonDetailComponent } from "@/components/hackathon-detail"
+import { Plus } from "lucide-react"
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()
@@ -69,11 +71,11 @@ export default function HackathonTeamsScreen() {
     setTeams(userTeams);
 
     setFilteredActiveTeams(userTeams
-      .filter(team => userData?.teams[team.id] === 'active')
+      .filter(team => userData?.teams[team.id || ''] === 'active')
       .sort((a, b) => a.name.localeCompare(b.name)));
       
     setFilteredPendingTeams(userTeams
-      .filter(team => userData?.teams[team.id] === 'pending')
+      .filter(team => userData?.teams[team.id || ''] === 'pending')
       .sort((a, b) => a.name.localeCompare(b.name)));
 
     console.log('filteredActiveTeams', filteredActiveTeams);
@@ -96,13 +98,18 @@ export default function HackathonTeamsScreen() {
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-white">My Teams</h1>
-          <InviteDialog
-            invites={invites}
-            teams={teams}
-            hackathons={hackathons}
-            setTeams={setTeams}
-            setHackathons={setHackathons}
-          />
+          <div className="flex gap-4">
+            <Button variant="outline" onClick={() => router.push('/hackathons/create-team')} className="gap-2 text-black">
+              <Plus className="w-4 h-4" />
+            </Button>
+            <InviteDialog
+              invites={invites}
+              teams={teams}
+              hackathons={hackathons}
+              setTeams={setTeams}
+              setHackathons={setHackathons}
+            />
+          </div>
         </div>
         <div className="space-y-8">
           <TeamListSection

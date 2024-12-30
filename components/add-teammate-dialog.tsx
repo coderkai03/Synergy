@@ -53,7 +53,7 @@ export function AddTeammateDialog({ teamId, isHost, onAddTeammate }: AddTeammate
       <DialogTrigger asChild>
         <Button variant="outline" className="gap-2 text-black">
           <Plus className="w-4 h-4" />
-          Add Teammate
+          Invite
         </Button>
       </DialogTrigger>
       <DialogContent className="bg-gray-900 text-white">

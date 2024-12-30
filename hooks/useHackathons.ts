@@ -40,10 +40,6 @@ export function useHackathons() {
     return hackathons as Hackathon[];
   }
 
-  const getAllHackathons = async () => {
-    const hackathons = await getDocs(collection(db, "hackathons"));
-    return hackathons.docs.map((doc) => doc.data() as Hackathon);
-  }
-
-  return { hackathons, getHackathons, getAllHackathons };
+  return { hackathons, getHackathons };
 }
+

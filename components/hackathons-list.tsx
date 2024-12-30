@@ -26,6 +26,7 @@ export function HackathonsListComponent() {
   const { userData } = useFirebaseUser();
   const { hackathons } = useHackathons();
   const { userTeams } = useTeams();
+  console.log('userTeams:', userTeams);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter] = useState("");
@@ -63,10 +64,6 @@ export function HackathonsListComponent() {
   // Use these functions directly in your JSX
   const activeHackathons = getActiveHackathons(hackathons);
   const filteredHackathons = filterHackathons(activeHackathons);
-
-  useEffect(() => {
-    console.log('userTeams:', userTeams);
-  }, []);
 
   return (
     <div className="min-h-screen bg-[#111119] p-4">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, doc, getDoc, updateDoc, arrayRemove, deleteDoc, where, query } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, updateDoc, arrayRemove, deleteDoc, where, query, setDoc, addDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { Invite, Team } from '@/types/Teams';
 import { User } from '@/types/User';
@@ -37,7 +37,7 @@ export function useTeams() {
       }
     }
     fetchTeams();
-  }, [user]);
+  }, [user?.id]);
   
 
   const updateTeamInvites = async (teammateIds: string[], userId: string, invite: Invite) => {
@@ -158,6 +158,20 @@ export function useTeams() {
     }
   }
 
+  const createTeam = async (team: Team) => {
+    const { id, ...teamWithoutId } = team;
+    const teamRef = collection(db, 'teams');
+    const docRef = await addDoc(teamRef, teamWithoutId);
+
+    // Add teamId to user's teams collection
+    const userRef = doc(db, 'users', team.hostId);
+    await updateDoc(userRef, {
+      [`teams.${docRef.id}`]: "active"
+    });
+
+    return docRef.id;
+  }
+
   const leaveTeam = async (teamId: string, userId: string) => {
     const teamRef = doc(db, 'teams', teamId);
     // remove userId from team
@@ -189,6 +203,21 @@ export function useTeams() {
     });
   }
 
+  const teamNameExists = async (teamName: string, hackathonId: string) => {
+    try {
+      const teamsRef = collection(db, 'teams');
+      const q = query(teamsRef, 
+        where('hackathonId', '==', hackathonId),
+        where('name', '==', teamName)
+      );
+      const querySnapshot = await getDocs(q);
+      return !querySnapshot.empty;
+    } catch (error) {
+      console.error('Error checking team name:', error);
+      throw error;
+    }
+  }
+
   return {
     userTeams,
     loading,
@@ -197,9 +226,11 @@ export function useTeams() {
     updateTeamInvitesByEmail,
     updateTeammates,
     getTeams,
+    createTeam,
     leaveTeam,
     updateTeamHost,
-    deleteTeam
+    deleteTeam,
+    teamNameExists
   };
 }
 

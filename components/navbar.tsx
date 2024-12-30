@@ -10,11 +10,13 @@ import SynergyLogo from "./synergy-logo";
 export default function Navbar() {
     const { signOut } = useClerk();
     const { user } = useUser();
+    const { getLogoSize } = SynergyLogo();
+    const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
     return (
         <header className="sticky top-0 z-10 bg-[#111119] px-4 shadow-sm">
             <div className="container mx-auto px-4 py-4 backdrop-blur-md flex justify-between items-center rounded-full">
-                <SynergyLogo/>
+                {getLogoSize('md')}
 
                 <div className="flex items-center gap-4">
                     <div className="hidden md:block mx-10 space-x-10">
@@ -30,12 +32,12 @@ export default function Navbar() {
                         >
                             Teams
                         </Link>
-                        <Link 
+                        {publishableKey?.includes('pk_test') && <Link 
                             href="/search"
                             className="text-white hover:text-amber-100"
                         >
                             Search
-                        </Link>
+                        </Link>}
                         <Link 
                             href="/hackathons"
                             className="text-white hover:text-amber-100"
