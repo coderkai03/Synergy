@@ -27,7 +27,7 @@ export function HackathonCard({ hackathon, userTeams, userData }: HackathonCardP
   const hasApplied = userTeams.some(team => team.hackathonId === hackathon.id);
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#4A4A4A] border-none">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#4A4A4A] border-none flex flex-col">
       <CardHeader className="p-0">
         {hackathon.image ? (
           <Image
@@ -43,7 +43,7 @@ export function HackathonCard({ hackathon, userTeams, userData }: HackathonCardP
           </div>
         )}
       </CardHeader>
-      <CardContent className="grid gap-3 p-4">
+      <CardContent className="grid gap-3 p-4 mt-auto">
         <h3 className="text-xl font-semibold text-white line-clamp-1">
           {hackathon.name}
         </h3>

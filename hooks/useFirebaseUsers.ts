@@ -27,6 +27,23 @@ export function useFirebaseUser() {
     fetchUserData();
   }, [user?.id]);
 
+  const createUser = async (user: User) => {
+    if (!user?.id) return;
+
+    try {
+      const userRef = doc(db, 'users', user.id);
+      const userDoc = await getDoc(userRef);
+
+      if (!userDoc.exists()) {
+        await setDoc(userRef, user);
+        console.log('Created new user:', user.id);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error creating user');
+      console.error('Error creating user:', err);
+    }
+  }
+
   // Move updateUserInvites outside useEffect so it can be returned
   const updateUserInvites = async (index: number, invites: Invite[], accepted: boolean) => {
     if (!user?.id) return;
@@ -54,5 +71,12 @@ export function useFirebaseUser() {
     return users;
   }
 
-  return { loading, error, userData, updateUserInvites, getUsers };
+  return {
+    loading,
+    error,
+    userData,
+    updateUserInvites,
+    getUsers,
+    createUser
+  };
 }

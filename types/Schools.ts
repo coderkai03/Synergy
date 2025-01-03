@@ -26,3 +26,11 @@ export const schools: School[] = [
     title: "Top public university in Texas"
   }
 ]
+
+export const degreeOptions = [
+  "Bachelor of Science",
+  "Bachelor of Arts",
+  "Master of Science",
+  "Master of Arts",
+  "Doctor of Philosophy"
+]

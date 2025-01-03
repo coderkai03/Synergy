@@ -5,13 +5,16 @@ export type User = {
   firstName: string;
   lastName: string;
   email: string;
-  username: string;
-  phone: string;
-  gradYear: string;
+  profilePicture: string;
+  bio: string;
+  // phone: string;
+  // gradYear: string;
   school: string;
-  degree: string;
-  programming_languages: string[];
+  major: string;
+  technologies: string[];
   category_experience: string[];
+  interests: string[];
+  linkedin: string;
   devpost: string;
   github: string;
   number_of_hackathons: string;
@@ -30,13 +33,16 @@ export const defaultUser: User = {
   firstName: "",
   lastName: "",
   email: "",
-  username: "",
-  phone: "",
-  gradYear: "",
+  profilePicture: "",
+  bio: "",
+  // phone: "",
+  // gradYear: "",
   school: "",
-  degree: "",
-  programming_languages: [],
+  major: "",
+  technologies: [],
   category_experience: [],
+  interests: [],
+  linkedin: "",
   devpost: "",
   github: "",
   number_of_hackathons: "",
@@ -50,7 +56,7 @@ export const defaultUser: User = {
   invites: [],
 }
 
-export const programming_languages = [
+export const technologies_options = [
   "JavaScript",
   "Python",
   "Java", 
@@ -150,7 +156,7 @@ export const programming_languages = [
   "None"
 ];
 
-export const category_experience = [
+export const category_experience_options = [
   "Web Development",
   "Mobile Development",
   "AI/Machine Learning",
