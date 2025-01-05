@@ -2,9 +2,9 @@
 
 import { motion } from "framer-motion";
 import {Zap, Search, User } from "lucide-react";
-import GetStarted from "./get-started";
+import GetStarted from "../../components/get-started";
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
-import { schools } from "@/constants/schoollist";
+import { schools } from "@/types/Schools";
 
 export default function Home() {
   return (

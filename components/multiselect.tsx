@@ -58,10 +58,7 @@ export function Multiselect({
         <div className="flex flex-col items-center relative">
           <div className="w-full">
             <div className="my-2 p-1 flex border border-gray-200 bg-[#111119] rounded">
-              <button
-                type="button"
-                aria-haspopup="listbox"
-                aria-expanded={isOpen}
+              <div
                 className="flex flex-auto flex-wrap"
                 onClick={toggleDropdown}
               >
@@ -77,7 +74,10 @@ export function Multiselect({
                       <div className="flex flex-auto flex-row-reverse">
                         <button
                           type="button"
-                          onClick={() => removeItem(item)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeItem(item);
+                          }}
                           aria-label={`Remove ${item}`}
                         >
                           <X className="cursor-pointer hover:text-zinc-800 rounded-full w-4 h-4 ml-2" />
@@ -86,9 +86,9 @@ export function Multiselect({
                     </div>
                   ))}
                 </div>
-                <div className="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200">
+                <div className="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200 justify-center">
                   <div
-                    className="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none"
+                    className="flex items-center justify-center cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none"
                   >
                     {isOpen ? (
                       <ChevronUp className="w-4 h-4" />
@@ -97,7 +97,7 @@ export function Multiselect({
                     )}
                   </div>
                 </div>
-              </button>
+              </div>
             </div>
           </div>
           {isOpen && (

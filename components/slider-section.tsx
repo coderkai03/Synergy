@@ -1,4 +1,4 @@
-import { User } from "@/interfaces/User";
+import { User } from "@/types/User";
 import SkillSlider from "./skill-slider";
 
 type SliderChangeHandler = (role: string) => (value: number[]) => void;
@@ -29,11 +29,11 @@ function SkillsSection({ formData, handleSliderChange }: { formData: User, handl
           onValueChange={handleSliderChange("hardware")}
         />
         <SkillSlider
-          id="uiDesign"
-          label="UI/UX Design"
+          id="design"
+          label="Design"
           description="User interface design, user experience, wireframing, and prototyping"
-          value={formData.role_experience?.uiux_design}
-          onValueChange={handleSliderChange("uiux_design")}
+          value={formData.role_experience?.design}
+          onValueChange={handleSliderChange("design")}
         />
       </div>
     );

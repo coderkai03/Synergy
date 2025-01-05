@@ -31,55 +31,51 @@ import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import { db } from '@/firebaseConfig'
 import { doc, setDoc } from '@firebase/firestore'
-import { defaultUser, programming_languages, category_experience, User } from "@/interfaces/User";
+import {
+  defaultUser,
+  technologies_options,
+  category_experience_options,
+  // interests_options,
+  User
+} from "@/types/User";
 import SkillsSection from "./slider-section";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { ItemSelect } from "./item-select";
+import { Textarea } from "./ui/textarea";
 
 export function AccountSetupComponent() {
   const router = useRouter();
-  const { user, isSignedIn, isLoaded } = useUser();
-  const { userData, loading: isFirebaseLoading } = useFirebaseUser(user?.id);
+  const { user } = useUser();
+  const { userData } = useFirebaseUser();
+
   const [formData, setFormData] = useState<User>({
     ...defaultUser,
     email: user?.primaryEmailAddress?.emailAddress || "",
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
+    role_experience: {
+      product_management: -1,
+      software: -1,
+      hardware: -1,
+      design: -1
+    }
   });
+  const [currentSection, setCurrentSection] = useState(0);
   
   useEffect(() => {
     console.log('Current userData:', userData);
-    setFormData({
-      ...formData,
-      ...userData,
-    });
-  }, [userData]);
-
-  useEffect(() => {
-    if (!isLoaded) return;
-    if (!isSignedIn || !user) return;
-    
-    async function fetchUserData() {
-      try {
-        const userId = user?.id
-        const userEmail = user?.primaryEmailAddress?.emailAddress
-        console.log('User:', userId, userEmail)
-
-        if (!userId) {
-          throw new Error("User ID not found")
+    if (userData) {
+      setFormData(prevFormData => ({
+        ...userData,
+        role_experience: {
+          ...prevFormData.role_experience,
+          ...userData.role_experience,
+          design: userData.role_experience?.design ?? -1
         }
-
-        if (!userEmail) {
-          throw new Error("User email not found")
-        }
-      } catch (error) {
-        console.error("Error getting user ID:", error)
-        return
-      }
+      }));
     }
-
-    fetchUserData()
-  }, [user, isSignedIn, isLoaded]);
+    console.log('Updated formData:', formData);
+  }, [userData]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -116,7 +112,10 @@ export function AccountSetupComponent() {
       console.log("Submitting formData:", formData);
       if (!user?.id) return;
       const userDoc = doc(db, 'users', user.id);
-      await setDoc(userDoc, formData);
+      await setDoc(userDoc, {
+        ...formData, 
+        email: user?.primaryEmailAddress?.emailAddress,
+      });
       console.log("User data updated successfully");
 
       // Navigate to the next page
@@ -127,10 +126,15 @@ export function AccountSetupComponent() {
     }
   };
 
+  const handleNext = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCurrentSection(prev => prev + 1);
+  };
+
   return (
     <div className="justify-center min-h-screen bg-[#111119] p-4">
       <div className="flex justify-center">
-        <Card className="felx fex-col items-center space-y-6 w-3/4 bg-[#111119] text-white border-none pt-5">
+        <Card className="felx fex-col items-center space-y-6 w-1/2 bg-[#111119] text-white border-none pt-5">
           <CardHeader>
             <CardTitle>Account Setup</CardTitle>
             <CardDescription>
@@ -139,58 +143,89 @@ export function AccountSetupComponent() {
             </CardDescription>
           </CardHeader>
 
-          {isLoaded && !isFirebaseLoading ? (
-            <form onSubmit={handleSubmit}>
+          {userData ? (
+            <form onSubmit={
+              currentSection === 4 ? handleSubmit : handleNext
+            }>
               <CardContent className="space-y-6 text-white">
 
               {/* Personal Information section */}
-              <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
-                <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
-                  <h2 className="text-lg font-semibold text-white">Personal Information</h2>
-                  <ChevronDown className="w-5 h-5 text-zinc-400" />
-                </CollapsibleTrigger>
-                <CollapsibleContent className="p-4 pt-0 space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
-                      <Input 
-                        id="firstName" 
+              {currentSection === 0 && (
+                <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
+                    <h2 className="text-lg font-semibold text-white">Personal Information</h2>
+                    <ChevronDown className="w-5 h-5 text-zinc-400" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="p-4 pt-0 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-rows-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name</Label>
+                        <Input 
+                          id="firstName" 
+                          className="bg-zinc-700 border-amber-500/50" 
+                          value={formData.firstName}
+                          onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input 
+                          id="lastName" 
+                          className="bg-zinc-700 border-amber-500/50" 
+                          value={formData.lastName}
+                          onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                    {/* <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        name="phone"
                         className="bg-zinc-700 border-amber-500/50" 
-                        value={formData.firstName}
-                        onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                        value={formData.phone}
+                        onChange={handleChange}
+                      />
+                    </div> */}
+
+                    {/* <div className="space-y-2">
+                      <Label htmlFor="profilePicture">Profile Picture URL</Label>
+                      <Input
+                        id="profilePicture"
+                        name="profilePicture"
+                        className="bg-zinc-700 border-amber-500/50"
+                        value={formData.profilePicture}
+                        onChange={handleChange}
+                        placeholder="https://example.com/your-photo.jpg"
+                        required
+                      />
+                    </div> */}
+
+                    <div className="space-y-2">
+                      <Label htmlFor="bio">Bio</Label>
+                      <Textarea
+                        id="bio"
+                        name="bio"
+                        className="bg-zinc-700 border-amber-500/50 min-h-[40px]" 
+                        value={formData.bio}
+                        onChange={handleChange}
+                        placeholder="Give us your best one-liner..."
+                        required
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <Input 
-                        id="lastName" 
-                        className="bg-zinc-700 border-amber-500/50" 
-                        value={formData.lastName}
-                        onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      className="bg-zinc-700 border-amber-500/50" 
-                      value={formData.phone}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
 
               {/* Educational Background section */}
-              <Collapsible className="bg-zinc-800 rounded-lg">
-              <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
-                <h2 className="text-lg font-semibold text-white">Education</h2>
+              {currentSection === 1 && (
+                <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
+                    <h2 className="text-lg font-semibold text-white">Education</h2>
                 <ChevronDown className="w-5 h-5 text-zinc-400" />
               </CollapsibleTrigger>
               <CollapsibleContent className="p-4 pt-0 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-rows-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="school">School</Label>
                     <Input id="school" className="bg-zinc-700 border-amber-500/50" 
@@ -202,109 +237,149 @@ export function AccountSetupComponent() {
                       />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="degree">Degree</Label>
+                    <Label htmlFor="major">Major</Label>
                     <Input
-                      id="degree"
-                      name="degree"
-                      value={formData.degree}
+                      id="major"
+                      name="major"
+                      value={formData.major}
                       onChange={handleChange}
-                      placeholder="Your Degree"
+                      placeholder="Your Major"
                       required
                       className="bg-zinc-700 border-amber-500/50"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="gradYear">Graduation Year</Label>
-                    <Select
-                      name="gradYear"
-                      value={formData.gradYear}
-                      onValueChange={handleSelectChange("gradYear")}
-                    >
-                      <SelectTrigger className="bg-zinc-700 border-amber-500/50 text-white-500">
-                        <SelectValue placeholder="Select graduation year"/>
-                      </SelectTrigger>
-                      <SelectContent className="bg-zinc-700 border-amber-500/50 text-white hover:bg-[##FFAD08]">
-                        {[2024, 2025, 2026, 2027, 2028, 2029, 2030].map((year) => (
-                          <SelectItem key={year} value={year.toString()}>
-                            {year}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
+                      {/* <div className="space-y-2">
+                        <Label htmlFor="gradYear">Graduation Year</Label>
+                        <Select
+                          name="gradYear"
+                          value={formData.gradYear}
+                          onValueChange={handleSelectChange("gradYear")}
+                        >
+                          <SelectTrigger className="bg-zinc-700 border-amber-500/50 text-white-500">
+                            <SelectValue placeholder="Select graduation year"/>
+                          </SelectTrigger>
+                          <SelectContent className="bg-zinc-700 border-amber-500/50 text-white hover:bg-[##FFAD08]">
+                            {[2024, 2025, 2026, 2027, 2028, 2029, 2030].map((year) => (
+                              <SelectItem key={year} value={year.toString()}>
+                                {year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div> */}
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
 
               {/* Technical Skills section */}
-              <Collapsible className="bg-zinc-800 rounded-lg">
+              {currentSection === 2 && (
+                <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
                   <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
-                    <h2 className="text-lg font-semibold text-white">Technical Skills</h2>
+                    <h2 className="text-lg font-semibold text-white">Skills and Interests</h2>
                     <ChevronDown className="w-5 h-5 text-zinc-400" />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="p-4 pt-0 space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="programming_languages" className="text-white">Programming Languages</Label>
-                    <ItemSelect
-                      itemList={programming_languages.map(lang => ({
-                        id: lang,
-                        label: lang
-                      }))}
-                      selectedItems={formData.programming_languages}
-                      onItemAdd={(langId) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          programming_languages: [...prev.programming_languages, langId]
-                        }));
-                      }}
-                      onItemRemove={(langId) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          programming_languages: prev.programming_languages.filter(id => id !== langId)
-                        }));
-                      }}
-                      placeholder="Search languages..."
-                      maxItems={10}
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="programming_languages" className="text-white">Programming Languages</Label>
+                      <ItemSelect
+                        itemList={technologies_options.map(lang => ({
+                          id: lang,
+                          label: lang
+                        }))}
+                        selectedItems={formData.technologies}
+                        onItemAdd={(langId) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            technologies: [...prev.technologies, langId]
+                          }));
+                        }}
+                        onItemRemove={(langId) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            technologies: prev.technologies.filter(id => id !== langId)
+                          }));
+                        }}
+                        placeholder="Search languages..."
+                        maxItems={10}
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="category_experience" className="text-white">Category Experience</Label>
-                    <ItemSelect
-                      itemList={category_experience.map(item => ({
-                        id: item,
-                        label: item
-                      }))}
-                      selectedItems={formData.category_experience}
-                      onItemAdd={(itemId) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          category_experience: [...prev.category_experience, itemId]
-                        }));
-                      }}
-                      onItemRemove={(itemId) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          category_experience: prev.category_experience.filter(id => id !== itemId)
-                        }));
-                      }}
-                      placeholder="Search categories..."
-                      maxItems={10}
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="category_experience" className="text-white">Category Experience</Label>
+                      <ItemSelect
+                        itemList={category_experience_options.map(item => ({
+                          id: item,
+                          label: item
+                        }))}
+                        selectedItems={formData.category_experience}
+                        onItemAdd={(itemId) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            category_experience: [...prev.category_experience, itemId]
+                          }));
+                        }}
+                        onItemRemove={(itemId) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            category_experience: prev.category_experience.filter(id => id !== itemId)
+                          }));
+                        }}
+                        placeholder="Search categories..."
+                        maxItems={10}
+                      />
+                    </div>
+
+                    {/* <div className="space-y-2">
+                      <Label htmlFor="interests" className="text-white">Interests</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {formData.interests.map((interest, index) => (
+                          <div key={index} className="flex items-center bg-zinc-700 rounded px-2 py-1">
+                            <span className="text-white">{interest}</span>
+                            <button
+                              onClick={() => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  interests: prev.interests.filter((_, i) => i !== index)
+                                }));
+                              }}
+                              className="ml-2 text-zinc-400 hover:text-white"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                      <Input
+                        className="mt-2 bg-zinc-700 border-amber-500/50 w-1/2"
+                        placeholder="Type an interest and press Enter"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                            e.preventDefault();
+                            setFormData(prev => ({
+                              ...prev,
+                              interests: [...prev.interests, e.currentTarget.value.trim().replace(/ /g, '-')]
+                            }));
+                            e.currentTarget.value = '';
+                          }
+                        }}
+                      />
+                    </div> */}
                   </CollapsibleContent>
                 </Collapsible>
+              )}
 
               {/* Online Profiles section */}
-              <Collapsible className="bg-zinc-800 rounded-lg">
+              {currentSection === 3 && (
+                <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
                   <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
                     <h2 className="text-lg font-semibold text-white">Online Profiles</h2>
                     <ChevronDown className="w-5 h-5 text-zinc-400" />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="p-4 pt-0 space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-rows-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="devpost">Devpost Profile</Label>
+                        <Label htmlFor="devpost">Devpost Link</Label>
                         <Input
                           id="devpost"
                           name="devpost"
@@ -316,7 +391,7 @@ export function AccountSetupComponent() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="github">GitHub Profile</Label>
+                        <Label htmlFor="github">GitHub Link</Label>
                         <Input
                           id="github"
                           name="github"
@@ -327,12 +402,26 @@ export function AccountSetupComponent() {
                           className="bg-zinc-700 border-amber-500/50"
                         />
                       </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="linkedin">LinkedIn Link</Label>
+                        <Input
+                          id="linkedin"
+                          name="linkedin"
+                          value={formData.linkedin}
+                          onChange={handleChange}
+                          placeholder="https://linkedin.com/in/yourusername"
+                          required
+                          className="bg-zinc-700 border-amber-500/50"
+                        />
+                      </div>
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
+              )}
 
               {/* Hackathon Experience section */}
-              <Collapsible className="bg-zinc-800 rounded-lg">
+              {currentSection === 4 && (
+                <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
                   <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
                     <h2 className="text-lg font-semibold text-white">Hackathon Experience</h2>
                     <ChevronDown className="w-5 h-5 text-zinc-400" />
@@ -375,34 +464,48 @@ export function AccountSetupComponent() {
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
+              )}
 
             </CardContent>
             <CardFooter>
-              {/* Submit Button */}
-              <div className="flex justify-end">
-                <Button
-                  type="submit" 
-                  className="bg-amber-500 hover:bg-amber-600"
-                  disabled={
-                    !formData.firstName || 
-                    !formData.lastName ||
-                    !formData.phone ||
-                    !formData.school ||
-                    !formData.degree ||
-                    !formData.gradYear ||
-                    !formData.number_of_hackathons ||
-                    !formData.devpost ||
-                    !formData.github ||
-                    !formData.programming_languages.length ||
-                    !formData.category_experience.length ||
-                    !formData.role_experience ||
-                    Object.values(formData.role_experience || {}).some(value => value === -1)
+              {/* Navigation Buttons */}
+              <div className="flex justify-between w-full">
+                {currentSection > 0 && (
+                  <Button
+                    type="button"
+                    className="bg-zinc-700 hover:bg-zinc-600"
+                    onClick={() => setCurrentSection(currentSection - 1)}
+                  >
+                    Back
+                  </Button>
+                )}
+                <div className={currentSection === 0 ? "w-full flex justify-end" : ""}>
+                  <Button
+                    type="submit" 
+                    className="bg-amber-500 hover:bg-amber-600"
+                    disabled={
+                      currentSection === 4 && (
+                      !formData.firstName || 
+                      !formData.lastName ||
+                      // !formData.phone ||
+                      !formData.school ||
+                      !formData.major ||
+                      // !formData.gradYear ||
+                      !formData.number_of_hackathons ||
+                      !formData.devpost ||
+                      !formData.github ||
+                      !formData.technologies.length ||
+                      !formData.category_experience.length ||
+                      !formData.role_experience ||
+                      Object.values(formData.role_experience || {}).some(value => value === -1)
+                    )
                   }
-                >
-                  Submit
-                </Button>
+                  >
+                    {currentSection === 4 ? "Finish" : "Next"}
+                  </Button>
+                </div>
               </div>
-              </CardFooter>
+            </CardFooter>
             </form>
           ) : (
             <div className="flex justify-center p-8">

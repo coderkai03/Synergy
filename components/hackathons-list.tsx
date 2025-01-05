@@ -1,46 +1,40 @@
 "use client";
 
-import * as React from "react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-
-import { Calendar, Globe2, MapPin, Search, Users } from "lucide-react";
-import Link from "next/link";
 import { motion } from "framer-motion";
-
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Hackathon } from "@/constants/hackathonlist";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useUser } from "@clerk/nextjs";
-import { useMemo, useState } from "react";
-import { useUserExists, useUserHackathons } from "@/hooks/useFirebaseUsers";
+import { useState } from "react";
 import { useHackathons } from "@/hooks/useHackathons";
+import { SearchBar } from "@/components/ui/SearchBar";
+import { Hackathon } from "@/types/Hackathons";
+import { HackathonCard } from "@/components/hackathon-card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 
 export function HackathonsListComponent() {
   //currently pulling from constants, will need to pull from database
-  const { user } = useUser();
-  const { hackathonIds } = useUserHackathons(user?.id);
-  const { hackathonsList } = useHackathons();
-  const { exists } = useUserExists(user?.id);
+  const { hackathons } = useHackathons();
+  const { userData } = useFirebaseUser();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("all");
 
-  const hackathons: Hackathon[] = useMemo(() => {
+  // Simple function to filter hackathons by date
+  const getActiveHackathons = (hackathons: Hackathon[]) => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time to start of day
+    today.setHours(0, 0, 0, 0);
 
-    return hackathonsList
+    return hackathons
       .filter((hackathon) => {
         const hackathonDate = new Date(hackathon.endDate);
         return hackathonDate >= today;
       })
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, [hackathonsList]);
+  };
 
-  const filteredHackathons = useMemo(() => {
+  // Simple function to apply all filters
+  const filterHackathons = (hackathons: Hackathon[]) => {
     return hackathons.filter((hackathon) => {
       const matchesSearch = hackathon.name
         .toLowerCase()
@@ -53,7 +47,11 @@ export function HackathonsListComponent() {
         (locationFilter === "in-person" && !hackathon.isOnline);
       return matchesSearch && matchesDate && matchesLocation;
     });
-  }, [hackathons, searchTerm, dateFilter, locationFilter]);
+  };
+
+  // Use these functions directly in your JSX
+  const activeHackathons = getActiveHackathons(hackathons);
+  const filteredHackathons = filterHackathons(activeHackathons);
 
   return (
     <div className="min-h-screen bg-[#111119] p-4">
@@ -79,146 +77,60 @@ export function HackathonsListComponent() {
         </motion.p>
 
         {/* Search and Filter */}
-        <div className="mb-8 space-y-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-grow">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <Input
-                placeholder="Search hackathons..."
-                className="pl-10 h-12 flex-1 bg-[#E4E4E4] border-amber-500/20"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
-                <Button variant="secondary" className="bg-amber-500 hover:bg-amber-600 text-white h-12">
-                  Filter by category
-                </Button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content className="w-56 bg-white border rounded-md shadow-lg">
-                <div className="p-2 space-y-2">
-                  <DropdownMenu.Item asChild>
-                    <label className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="online"
-                        checked={locationFilter == "online"}
-                        onCheckedChange={() => setLocationFilter("online")}
-                        />
-                      <span>Online</span>
-                    </label>
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item asChild>
-                    <label className="flex items-center space-x-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" className="bg-amber-500 hover:bg-amber-600 text-white h-12">
+                Filter by category
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56 bg-white border rounded-md shadow-lg">
+              <div className="p-2 space-y-2">
+                <DropdownMenuItem asChild>
+                  <label className="flex items-center space-x-2">
                     <Checkbox 
-                        id="in-person"
-                        checked={locationFilter == "in-person"}
-                        onCheckedChange={() => setLocationFilter("in-person")}
+                      id="online"
+                      checked={locationFilter == "online"}
+                      onCheckedChange={() => setLocationFilter("online")}
                       />
-                      <span>In-person</span>
-                    </label>
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item asChild>
-                    <label className="flex items-center space-x-2">
-                    <Checkbox 
-                        id="all"
-                        checked={locationFilter == "all"}
-                        onCheckedChange={() => setLocationFilter("all")}
-                      />
-                      <span>No Filter</span>
-                    </label>
-                  </DropdownMenu.Item>
-                </div>
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          </div>
+                    <span>Online</span>
+                  </label>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <label className="flex items-center space-x-2">
+                  <Checkbox 
+                      id="in-person"
+                      checked={locationFilter == "in-person"}
+                      onCheckedChange={() => setLocationFilter("in-person")}
+                    />
+                    <span>In-person</span>
+                  </label>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <label className="flex items-center space-x-2">
+                  <Checkbox 
+                      id="all"
+                      checked={locationFilter == "all"}
+                      onCheckedChange={() => setLocationFilter("all")}
+                    />
+                    <span>No Filter</span>
+                  </label>
+                </DropdownMenuItem>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Hackathon Grid */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-4">
           {filteredHackathons.map((hackathon) => (
-            <Card
+            <HackathonCard
               key={hackathon.id}
-              className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#4A4A4A] border-none"
-            >
-              <CardHeader className="p-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={hackathon.image}
-                  alt={hackathon.name}
-                  className="w-full h-[200px] object-cover object-top rounded-t-lg"
-                />
-              </CardHeader>
-              <CardContent className="grid gap-3 p-4">
-                <h3 className="text-xl font-semibold text-white line-clamp-1">
-                  {hackathon.name}
-                </h3>
-                <div className="flex items-center gap-2 text-sm text-white">
-                  <Calendar className="h-4 w-4 text-white" />
-                  <time dateTime={hackathon.date}>
-                    {new Date(`${hackathon.date}T00:00:00`).toLocaleDateString(
-                      "en-US",
-                      {
-                        month: "short",
-                        day: "numeric",
-                      }
-                    )}
-                    {" - "}
-                    {new Date(
-                      `${hackathon.endDate}T00:00:00`
-                    ).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </time>
-                  {hackathon.daysLeft && (
-                    <span className="ml-auto rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-600">
-                      {hackathon.daysLeft} days left
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-white">
-                  {hackathon.isOnline ? (
-                    <Globe2 className="h-4 w-4 text-white" />
-                  ) : (
-                    <MapPin className="h-4 w-4 text-white" />
-                  )}
-                  {hackathon.location}
-                </div>
-                {hackathon.participants && (
-                  <div className="flex items-center gap-2 text-sm text-white">
-                    <Users className="h-4 w-4 text-white" />
-                    {`${hackathon.participants} hackers`}
-                  </div>
-                )}
-                <div className="mt-4 flex gap-3">
-                  {hackathonIds.includes(hackathon.id) ? (
-                    <Button disabled className="flex-1 bg-gray-500 font-bold text-white">
-                      Applied
-                    </Button>
-                  ) : (
-                    <Button 
-                      asChild 
-                      className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-white hover:text-white"
-                    >
-                      <Link href={exists ? `/hackathons/${hackathon.id}` : '/account-setup'}>
-                        Form Team
-                      </Link>
-                    </Button>
-                  )}
-                  <Button asChild variant="outline" className="flex-1 bg-[#4A4A4A] border-[#ffac4c] text-[#ffac4c] hover:bg-[#FFAD08]/10 hover:text-[#ffac4c]">
-                    <Link
-                      href={hackathon.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Website
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+              hackathon={hackathon}
+              userData={userData}
+            />
           ))}
         </div>
       </main>
