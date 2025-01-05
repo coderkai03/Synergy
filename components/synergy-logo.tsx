@@ -24,15 +24,6 @@ function SynergyIcon({ size = 'md', className = '' }: SynergyIconProps) {
   );
 }
 
-interface ImageWithFallbackProps {
-  src: string;
-  alt: string;
-  fallbackSrc: Element;
-  width: number;
-  height: number;
-  className?: string;
-}
-
 export default function SynergyLogo() {
   const getLogoSize = (size: 'sm' | 'md' | 'lg' | 'xl') => {
     return (

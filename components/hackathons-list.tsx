@@ -2,27 +2,19 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useUser } from "@clerk/nextjs";
-import { useMemo, useState, useEffect } from "react";
+import { useState } from "react";
 import { useHackathons } from "@/hooks/useHackathons";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { Hackathon } from "@/types/Hackathons";
-import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
-import { useTeams } from "@/hooks/useTeams";
-import { Team } from "@/types/Teams";
-import { User } from "@/types/User";
 import { HackathonCard } from "@/components/hackathon-card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 
 export function HackathonsListComponent() {
   //currently pulling from constants, will need to pull from database
-  const { user } = useUser();
-  const { userData } = useFirebaseUser();
   const { hackathons } = useHackathons();
-  const { userTeams } = useTeams();
-  console.log('userTeams:', userTeams);
+  const { userData } = useFirebaseUser();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter] = useState("");

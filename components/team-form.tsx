@@ -82,11 +82,10 @@ export function TeamForm() {
         toast.success("Team created");
       } else if (teamId === 'alreadyInTeam') {
         toast.error("You are already in a team for this hackathon");
-      } else {
-        toast.error("Failed to create team");
       }
     } catch (error) {
-      toast.error("Failed to submit information. Please try again.");
+      console.error("Error creating team:", error);
+      toast.error("Failed to create team");
     } finally {
       setIsSubmitting(false);
     }

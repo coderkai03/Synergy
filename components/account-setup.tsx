@@ -41,13 +41,11 @@ import {
 import SkillsSection from "./slider-section";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { ItemSelect } from "./item-select";
-import { useSchools } from "@/hooks/useSchools";
 
 export function AccountSetupComponent() {
   const router = useRouter();
   const { user } = useUser();
   const { userData } = useFirebaseUser();
-  const { loading, error } = useSchools();
 
   const [formData, setFormData] = useState<User>({
     ...defaultUser,

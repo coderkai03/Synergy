@@ -71,7 +71,7 @@ export default function TeamDetailPage() {
       const updatedTeam = await getTeams([team.id]);
       setTeam(updatedTeam[0]);
     } catch (error) {
-      throw new Error("Failed to add teammate");
+      console.error("Failed to add teammate:", error);
     }
   };
 
@@ -216,8 +216,7 @@ export default function TeamDetailPage() {
                     key={index}
                     teammate={teammate}
                     isHost={index === 0}
-                    isCurrentUser={userData?.id === teammate.id}
-                />
+                  />
                 ))}
               </div>
             </TeamSection>
@@ -236,10 +235,9 @@ function TeamSection({ children }: { title: string; children: React.ReactNode })
   );
 }
 
-function TeamMemberCard({ teammate, isHost, isCurrentUser }: { 
+function TeamMemberCard({ teammate, isHost }: { 
   teammate: User; 
   isHost: boolean;
-  isCurrentUser: boolean;
 }) {
   return (
     <Card className='bg-gray-900 border-gray-700'>
@@ -316,7 +314,7 @@ function TeamNotFound() {
           <CardTitle className="text-white">Team not found</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-300">Sorry, we couldn't find the team you're looking for. It may have been removed or you may have entered an incorrect URL.</p>
+          <p className="text-gray-300">Sorry, we couldn&apos;t find the team you&apos;re looking for. It may have been removed or you may have entered an incorrect URL.</p>
         </CardContent>
       </Card>
     </div>
