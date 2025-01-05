@@ -27,7 +27,7 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTeams } from "@/hooks/useTeams";
 
-export function TeamForm({ hackathonId }: { hackathonId: string }) {
+export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const { user } = useUser();
   const router = useRouter();
   const { hackathons } = useHackathons();
