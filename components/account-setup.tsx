@@ -41,6 +41,7 @@ import {
 import SkillsSection from "./slider-section";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { ItemSelect } from "./item-select";
+import { Textarea } from "./ui/textarea";
 
 export function AccountSetupComponent() {
   const router = useRouter();
@@ -52,15 +53,28 @@ export function AccountSetupComponent() {
     email: user?.primaryEmailAddress?.emailAddress || "",
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
+    role_experience: {
+      product_management: -1,
+      software: -1,
+      hardware: -1,
+      design: -1
+    }
   });
   const [currentSection, setCurrentSection] = useState(0);
   
   useEffect(() => {
     console.log('Current userData:', userData);
-    setFormData({
-      ...formData,
-      ...userData,
-    });
+    if (userData) {
+      setFormData(prevFormData => ({
+        ...userData,
+        role_experience: {
+          ...prevFormData.role_experience,
+          ...userData.role_experience,
+          design: userData.role_experience?.design ?? -1
+        }
+      }));
+    }
+    console.log('Updated formData:', formData);
   }, [userData]);
 
   const handleChange = (
@@ -140,39 +154,65 @@ export function AccountSetupComponent() {
                 <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
                   <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
                     <h2 className="text-lg font-semibold text-white">Personal Information</h2>
-                  <ChevronDown className="w-5 h-5 text-zinc-400" />
-                </CollapsibleTrigger>
-                <CollapsibleContent className="p-4 pt-0 space-y-4">
-                  <div className="grid grid-cols-1 md:grid-rows-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
-                      <Input 
-                        id="firstName" 
+                    <ChevronDown className="w-5 h-5 text-zinc-400" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="p-4 pt-0 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-rows-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name</Label>
+                        <Input 
+                          id="firstName" 
+                          className="bg-zinc-700 border-amber-500/50" 
+                          value={formData.firstName}
+                          onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input 
+                          id="lastName" 
+                          className="bg-zinc-700 border-amber-500/50" 
+                          value={formData.lastName}
+                          onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                    {/* <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        name="phone"
                         className="bg-zinc-700 border-amber-500/50" 
-                        value={formData.firstName}
-                        onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                        value={formData.phone}
+                        onChange={handleChange}
+                      />
+                    </div> */}
+
+                    {/* <div className="space-y-2">
+                      <Label htmlFor="profilePicture">Profile Picture URL</Label>
+                      <Input
+                        id="profilePicture"
+                        name="profilePicture"
+                        className="bg-zinc-700 border-amber-500/50"
+                        value={formData.profilePicture}
+                        onChange={handleChange}
+                        placeholder="https://example.com/your-photo.jpg"
+                        required
+                      />
+                    </div> */}
+
+                    <div className="space-y-2">
+                      <Label htmlFor="bio">Bio</Label>
+                      <Textarea
+                        id="bio"
+                        name="bio"
+                        className="bg-zinc-700 border-amber-500/50 min-h-[40px]" 
+                        value={formData.bio}
+                        onChange={handleChange}
+                        placeholder="Give us your best one-liner..."
+                        required
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <Input 
-                        id="lastName" 
-                        className="bg-zinc-700 border-amber-500/50" 
-                        value={formData.lastName}
-                        onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                      />
-                    </div>
-                  </div>
-                  {/* <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      className="bg-zinc-700 border-amber-500/50" 
-                      value={formData.phone}
-                      onChange={handleChange}
-                    />
-                  </div> */}
                   </CollapsibleContent>
                 </Collapsible>
               )}
@@ -292,26 +332,37 @@ export function AccountSetupComponent() {
 
                     {/* <div className="space-y-2">
                       <Label htmlFor="interests" className="text-white">Interests</Label>
-                      <ItemSelect
-                        itemList={interests_options.map(interest => ({
-                          id: interest,
-                          label: interest
-                        }))}
-                        selectedItems={formData.interests}
-                        onItemAdd={(interestId) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            interests: [...prev.interests, interestId]
-                          }));
+                      <div className="flex flex-wrap gap-2">
+                        {formData.interests.map((interest, index) => (
+                          <div key={index} className="flex items-center bg-zinc-700 rounded px-2 py-1">
+                            <span className="text-white">{interest}</span>
+                            <button
+                              onClick={() => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  interests: prev.interests.filter((_, i) => i !== index)
+                                }));
+                              }}
+                              className="ml-2 text-zinc-400 hover:text-white"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                      <Input
+                        className="mt-2 bg-zinc-700 border-amber-500/50 w-1/2"
+                        placeholder="Type an interest and press Enter"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                            e.preventDefault();
+                            setFormData(prev => ({
+                              ...prev,
+                              interests: [...prev.interests, e.currentTarget.value.trim().replace(/ /g, '-')]
+                            }));
+                            e.currentTarget.value = '';
+                          }
                         }}
-                        onItemRemove={(interestId) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            interests: prev.interests.filter(id => id !== interestId)
-                          }));
-                        }}
-                        placeholder="Search interests..."
-                        maxItems={10}
                       />
                     </div> */}
                   </CollapsibleContent>

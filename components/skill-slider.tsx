@@ -15,6 +15,7 @@ function SkillSlider({
   onValueChange: (value: number[]) => void;
   id: string;
 }) {
+  console.log(value);
   return (
     <div className="mb-8">
       <div className="flex items-center w-full">

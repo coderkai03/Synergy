@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TeamForm } from "./team-form";
+import { RequireProfile } from "./require-profile";
 
 export function HackathonDetailComponent() {
 
@@ -14,7 +15,9 @@ export function HackathonDetailComponent() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <TeamForm />
+          <RequireProfile>
+            <TeamForm />
+          </RequireProfile>
         </CardContent>
       </Card>
     </div>

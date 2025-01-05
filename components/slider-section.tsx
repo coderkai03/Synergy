@@ -29,8 +29,8 @@ function SkillsSection({ formData, handleSliderChange }: { formData: User, handl
           onValueChange={handleSliderChange("hardware")}
         />
         <SkillSlider
-          id="uiDesign"
-          label="UI/UX Design"
+          id="design"
+          label="Design"
           description="User interface design, user experience, wireframing, and prototyping"
           value={formData.role_experience?.design}
           onValueChange={handleSliderChange("design")}
