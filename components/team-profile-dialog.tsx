@@ -4,7 +4,6 @@ import { Team } from "@/types/Teams";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { TeamPreview } from "./team-preview";
 import { TeamProfileContent } from "./team-profile-content";
-import { Avatar, AvatarFallback } from "./ui/avatar";
 
 interface TeamProfileDialogProps {
   team: Team;

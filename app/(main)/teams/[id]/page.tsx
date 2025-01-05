@@ -10,16 +10,15 @@ import { useTeams } from "@/hooks/useTeams";
 import { Hackathon } from "@/types/Hackathons";
 import { User } from "@/types/User";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Users, LogOut, Crown } from 'lucide-react';
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Calendar, MapPin, Users, Crown } from 'lucide-react';
 import Image from "next/image";
 import { LeaveTeamDialog } from "@/components/leave-team-dialog";
 import { AddTeammateDialog } from "@/components/add-teammate-dialog";
 import { subscribeToDoc } from "@/hooks/useDocSubscription";
 import { RequestsDialog } from "@/components/requests-dialog";
 import { JoinTeamDialog } from "@/components/join-team-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function TeamDetailPage() {
   const params = useParams();
@@ -64,13 +63,11 @@ export default function TeamDetailPage() {
   const handleAddTeammate = async (email: string) => {
     if (!team || !userData) return;
     try {
-      // You'll need to implement this function in your useTeams hook
       const invite: Invite = {
         teamId: team.id,
         inviterId: userData.id,
       };
       await updateTeamInvitesByEmail([email], userData.id, invite);
-      // Refresh the team data
       const updatedTeam = await getTeams([team.id]);
       setTeam(updatedTeam[0]);
     } catch (error) {
@@ -120,10 +117,8 @@ export default function TeamDetailPage() {
     if (!team || !userData) return;
     try {
       if (newHostId) {
-        // First update the host
         await updateTeamHost(team.id, newHostId);
       }
-      // Then leave the team
       await leaveTeam(team.id, userData.id);
       router.push('/teams');
     } catch (error) {
@@ -208,7 +203,6 @@ export default function TeamDetailPage() {
                         requests={team.requests}
                       />
                       <AddTeammateDialog
-                        teamId={team.id}
                         isHost={userData.id === team.hostId}
                         onAddTeammate={handleAddTeammate}
                       />
@@ -234,7 +228,7 @@ export default function TeamDetailPage() {
   );
 }
 
-function TeamSection({ title, children }: { title: string; children: React.ReactNode }) {
+function TeamSection({ children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
       {children}
@@ -259,7 +253,6 @@ function TeamMemberCard({ teammate, isHost, isCurrentUser }: {
           <div>
             <p className="font-semibold text-white">
               {teammate.firstName} {teammate.lastName}
-              {/* {isCurrentUser && <span className="ml-2 text-gray-400">(You)</span>} */}
             </p>
             <p className="text-sm text-gray-300">{teammate.email}</p>
           </div>

@@ -1,8 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { SearchBar } from "@/components/ui/SearchBar"
-import { TeamPreview } from "@/components/team-preview"
 import { useRouter } from 'next/navigation'
 import { useTeams } from "@/hooks/useTeams"
 import { useHackathons } from "@/hooks/useHackathons"
@@ -10,14 +8,11 @@ import { Invite, Team } from "@/types/Teams"
 import { useUser } from "@clerk/nextjs"
 import { InviteDialog } from "@/components/invite-dialog"
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers"
-import { collection, onSnapshot, query, where, documentId, doc } from "firebase/firestore"
-import { db } from "@/firebaseConfig"
 import { User } from "@/types/User"
 import { Hackathon } from "@/types/Hackathons"
 import { Button } from "@/components/ui/button"
 import { TeamListSection } from "@/components/team-list-section"
 import { subscribeToDoc } from "@/hooks/useDocSubscription"
-import { HackathonDetailComponent } from "@/components/hackathon-detail"
 import { Plus } from "lucide-react"
 
 export default function HackathonTeamsScreen() {
@@ -38,7 +33,6 @@ export default function HackathonTeamsScreen() {
       docId: user?.id || '',
       onUpdate: (userData) => {
         const newInvites = userData.invites || [];
-        // Only update if there are more invites than before
         setInvites(prevInvites => {
           if (JSON.stringify(newInvites) !== JSON.stringify(prevInvites)) {
             console.log('New invite received:', newInvites);
@@ -110,4 +104,3 @@ export default function HackathonTeamsScreen() {
     </div>
   )
 }
-

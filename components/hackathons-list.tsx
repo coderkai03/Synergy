@@ -1,10 +1,5 @@
 "use client";
 
-import * as React from "react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-
-import { Calendar, Globe2, MapPin, Search, Users } from "lucide-react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -19,6 +14,7 @@ import { useTeams } from "@/hooks/useTeams";
 import { Team } from "@/types/Teams";
 import { User } from "@/types/User";
 import { HackathonCard } from "@/components/hackathon-card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 
 export function HackathonsListComponent() {
   //currently pulling from constants, will need to pull from database
@@ -92,15 +88,15 @@ export function HackathonsListComponent() {
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button variant="secondary" className="bg-amber-500 hover:bg-amber-600 text-white h-12">
                 Filter by category
               </Button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content className="w-56 bg-white border rounded-md shadow-lg">
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56 bg-white border rounded-md shadow-lg">
               <div className="p-2 space-y-2">
-                <DropdownMenu.Item asChild>
+                <DropdownMenuItem asChild>
                   <label className="flex items-center space-x-2">
                     <Checkbox 
                       id="online"
@@ -109,8 +105,8 @@ export function HackathonsListComponent() {
                       />
                     <span>Online</span>
                   </label>
-                </DropdownMenu.Item>
-                <DropdownMenu.Item asChild>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <label className="flex items-center space-x-2">
                   <Checkbox 
                       id="in-person"
@@ -119,8 +115,8 @@ export function HackathonsListComponent() {
                     />
                     <span>In-person</span>
                   </label>
-                </DropdownMenu.Item>
-                <DropdownMenu.Item asChild>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <label className="flex items-center space-x-2">
                   <Checkbox 
                       id="all"
@@ -129,10 +125,10 @@ export function HackathonsListComponent() {
                     />
                     <span>No Filter</span>
                   </label>
-                </DropdownMenu.Item>
+                </DropdownMenuItem>
               </div>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Hackathon Grid */}
@@ -141,7 +137,6 @@ export function HackathonsListComponent() {
             <HackathonCard
               key={hackathon.id}
               hackathon={hackathon}
-              userTeams={userTeams}
               userData={userData}
             />
           ))}

@@ -2,13 +2,12 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { Check, X, UserPlus, Mail } from "lucide-react";
+import { Check, X, Mail } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Card } from "./ui/card";
 import { User } from "@/types/User";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { useEffect, useState } from "react";
-import { Badge } from "./ui/badge";
 import { useTeams } from "@/hooks/useTeams";
 
 interface RequestsDialogProps {

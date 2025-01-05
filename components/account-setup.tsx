@@ -45,14 +45,9 @@ import { useSchools } from "@/hooks/useSchools";
 
 export function AccountSetupComponent() {
   const router = useRouter();
-  const { user, isSignedIn, isLoaded } = useUser();
+  const { user } = useUser();
   const { userData } = useFirebaseUser();
-  const { schools, loading, error } = useSchools();
-  const [schoolNames, setSchoolNames] = useState<string[]>([]);
-
-  console.log("Schools:", schoolNames);
-  console.log("Loading:", loading);
-  console.log("Error:", error);
+  const { loading, error } = useSchools();
 
   const [formData, setFormData] = useState<User>({
     ...defaultUser,

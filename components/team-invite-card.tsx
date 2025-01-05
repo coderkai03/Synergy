@@ -3,12 +3,8 @@ import Image from 'next/image'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Users, Calendar, MessageSquare, Eye, UserPlus } from 'lucide-react'
+import { Users, Calendar, Eye, UserPlus } from 'lucide-react'
 import { Post } from '@/types/Posts'
-import { useHackathons } from '@/hooks/useHackathons'
-import { useTeams } from '@/hooks/useTeams'
-import { useFirebaseUser } from '@/hooks/useFirebaseUsers'
-
 
 interface TeamInviteCardProps {
   post: Post

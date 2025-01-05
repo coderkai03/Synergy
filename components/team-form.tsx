@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
@@ -8,17 +8,7 @@ import { Team } from "@/types/Teams";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
-import {
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "./ui/select";
 import { useHackathons } from "@/hooks/useHackathons";
-import { collection, updateDoc } from "firebase/firestore";
-import { addDoc } from "firebase/firestore";
-import { db } from "@/firebaseConfig";
 import { Hackathon } from "@/types/Hackathons";
 import { HackathonPreview } from "./hackathon-preview";
 import {
@@ -32,7 +22,6 @@ import {
   CommandItem,
   CommandEmpty,
   CommandGroup,
-  CommandList,
 } from "@/components/ui/command";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -45,7 +34,6 @@ export function TeamForm() {
   const hackathonId = searchParams.get('hackathonId');
   const { hackathons } = useHackathons();
   const { createTeam, teamNameExists } = useTeams();
-  const { userTeams } = useTeams();
   console.log("HACKATHONID", hackathonId);
 
   const [isSubmitting, setIsSubmitting] = useState(false);

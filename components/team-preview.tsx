@@ -1,12 +1,9 @@
 import { Team } from "@/types/Teams"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Calendar, MapPin, Users, Crown } from 'lucide-react'
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Hackathon } from "@/types/Hackathons"
 import { useUser } from "@clerk/nextjs"
-import { useFirebaseUser } from "@/hooks/useFirebaseUsers"
-import { useTeams } from "@/hooks/useTeams"
 import { useHackathons } from "@/hooks/useHackathons"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -18,7 +15,6 @@ interface TeamPreviewProps {
 export function TeamPreview({ team }: TeamPreviewProps) {
   const router = useRouter();
   const { user } = useUser();
-  const { userData } = useFirebaseUser();
   const { getHackathons } = useHackathons();
 
   const [hackathon, setHackathon] = useState<Hackathon | null>(null);

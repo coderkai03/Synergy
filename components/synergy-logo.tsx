@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { Zap } from "lucide-react";
-import { useState } from 'react';
-import Image from 'next/image';
 
 interface SynergyIconProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';

@@ -10,21 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormMessage 
-} from "@/components/ui/form";
 
 interface AddTeammateDialogProps {
-  teamId: string;
   isHost: boolean;
   onAddTeammate: (email: string) => Promise<void>;
 }
 
-export function AddTeammateDialog({ teamId, isHost, onAddTeammate }: AddTeammateDialogProps) {
+export function AddTeammateDialog({ isHost, onAddTeammate }: AddTeammateDialogProps) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);

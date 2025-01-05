@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { User } from "@/types/User";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GraduationCap, Briefcase, Code, Trophy } from 'lucide-react';
@@ -12,7 +11,6 @@ import { subscribeToDoc } from "@/hooks/useDocSubscription";
 
 export default function HackerDetailPage() {
   const params = useParams();
-  const { getUsers } = useFirebaseUser();
   const id = params.id as string;
 
   const [hacker, setHacker] = useState<User | null>(null);

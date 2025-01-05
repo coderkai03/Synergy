@@ -2,14 +2,12 @@
 
 import { Team } from "@/types/Teams";
 import { Badge } from "./ui/badge";
-import { Card } from "./ui/card";
 import { Calendar, MapPin, Users, Crown } from 'lucide-react';
 import { useEffect, useState } from "react";
 import { Hackathon } from "@/types/Hackathons";
 import { User } from "@/types/User";
 import { useHackathons } from "@/hooks/useHackathons";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
-import { HackerPreview } from "./hacker-preview";
 import { HackerProfileDialog } from "./hacker-profile-dialog";
 
 interface TeamProfileContentProps {

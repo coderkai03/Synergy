@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Mail, X } from 'lucide-react'
 import { useEffect, useState } from "react"
 import { Invite, Team } from "@/types/Teams"
-import { useRouter } from "next/navigation"
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers"
 import { useUser } from "@clerk/nextjs"
 import { useTeams } from "@/hooks/useTeams"
