@@ -35,6 +35,7 @@ import {
   defaultUser,
   technologies_options,
   category_experience_options,
+  // interests_options,
   User
 } from "@/types/User";
 import SkillsSection from "./slider-section";
@@ -242,59 +243,84 @@ export function AccountSetupComponent() {
               {currentSection === 2 && (
                 <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
                   <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
-                    <h2 className="text-lg font-semibold text-white">Technical Skills</h2>
+                    <h2 className="text-lg font-semibold text-white">Skills and Interests</h2>
                     <ChevronDown className="w-5 h-5 text-zinc-400" />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="p-4 pt-0 space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="programming_languages" className="text-white">Programming Languages</Label>
-                    <ItemSelect
-                      itemList={technologies_options.map(lang => ({
-                        id: lang,
-                        label: lang
-                      }))}
-                      selectedItems={formData.technologies}
-                      onItemAdd={(langId) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          technologies: [...prev.technologies, langId]
-                        }));
-                      }}
-                      onItemRemove={(langId) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          technologies: prev.technologies.filter(id => id !== langId)
-                        }));
-                      }}
-                      placeholder="Search languages..."
-                      maxItems={10}
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="programming_languages" className="text-white">Programming Languages</Label>
+                      <ItemSelect
+                        itemList={technologies_options.map(lang => ({
+                          id: lang,
+                          label: lang
+                        }))}
+                        selectedItems={formData.technologies}
+                        onItemAdd={(langId) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            technologies: [...prev.technologies, langId]
+                          }));
+                        }}
+                        onItemRemove={(langId) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            technologies: prev.technologies.filter(id => id !== langId)
+                          }));
+                        }}
+                        placeholder="Search languages..."
+                        maxItems={10}
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="category_experience" className="text-white">Category Experience</Label>
-                    <ItemSelect
-                      itemList={category_experience_options.map(item => ({
-                        id: item,
-                        label: item
-                      }))}
-                      selectedItems={formData.category_experience}
-                      onItemAdd={(itemId) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          category_experience: [...prev.category_experience, itemId]
-                        }));
-                      }}
-                      onItemRemove={(itemId) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          category_experience: prev.category_experience.filter(id => id !== itemId)
-                        }));
-                      }}
-                      placeholder="Search categories..."
-                      maxItems={10}
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="category_experience" className="text-white">Category Experience</Label>
+                      <ItemSelect
+                        itemList={category_experience_options.map(item => ({
+                          id: item,
+                          label: item
+                        }))}
+                        selectedItems={formData.category_experience}
+                        onItemAdd={(itemId) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            category_experience: [...prev.category_experience, itemId]
+                          }));
+                        }}
+                        onItemRemove={(itemId) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            category_experience: prev.category_experience.filter(id => id !== itemId)
+                          }));
+                        }}
+                        placeholder="Search categories..."
+                        maxItems={10}
+                      />
+                    </div>
+
+                    {/* <div className="space-y-2">
+                      <Label htmlFor="interests" className="text-white">Interests</Label>
+                      <ItemSelect
+                        itemList={interests_options.map(interest => ({
+                          id: interest,
+                          label: interest
+                        }))}
+                        selectedItems={formData.interests}
+                        onItemAdd={(interestId) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            interests: [...prev.interests, interestId]
+                          }));
+                        }}
+                        onItemRemove={(interestId) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            interests: prev.interests.filter(id => id !== interestId)
+                          }));
+                        }}
+                        placeholder="Search interests..."
+                        maxItems={10}
+                      />
+                    </div> */}
                   </CollapsibleContent>
                 </Collapsible>
               )}

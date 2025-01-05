@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, doc, getDoc, updateDoc, arrayRemove, deleteDoc, where, query, setDoc, addDoc, arrayUnion } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, updateDoc, arrayRemove, deleteDoc, where, query, setDoc, addDoc, arrayUnion, runTransaction } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { Invite, Team } from '@/types/Teams';
 import { User } from '@/types/User';
 import { useUser } from '@clerk/nextjs';
+import toast from 'react-hot-toast';
 
 
 export function useTeams() {
   const { user } = useUser()
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userTeams, setUserTeams] = useState<Team[]>([]);
@@ -24,9 +26,8 @@ export function useTeams() {
         const userDoc = await getDoc(userRef);
         console.log('userDoc', userDoc.data())
 
-        const teamsData: { [teamId: string]: string } = userDoc.exists() ? userDoc.data()?.teams || {} : {};
-        const teamIds = Object.keys(teamsData);
-        const teams = await getTeams(teamIds);
+        const teamsData: string[] = userDoc.exists() ? userDoc.data()?.teams || [] : [];
+        const teams = await getTeams(teamsData);
         console.log('teamsData', teamsData)
 
         setUserTeams(teams);
@@ -112,10 +113,8 @@ export function useTeams() {
 
   const updateTeammates = async (teamId: string, teammateId: string) => {
     const teamRef = doc(db, 'teams', teamId);
-    const teamDoc = await getDoc(teamRef);
-    const currentTeammates = teamDoc.exists() ? teamDoc.data().teammates || [] : [];
     await updateDoc(teamRef, {
-      teammates: [...currentTeammates, teammateId]
+      teammates: arrayUnion(teammateId)
     });
   }
 
@@ -158,7 +157,20 @@ export function useTeams() {
     }
   }
 
+  const getAllTeams = async () => {
+    const teamDocs = await getDocs(collection(db, 'teams'));
+    const teams = teamDocs.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id
+    } as Team));
+    return teams;
+  }
+
   const createTeam = async (team: Team) => {
+    if (userTeams.some(userTeam => userTeam.hackathonId === team.hackathonId)) {
+      return 'alreadyInTeam';
+    }
+
     const { id, ...teamWithoutId } = team;
     const teamRef = collection(db, 'teams');
     const docRef = await addDoc(teamRef, teamWithoutId);
@@ -166,7 +178,7 @@ export function useTeams() {
     // Add teamId to user's teams collection
     const userRef = doc(db, 'users', team.hostId);
     await updateDoc(userRef, {
-      [`teams.${docRef.id}`]: "active"
+      teams: arrayUnion(docRef.id)
     });
 
     return docRef.id;
@@ -218,6 +230,57 @@ export function useTeams() {
     }
   }
 
+  const updateRequests = async (teamId: string, userId: string, accepted: boolean) => {
+    const teamRef = doc(db, 'teams', teamId);
+    // remove userId from requests
+    await updateDoc(teamRef, {
+      requests: arrayRemove(userId)
+    });
+
+    if (accepted) {
+      // add userId to teammates
+      await updateDoc(teamRef, {
+        teammates: arrayUnion(userId)
+      });
+
+      // add teamId to user's teams collection
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        teams: arrayUnion(teamId)
+      });
+    }
+  }
+
+  const updateTeamRequests = async (teamId: string, userId: string) => {
+    const teamRef = doc(db, 'teams', teamId);
+    
+    try {
+      await runTransaction(db, async (transaction) => {
+        const teamDoc = await transaction.get(teamRef);
+        if (!teamDoc.exists()) {
+          throw new Error('Team does not exist');
+        }
+
+        // add userId to requests
+        const currentRequests = teamDoc.data().requests || [];
+        if (!currentRequests.includes(userId)) {
+          transaction.update(teamRef, {
+            requests: [...currentRequests, userId]
+          });
+        }
+
+        // add teamId to user's teams collection
+        const userRef = doc(db, 'users', userId);
+        await transaction.update(userRef, {
+          teams: arrayUnion(teamId)
+        });
+      });
+    } catch (error) {
+      console.error('Error updating team requests:', error);
+      throw error;
+    }
+  };
+
   return {
     userTeams,
     loading,
@@ -225,12 +288,15 @@ export function useTeams() {
     updateTeamInvites,
     updateTeamInvitesByEmail,
     updateTeammates,
+    getAllTeams,
     getTeams,
     createTeam,
     leaveTeam,
     updateTeamHost,
     deleteTeam,
-    teamNameExists
+    teamNameExists,
+    updateRequests,
+    updateTeamRequests
   };
 }
 

@@ -30,8 +30,7 @@ export default function HackathonTeamsScreen() {
   const [teams, setTeams] = useState<Team[]>([])
   const [hackathons, setHackathons] = useState<Hackathon[]>([])
   const [invites, setInvites] = useState<Invite[]>([])
-  const [filteredActiveTeams, setFilteredActiveTeams] = useState<Team[]>([...userTeams]);
-  const [filteredPendingTeams, setFilteredPendingTeams] = useState<Team[]>([...userTeams]);
+  const [filteredTeams, setFilteredTeams] = useState<Team[]>([...userTeams]);
 
   useEffect(() => {
     const unsubscribe = subscribeToDoc<User>({
@@ -70,16 +69,10 @@ export default function HackathonTeamsScreen() {
     setInvites(userData?.invites || []);
     setTeams(userTeams);
 
-    setFilteredActiveTeams(userTeams
-      .filter(team => userData?.teams[team.id || ''] === 'active')
-      .sort((a, b) => a.name.localeCompare(b.name)));
-      
-    setFilteredPendingTeams(userTeams
-      .filter(team => userData?.teams[team.id || ''] === 'pending')
+    setFilteredTeams(userTeams
       .sort((a, b) => a.name.localeCompare(b.name)));
 
-    console.log('filteredActiveTeams', filteredActiveTeams);
-    console.log('filteredPendingTeams', filteredPendingTeams);
+    console.log('filteredTeams', filteredTeams);
 
     const fetchHackathons = async () => {
       const hackathonIds = userTeams.map(team => team.hackathonId);
@@ -89,18 +82,14 @@ export default function HackathonTeamsScreen() {
     fetchHackathons();
   }, [userTeams?.length]);
 
-  const handleTeamClick = (teamId: string) => {
-    router.push(`/teams/${teamId}`)
-  }
-  
   return (
     <div className="p-4 min-h-screen bg-[#111119]">
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-white">My Teams</h1>
           <div className="flex gap-4">
-            <Button variant="outline" onClick={() => router.push('/hackathons/create-team')} className="gap-2 text-black">
-              <Plus className="w-4 h-4" />
+            <Button variant="outline" onClick={() => router.push('/teams/create')} className="gap-2 text-black">
+              <Plus className="w-4 h-4" /> Create Team
             </Button>
             <InviteDialog
               invites={invites}
@@ -113,19 +102,8 @@ export default function HackathonTeamsScreen() {
         </div>
         <div className="space-y-8">
           <TeamListSection
-            title="Active"
-            teams={filteredActiveTeams}
+            teams={filteredTeams}
             hackathons={hackathons}
-            viewAllPath="/teams/active"
-            onTeamClick={handleTeamClick}
-          />
-
-          <TeamListSection
-            title="Pending"
-            teams={filteredPendingTeams}
-            hackathons={hackathons}
-            viewAllPath="/teams/pending"
-            onTeamClick={handleTeamClick}
           />
         </div>
       </main>

@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Calendar, Globe2, MapPin } from "lucide-react";
 import Link from "next/link";
-import { Team } from "@/types/Teams";
 import { Hackathon } from "@/types/Hackathons";
 import { User } from "@/types/User";
 import Image from "next/image";
@@ -10,11 +9,10 @@ import SynergyLogo from "./synergy-logo";
 
 interface HackathonCardProps {
   hackathon: Hackathon;
-  userTeams: Team[];
   userData: User | null;
 }
 
-export function HackathonCard({ hackathon, userTeams, userData }: HackathonCardProps) {
+export function HackathonCard({ hackathon, userData }: HackathonCardProps) {
   const { getIconSize } = SynergyLogo();
 
   const formatDate = (dateString: string) => {
@@ -23,8 +21,6 @@ export function HackathonCard({ hackathon, userTeams, userData }: HackathonCardP
       day: "numeric",
     });
   };
-
-  const hasApplied = userTeams.some(team => team.hackathonId === hackathon.id);
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#4A4A4A] border-none flex flex-col">
@@ -64,20 +60,14 @@ export function HackathonCard({ hackathon, userTeams, userData }: HackathonCardP
           {hackathon.location}
         </div>
         <div className="mt-4 flex gap-3">
-          {hasApplied ? (
-            <Button disabled className="flex-1 bg-gray-500 font-bold text-white">
-              Applied
-            </Button>
-          ) : (
-            <Button 
-              asChild 
-              className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-white hover:text-white"
-            >
-              <Link href={userData ? `/hackathons/${hackathon.id}` : '/account-setup'}>
-                Form Team
-              </Link>
-            </Button>
-          )}
+          <Button 
+            asChild 
+            className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-white hover:text-white"
+          >
+            <Link href={userData ? `/teams/create${hackathon.id ? `?hackathonId=${hackathon.id}` : ''}` : '/account-setup'}>
+              Form Team
+            </Link>
+          </Button>
           <Button 
             asChild 
             variant="outline" 

@@ -7,7 +7,6 @@ export interface Hackathon {
   website: string;
   image: string;
   isOnline: boolean;
-  participants: number;
 }
 
 export const problemSpaceOptions = [

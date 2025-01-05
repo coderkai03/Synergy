@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { doc, getDoc, setDoc, updateDoc } from '@firebase/firestore';
+import { arrayUnion, collection, doc, getDoc, getDocs, setDoc, updateDoc } from '@firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { User } from '@/types/User';
 import { Invite, Team } from '@/types/Teams';
@@ -53,7 +53,7 @@ export function useFirebaseUser() {
       invites: invites.filter((_, i) => i !== index),
       teams: accepted ? {
         ...(userData?.teams || {}), // Spread existing teams
-        [invites[index].teamId]: 'active' // Add new team
+        teams: arrayUnion(invites[index].teamId) // Add new team
       } : userData?.teams // Keep existing teams if not accepted
     });
     console.log(`Updated user invites: ${accepted ? 'accepted' : 'declined'} invite to ${invites[index].teamId}`)
@@ -70,6 +70,22 @@ export function useFirebaseUser() {
     }));
     return users;
   }
+  
+  const getAllUsers = async () => {
+    const userDocs = await getDocs(collection(db, 'users'));
+    const users = userDocs.docs
+      .map((doc) => ({ ...doc.data(), id: doc.id } as User))
+      .filter((u) => u.id !== user?.id);
+    return users;
+  }
+
+  const getOlderUsers = async (lastUserId: string) => {
+    const userDocs = await getDocs(collection(db, 'users'));
+    const users = userDocs.docs
+      .map((doc) => ({ ...doc.data(), id: doc.id } as User))
+      .filter((u) => u.id !== user?.id);
+    return users;
+  }
 
   return {
     loading,
@@ -77,6 +93,8 @@ export function useFirebaseUser() {
     userData,
     updateUserInvites,
     getUsers,
-    createUser
+    createUser,
+    getAllUsers,
+    getOlderUsers
   };
 }

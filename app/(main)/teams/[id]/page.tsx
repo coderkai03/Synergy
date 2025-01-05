@@ -13,11 +13,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Users, LogOut } from 'lucide-react';
+import { Calendar, MapPin, Users, LogOut, Crown } from 'lucide-react';
 import Image from "next/image";
 import { LeaveTeamDialog } from "@/components/leave-team-dialog";
 import { AddTeammateDialog } from "@/components/add-teammate-dialog";
 import { subscribeToDoc } from "@/hooks/useDocSubscription";
+import { RequestsDialog } from "@/components/requests-dialog";
+import { JoinTeamDialog } from "@/components/join-team-dialog";
 
 export default function TeamDetailPage() {
   const params = useParams();
@@ -31,6 +33,8 @@ export default function TeamDetailPage() {
   const [hackathon, setHackathon] = useState<Hackathon | null>(null);
   const [teammates, setTeammates] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const isMember = team?.teammates.includes(userData?.id || '');
 
   useEffect(() => {
     const unsubscribeTeams = subscribeToDoc<Team>({
@@ -170,17 +174,23 @@ export default function TeamDetailPage() {
                 )}
               </div>
             </div>
-            <div className="flex flex-col gap-2">
-              <Badge variant={team.status === 'active' ? 'default' : 'secondary'} className="text-sm">
-                active {/* {team.status} */}
-              </Badge>
-              {userData && team.teammates.includes(userData.id) && (
-                <LeaveTeamDialog
-                  team={team}
-                  userData={userData}
-                  teammates={teammates}
-                  onLeaveTeam={handleLeaveTeam}
-                />
+            <div className="flex flex-col gap-4">
+              {userData && (
+                <>
+                  {isMember ? (
+                    <LeaveTeamDialog
+                      team={team}
+                      userData={userData}
+                      teammates={teammates}
+                      onLeaveTeam={handleLeaveTeam}
+                    />
+                  ) : (
+                    <JoinTeamDialog
+                      team={team}
+                      userData={userData}
+                    />
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -190,13 +200,21 @@ export default function TeamDetailPage() {
             <TeamSection title="Team Members">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-semibold text-white">Team Members</h3>
-                {userData && userData.id === team.hostId && (
-                  <AddTeammateDialog
-                    teamId={team.id}
-                    isHost={userData.id === team.hostId}
-                    onAddTeammate={handleAddTeammate}
-                  />
-                )}
+                <div className="flex gap-4">
+                  {userData && userData.id === team.hostId && (
+                    <>
+                      <RequestsDialog
+                        teamId={team.id}
+                        requests={team.requests}
+                      />
+                      <AddTeammateDialog
+                        teamId={team.id}
+                        isHost={userData.id === team.hostId}
+                        onAddTeammate={handleAddTeammate}
+                      />
+                    </>
+                  )}
+                </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {teammates.map((teammate, index) => (
@@ -241,26 +259,25 @@ function TeamMemberCard({ teammate, isHost, isCurrentUser }: {
           <div>
             <p className="font-semibold text-white">
               {teammate.firstName} {teammate.lastName}
-              {isCurrentUser && <span className="ml-2 text-gray-400">(You)</span>}
+              {/* {isCurrentUser && <span className="ml-2 text-gray-400">(You)</span>} */}
             </p>
             <p className="text-sm text-gray-300">{teammate.email}</p>
           </div>
           {isHost && (
-            <Badge variant="outline" className="ml-auto border-gray-500 text-gray-300">Host</Badge>
+            <Crown className="ml-auto w-5 h-5 text-yellow-500" />
           )}
         </div>
         <div className="space-y-1 text-sm text-gray-300">
           <p><span className="font-medium text-white">School:</span> {teammate.school}</p>
-          <p><span className="font-medium text-white">Major:</span> {teammate.degree}</p>
-          <p><span className="font-medium text-white">Year:</span> {teammate.gradYear}</p>
+          <p><span className="font-medium text-white">Major:</span> {teammate.major}</p>
         </div>
-        {teammate.programming_languages && teammate.programming_languages.length > 0 && (
+        {teammate.technologies && teammate.technologies.length > 0 && (
           <div className="mt-2">
             <p className="text-sm font-medium mb-1 text-white">Programming Languages:</p>
             <div className="flex flex-wrap gap-1">
-              {teammate.programming_languages.map((lang, i) => (
+              {teammate.technologies.map((tech, i) => (
                 <Badge key={i} variant="secondary" className="text-xs bg-gray-800 text-gray-200">
-                  {lang}
+                  {tech}
                 </Badge>
               ))}
             </div>

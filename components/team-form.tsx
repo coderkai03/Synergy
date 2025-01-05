@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import { Team } from "@/types/Teams";
@@ -38,22 +38,24 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTeams } from "@/hooks/useTeams";
 
-interface TeamFormProps {
-  hackathonId?: string;
-}
-
-export function TeamForm({ hackathonId }: TeamFormProps) {
+export function TeamForm() {
   const { user } = useUser();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const hackathonId = searchParams.get('hackathonId');
   const { hackathons } = useHackathons();
   const { createTeam, teamNameExists } = useTeams();
-  const hasHackathonId = hackathonId !== 'create-team';
+  const { userTeams } = useTeams();
   console.log("HACKATHONID", hackathonId);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Team>({
+    id: '',
     name: "",
-    hackathonId: hasHackathonId ? hackathonId : "",
+    hackathonId: hackathonId || "",
+    hostId: user?.id || "",
+    teammates: [user?.id || ""],
+    requests: []
   });
   const [open, setOpen] = useState(false);
 
@@ -82,19 +84,19 @@ export function TeamForm({ hackathonId }: TeamFormProps) {
       return;
     }
 
-    const team: Team = {
-      id: '', // Will be set after doc creation
-      name: formData.name,
-      hackathonId: formData.hackathonId || '',
-      teammates: [userId],
-      hostId: userId,
-    };
-    console.log("TEAM", team);
+    console.log("TEAM", formData);
 
     try {
-      const teamId = await createTeam(team);
-      toast.success("Team created");
-      router.push("/teams/" + teamId);
+      const teamId = await createTeam(formData);
+
+      if (teamId && teamId !== 'alreadyInTeam') {
+        router.push(`/teams/${teamId}`);
+        toast.success("Team created");
+      } else if (teamId === 'alreadyInTeam') {
+        toast.error("You are already in a team for this hackathon");
+      } else {
+        toast.error("Failed to create team");
+      }
     } catch (error) {
       toast.error("Failed to submit information. Please try again.");
     } finally {
@@ -112,7 +114,7 @@ export function TeamForm({ hackathonId }: TeamFormProps) {
         return endDate >= today;
       })
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    return hasHackathonId ? activeHackathons.filter((hackathon) => hackathon.id === hackathonId) : activeHackathons;
+    return activeHackathons;
   };
 
   const activeHackathons = getActiveHackathons(hackathons);
@@ -121,16 +123,15 @@ export function TeamForm({ hackathonId }: TeamFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="hackathon">Select Hackathon</Label>
-        <Popover open={hasHackathonId ? false : open} onOpenChange={hasHackathonId ? undefined : setOpen}>
+        <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               role="combobox"
               aria-expanded={open}
-              disabled={hasHackathonId}
               className="w-full justify-between h-auto min-h-[2.5rem] py-2 bg-gray-800 border border-gray-700 hover:text-white shadow-sm rounded-lg hover:bg-gray-700"
             >
-              {hasHackathonId || formData.hackathonId ? (
+              {formData.hackathonId ? (
                 <HackathonPreview hackathon={activeHackathons.find(h => h.id === formData.hackathonId)!} />
               ) : (
                 "Select hackathon..."

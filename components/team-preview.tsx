@@ -6,81 +6,97 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Hackathon } from "@/types/Hackathons"
 import { useUser } from "@clerk/nextjs"
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers"
+import { useTeams } from "@/hooks/useTeams"
+import { useHackathons } from "@/hooks/useHackathons"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 interface TeamPreviewProps {
   team: Team;
-  hackathon: Hackathon;
 }
 
-export function TeamPreview({ team, hackathon }: TeamPreviewProps) {
+export function TeamPreview({ team }: TeamPreviewProps) {
+  const router = useRouter();
   const { user } = useUser();
   const { userData } = useFirebaseUser();
+  const { getHackathons } = useHackathons();
 
-  const teamStatus = userData?.teams[team.id];
+  const [hackathon, setHackathon] = useState<Hackathon | null>(null);
   const isHost = user?.id === team.hostId;
+
+  useEffect(() => {
+    const fetchHackathon = async () => {
+      const hackathons = await getHackathons([team.hackathonId]);
+      setHackathon(hackathons[0]);
+      console.log('team:', team);
+      console.log('hackathon:', hackathons[0]);
+    };
+    fetchHackathon();
+  }, [team.hackathonId]);
+
+  const onTeamClick = (id: string) => {
+    console.log('url:', `/teams/${id}`);
+    router.push(`/teams/${id}`);
+  };
 
   if (!team || !hackathon) return null;
   
   return (
-    <Card className="w-full hover:bg-gray-700 transition-colors cursor-pointer bg-gray-800 text-white">
-      <CardHeader>
-        <CardTitle className="flex justify-between items-center">
-          <div className="flex justify-center items-center gap-2">
-            {isHost && (
-              <Crown className="w-4 h-4 text-yellow-500 -mt-1" />
-            )}
-            <span>{team.name}</span>
-          </div>
-          <Badge
-            variant={teamStatus === 'active' ? 'default' : 'outline'}
-            className={teamStatus === 'active' ? 'bg-green-500/80 text-white' : 'bg-gray-500/80 text-white'}
-          >
-            {teamStatus}
-          </Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-row justify-between items-center">
-          <div className="flex flex-col space-y-2">
-            <div className="flex items-center space-x-2">
-              <Users className="w-4 h-4 text-gray-400" />
-              <p className="text-sm text-gray-300 truncate">{hackathon.name}</p>
+    <div key={team.id} onClick={() => onTeamClick(team.id)}>
+      <Card className="w-full hover:bg-gray-700 transition-colors cursor-pointer bg-gray-800 text-white">
+        <CardHeader>
+          <CardTitle className="flex justify-between items-center">
+            <div className="flex justify-center items-center gap-2">
+              {isHost && (
+                <Crown className="w-4 h-4 text-yellow-500 -mt-1" />
+              )}
+              <span>{team.name}</span>
             </div>
-
-            <div className="flex items-center space-x-2">
-              <Calendar className="w-4 h-4 text-gray-400" />
-              <p className="text-sm text-gray-300 truncate">{hackathon.date}</p>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <MapPin className="w-4 h-4 text-gray-400" />
-              <p className="text-sm text-gray-300 truncate">{hackathon.isOnline ? 'Online' : hackathon.location}</p>
-            </div>
-
-            <div className="flex items-center space-x-2 my-4">
-              <div className="flex -space-x-2">
-                {team.teammates.slice(0, 3).map((teammate, index) => (
-                  <Avatar key={index} className="border-2 border-gray-800">
-                    <AvatarFallback className="bg-gray-600 text-white">{teammate[0]}</AvatarFallback>
-                  </Avatar>
-                ))}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-col space-y-2">
+              <div className="flex items-center space-x-2">
+                <Users className="w-4 h-4 text-gray-400" />
+                <p className="text-sm text-gray-300 truncate">{hackathon.name}</p>
               </div>
-              <p className="text-sm text-gray-300">{team.teammates.length} teammates</p>
+
+              <div className="flex items-center space-x-2">
+                <Calendar className="w-4 h-4 text-gray-400" />
+                <p className="text-sm text-gray-300 truncate">{hackathon.date}</p>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <MapPin className="w-4 h-4 text-gray-400" />
+                <p className="text-sm text-gray-300 truncate">{hackathon.isOnline ? 'Online' : hackathon.location}</p>
+              </div>
+
+              <div className="flex items-center space-x-2 my-4">
+                <div className="flex -space-x-2">
+                  {team.teammates.slice(0, 3).map((teammate, index) => (
+                    <Avatar key={index} className="border-2 border-gray-800">
+                      <AvatarFallback className="bg-gray-600 text-white">{teammate[0]}</AvatarFallback>
+                    </Avatar>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-300">{team.teammates.length} teammates</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-end">
+              <img
+                src={hackathon.image}
+                alt={`${hackathon.name} image`}
+                width={80}
+                height={80}
+                className="rounded-lg w-[100px] h-[100px]"
+              />
             </div>
           </div>
-
-          <div className="flex flex-col items-end">
-            <img
-              src={hackathon.image}
-              alt={`${hackathon.name} image`}
-              width={80}
-              height={80}
-              className="rounded-lg w-[100px] h-[100px]"
-            />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
 

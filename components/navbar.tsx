@@ -20,6 +20,12 @@ export default function Navbar() {
 
                 <div className="flex items-center gap-4">
                     <div className="hidden md:block mx-10 space-x-10">
+                        {publishableKey?.includes('pk_test') && <Link 
+                            href="/home"
+                            className="text-white hover:text-amber-100"
+                        >
+                            Home
+                        </Link>}
                         <Link 
                             href="/account-setup"
                             className="text-white hover:text-amber-100"
@@ -32,12 +38,12 @@ export default function Navbar() {
                         >
                             Teams
                         </Link>
-                        {publishableKey?.includes('pk_test') && <Link 
-                            href="/search"
+                        <Link 
+                            href="/explore"
                             className="text-white hover:text-amber-100"
                         >
-                            Search
-                        </Link>}
+                            Explore
+                        </Link>
                         <Link 
                             href="/hackathons"
                             className="text-white hover:text-amber-100"
