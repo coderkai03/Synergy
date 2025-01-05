@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/User";
-import { toast } from "react-hot-toast";
 
 interface RequireProfileProps {
   children: React.ReactNode;
