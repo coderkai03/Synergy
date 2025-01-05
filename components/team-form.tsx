@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import { Team } from "@/types/Teams";
