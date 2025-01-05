@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
-import { School } from "@/types/schoollist";
+import { School } from "@/types/Schools";
 export const InfiniteMovingCards = ({
   items,
   direction = "left",
