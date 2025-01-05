@@ -27,11 +27,9 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTeams } from "@/hooks/useTeams";
 
-export function TeamForm() {
+export function TeamForm({ hackathonId }: { hackathonId: string }) {
   const { user } = useUser();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const hackathonId = searchParams.get('hackathonId');
   const { hackathons } = useHackathons();
   const { createTeam, teamNameExists } = useTeams();
   console.log("HACKATHONID", hackathonId);
@@ -118,8 +116,8 @@ export function TeamForm() {
               aria-expanded={open}
               className="w-full justify-between h-auto min-h-[2.5rem] py-2 bg-gray-800 border border-gray-700 hover:text-white shadow-sm rounded-lg hover:bg-gray-700"
             >
-              {formData.hackathonId ? (
-                <HackathonPreview hackathon={activeHackathons.find(h => h.id === formData.hackathonId)!} />
+              {hackathonId ? (
+                <HackathonPreview hackathon={activeHackathons.find(h => h.id === hackathonId)!} />
               ) : (
                 "Select hackathon..."
               )}
