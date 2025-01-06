@@ -1,5 +1,6 @@
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
+import { useCollection } from './useCollection';
 
 type DocSubscriptionProps<T> = {
   collectionName: string;
@@ -22,7 +23,7 @@ export function subscribeToDoc<T>({
   console.log(`Subscribing to ${collectionName} docs:`, docIds);
   
   const unsubscribes = docIds.map(id => {
-    const docRef = doc(db, collectionName, id);
+    const docRef = doc(useCollection(collectionName), id);
     return onSnapshot(docRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data() as T;

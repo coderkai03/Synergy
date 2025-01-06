@@ -42,6 +42,7 @@ import SkillsSection from "./slider-section";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { ItemSelect } from "./item-select";
 import { Textarea } from "./ui/textarea";
+import { useCollection } from "@/hooks/useCollection";
 
 export function AccountSetupComponent() {
   const router = useRouter();
@@ -134,7 +135,7 @@ export function AccountSetupComponent() {
     try {
       console.log("Submitting formData:", formData);
       if (!user?.id) return;
-      const userDoc = doc(db, 'users', user.id);
+      const userDoc = doc(useCollection('users'), user.id);
       await setDoc(userDoc, {
         ...formData, 
         email: user?.primaryEmailAddress?.emailAddress,

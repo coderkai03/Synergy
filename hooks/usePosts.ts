@@ -5,6 +5,7 @@ import { collection, query, orderBy, limit, getDocs, getDoc, doc } from '@fireba
 import { db } from '@/firebaseConfig';
 import { Post } from '@/types/Posts';
 
+// TODO: Add useCollection to this hook
 export function usePosts() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);

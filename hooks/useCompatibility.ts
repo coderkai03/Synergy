@@ -3,7 +3,6 @@
 import { useState, useCallback } from 'react';
 import { User } from '@/types/User';
 import { Team } from '@/types/Teams';
-import OpenAI from 'openai';
 import { useFirebaseUser } from './useFirebaseUsers';
 
 export function useCompatibility() {

@@ -6,6 +6,7 @@ import { db } from '@/firebaseConfig';
 import { User } from '@/types/User';
 import { Invite, Team } from '@/types/Teams';
 import { useUser } from '@clerk/nextjs';
+import { useCollection } from './useCollection';
 
 export function useFirebaseUser() {
   const [userData, setUserData] = useState<User | null>(null);
@@ -31,7 +32,7 @@ export function useFirebaseUser() {
     if (!user?.id) return;
 
     try {
-      const userRef = doc(db, 'users', user.id);
+      const userRef = doc(useCollection('users'), user.id);
       const userDoc = await getDoc(userRef);
 
       if (!userDoc.exists()) {
@@ -48,7 +49,7 @@ export function useFirebaseUser() {
   const updateUserInvites = async (index: number, invites: Invite[], accepted: boolean) => {
     if (!user?.id) return;
 
-    const userRef = doc(db, 'users', user.id);
+    const userRef = doc(useCollection('users'), user.id);
     await updateDoc(userRef, {
       invites: invites.filter((_, i) => i !== index),
       teams: accepted 
@@ -61,7 +62,7 @@ export function useFirebaseUser() {
 
   const getUsers = async (userIds: string[]) => {
     const users = await Promise.all(userIds.map(async (userId) => {
-      const userRef = doc(db, 'users', userId);
+      const userRef = doc(useCollection('users'), userId);
       const userDoc = await getDoc(userRef);
       return {
         ...userDoc.data(),
@@ -72,7 +73,7 @@ export function useFirebaseUser() {
   }
   
   const getAllUsers = async () => {
-    const userDocs = await getDocs(collection(db, 'users'));
+    const userDocs = await getDocs(useCollection('users'));
     const users = userDocs.docs
       .map((doc) => ({ ...doc.data(), id: doc.id } as User))
       .filter((u) => u.id !== user?.id);
@@ -80,7 +81,7 @@ export function useFirebaseUser() {
   }
 
   const getOlderUsers = async (lastUserId: string) => {
-    const userDocs = await getDocs(collection(db, 'users'));
+    const userDocs = await getDocs(useCollection('users'));
     const users = userDocs.docs
       .map((doc) => ({ ...doc.data(), id: doc.id } as User))
       .filter((u) => u.id !== user?.id);

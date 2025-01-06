@@ -5,7 +5,7 @@ import { Invite, Team } from '@/types/Teams';
 import { User } from '@/types/User';
 import { useUser } from '@clerk/nextjs';
 import toast from 'react-hot-toast';
-
+import { useCollection } from './useCollection';
 
 export function useTeams() {
   const { user } = useUser()
@@ -22,7 +22,7 @@ export function useTeams() {
       console.log('user?.id', user?.id)
 
       try {
-        const userRef = doc(db, 'users', user?.id);
+        const userRef = doc(useCollection('users'), user?.id);
         const userDoc = await getDoc(userRef);
         console.log('userDoc', userDoc.data())
 
@@ -45,7 +45,7 @@ export function useTeams() {
     try {
       // Update each team document
       await Promise.all(teammateIds.map(async (teammateId) => {
-        const inviteeRef = doc(db, 'users', teammateId);
+        const inviteeRef = doc(useCollection('users'), teammateId);
         const inviteeDoc = await getDoc(inviteeRef);
         
         if (inviteeDoc.exists()) {
@@ -69,7 +69,7 @@ export function useTeams() {
   const updateTeamInvitesByEmail = async (teammateEmails: string[], userId: string, invite: Invite) => {
     try {
       // Get all users matching the emails
-      const usersRef = collection(db, 'users');
+      const usersRef = useCollection('users');
       const emailQueries = teammateEmails.map(email => 
         query(usersRef, where('email', '==', email))
       );
@@ -90,7 +90,7 @@ export function useTeams() {
 
       // Update invites for each found user
       await Promise.all(userIds.map(async (teammateId) => {
-        const inviteeRef = doc(db, 'users', teammateId);
+        const inviteeRef = doc(useCollection('users'), teammateId);
         const inviteeDoc = await getDoc(inviteeRef);
         
         if (inviteeDoc.exists()) {
@@ -112,14 +112,14 @@ export function useTeams() {
   };
 
   const updateTeammates = async (teamId: string, teammateId: string) => {
-    const teamRef = doc(db, 'teams', teamId);
+    const teamRef = doc(useCollection('teams'), teamId);
     await updateDoc(teamRef, {
       teammates: arrayUnion(teammateId)
     });
   }
 
   const updateTeamHost = async (teamId: string, hostId: string) => {
-    const teamRef = doc(db, 'teams', teamId);
+    const teamRef = doc(useCollection('teams'), teamId);
     await updateDoc(teamRef, {
       hostId: hostId
     });
@@ -132,7 +132,7 @@ export function useTeams() {
       console.log('Starting Promise.all')
       const teams = await Promise.all(teamIds.map(async (teamId) => {
         console.log('fetching teamId', teamId)
-        const teamRef = doc(db, 'teams', teamId);
+        const teamRef = doc(useCollection('teams'), teamId);
         const teamDoc = await getDoc(teamRef);
         console.log('teamDoc', teamDoc.data())
 
@@ -158,7 +158,7 @@ export function useTeams() {
   }
 
   const getAllTeams = async () => {
-    const teamDocs = await getDocs(collection(db, 'teams'));
+    const teamDocs = await getDocs(useCollection('teams'));
     const teams = teamDocs.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id
@@ -172,11 +172,11 @@ export function useTeams() {
     }
 
     const { id, ...teamWithoutId } = team;
-    const teamRef = collection(db, 'teams');
+    const teamRef = useCollection('teams');
     const docRef = await addDoc(teamRef, teamWithoutId);
 
     // Add teamId to user's teams collection
-    const userRef = doc(db, 'users', team.hostId);
+    const userRef = doc(useCollection('users'), team.hostId);
     await updateDoc(userRef, {
       teams: arrayUnion(docRef.id)
     });
@@ -185,14 +185,14 @@ export function useTeams() {
   }
 
   const leaveTeam = async (teamId: string, userId: string) => {
-    const teamRef = doc(db, 'teams', teamId);
+    const teamRef = doc(useCollection('teams'), teamId);
     // remove userId from team
     await updateDoc(teamRef, {
       teammates: arrayRemove(userId)
     });
 
     // remove teamId from user's teams array
-    const userRef = doc(db, 'users', userId);
+    const userRef = doc(useCollection('users'), userId);
     await updateDoc(userRef, {
       teams: arrayRemove(teamId)
     });
@@ -200,11 +200,11 @@ export function useTeams() {
 
   const deleteTeam = async (teamId: string, hostId: string) => {
     // delete team
-    const teamRef = doc(db, 'teams', teamId);
+    const teamRef = doc(useCollection('teams'), teamId);
     await deleteDoc(teamRef);
 
     // remove teamId from user
-    const userRef = doc(db, 'users', hostId);
+    const userRef = doc(useCollection('users'), hostId);
     await updateDoc(userRef, {
       teams: arrayRemove(teamId)
     });
@@ -212,7 +212,7 @@ export function useTeams() {
 
   const teamNameExists = async (teamName: string, hackathonId: string) => {
     try {
-      const teamsRef = collection(db, 'teams');
+      const teamsRef = useCollection('teams');
       const q = query(teamsRef, 
         where('hackathonId', '==', hackathonId),
         where('name', '==', teamName)
@@ -226,7 +226,7 @@ export function useTeams() {
   }
 
   const updateRequests = async (teamId: string, userId: string, accepted: boolean) => {
-    const teamRef = doc(db, 'teams', teamId);
+    const teamRef = doc(useCollection('teams'), teamId);
     // remove userId from requests
     await updateDoc(teamRef, {
       requests: arrayRemove(userId)
@@ -239,7 +239,7 @@ export function useTeams() {
       });
 
       // add teamId to user's teams collection
-      const userRef = doc(db, 'users', userId);
+      const userRef = doc(useCollection('users'), userId);
       await updateDoc(userRef, {
         teams: arrayUnion(teamId)
       });
@@ -247,7 +247,7 @@ export function useTeams() {
   }
 
   const updateTeamRequests = async (teamId: string, userId: string) => {
-    const teamRef = doc(db, 'teams', teamId);
+    const teamRef = doc(useCollection('teams'), teamId);
     
     try {
       await runTransaction(db, async (transaction) => {
@@ -265,7 +265,7 @@ export function useTeams() {
         }
 
         // add teamId to user's teams collection
-        const userRef = doc(db, 'users', userId);
+        const userRef = doc(useCollection('users'), userId);
         await transaction.update(userRef, {
           teams: arrayUnion(teamId)
         });

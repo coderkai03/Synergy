@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { TeamListSection } from "@/components/team-list-section"
 import { subscribeToDoc } from "@/hooks/useDocSubscription"
 import { Plus } from "lucide-react"
+import { RequireProfile } from "@/components/require-profile"
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()
@@ -82,9 +83,11 @@ export default function HackathonTeamsScreen() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-white">My Teams</h1>
           <div className="flex gap-4">
-            <Button variant="outline" onClick={() => router.push('/teams/create')} className="gap-2 text-black">
-              <Plus className="w-4 h-4" /> Create Team
-            </Button>
+            <RequireProfile>
+              <Button variant="outline" onClick={() => router.push('/teams/create')} className="gap-2 text-black">
+                <Plus className="w-4 h-4" /> Create Team
+              </Button>
+            </RequireProfile>
             <InviteDialog
               invites={invites}
               teams={teams}
