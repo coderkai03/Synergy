@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { arrayUnion, collection, doc, getDoc, getDocs, setDoc, updateDoc } from '@firebase/firestore';
-import { db } from '@/firebaseConfig';
+import { arrayUnion, doc, getDoc, getDocs, orderBy,startAfter,  query, setDoc, updateDoc, limit } from '@firebase/firestore';
 import { User } from '@/types/User';
-import { Invite, Team } from '@/types/Teams';
+import { Invite } from '@/types/Teams';
 import { useUser } from '@clerk/nextjs';
 import { useCollection } from './useCollection';
+import { toast } from 'react-hot-toast';
 
 export function useFirebaseUser() {
   const [userData, setUserData] = useState<User | null>(null);
@@ -28,20 +28,22 @@ export function useFirebaseUser() {
     fetchUserData();
   }, [user?.id]);
 
-  const createUser = async (user: User) => {
-    if (!user?.id) return;
-
+  const createUser = async (formData: User) => {
     try {
-      const userRef = doc(useCollection('users'), user.id);
-      const userDoc = await getDoc(userRef);
+      console.log("Submitting formData:", formData);
+      if (!user?.id) return;
+      const userDoc = doc(useCollection('users'), user.id);
+      await setDoc(userDoc, {
+        ...formData, 
+        email: user?.primaryEmailAddress?.emailAddress,
+      });
+      console.log("User data updated successfully");
 
-      if (!userDoc.exists()) {
-        await setDoc(userRef, user);
-        console.log('Created new user:', user.id);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error creating user');
-      console.error('Error creating user:', err);
+      return true;
+    } catch (error) {
+      console.error("Error saving to Firestore:", error);
+      toast.error("Failed to save your profile. Please try again.");
+      return false;
     }
   }
 
@@ -80,12 +82,44 @@ export function useFirebaseUser() {
     return users;
   }
 
-  const getOlderUsers = async (lastUserId: string) => {
-    const userDocs = await getDocs(useCollection('users'));
-    const users = userDocs.docs
-      .map((doc) => ({ ...doc.data(), id: doc.id } as User))
-      .filter((u) => u.id !== user?.id);
-    return users;
+  const getOlderUsers = async (limitCount: number, lastUserId?: string) => {
+    setLoading(true);
+    try {
+      const usersRef = useCollection('users');
+      let q;
+      
+      if (lastUserId) {
+        const lastUserDoc = await getDoc(doc(usersRef, lastUserId));
+        q = query(usersRef, 
+          orderBy('id'),
+          startAfter(lastUserDoc), 
+          limit(limitCount)
+        );
+      } else {
+        q = query(usersRef, 
+          orderBy('id'),
+          limit(limitCount)
+        );
+      }
+
+      const userDocs = await getDocs(q);
+      console.log("older user docs:", userDocs);
+      const users = userDocs.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id } as User))
+        .filter((u) => u.id !== user?.id);
+
+      console.log("older users:", users);
+
+      // Return false if we got fewer docs than requested
+      const hasMore = users.length >= limitCount;
+
+      return { users, hasMore };
+    } catch (error) {
+      console.error('Error fetching older users:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   }
 
   return {

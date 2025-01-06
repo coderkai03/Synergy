@@ -8,82 +8,73 @@ import { HackerPreview } from "@/components/hacker-preview";
 import { useTeams } from "@/hooks/useTeams";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { Search } from "lucide-react";
-import { User, mockHackers } from "@/types/User";
+import { User } from "@/types/User";
 import { Team } from "@/types/Teams";
 import { useCompatibility } from "@/hooks/useCompatibility";
+import InfiniteScroll from "@/components/ui/infinite-scroll";
 
 export default function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const { userData } = useFirebaseUser();
-  const { getAllTeams } = useTeams();
-  const { getAllUsers, loading: usersLoading, getOlderUsers } = useFirebaseUser();
+  const { getAllTeams, getOlderTeams, loading: teamsLoading } = useTeams();
+  const { userData, getAllUsers, loading: usersLoading, getOlderUsers } = useFirebaseUser();
   const { calculateHackerScores, loading: scoresLoading } = useCompatibility();
+
+  const PAGE_LIMIT = 10;
   
   const [hackerScores, setHackerScores] = useState<number[]>([]);
   const [filteredHackers, setFilteredHackers] = useState<User[]>([]);
   const [filteredTeams, setFilteredTeams] = useState<Team[]>([]);
+  const [hasMoreUsers, setHasMoreUsers] = useState(true);
+  const [hasMoreTeams, setHasMoreTeams] = useState(true);
 
-  const setObserver = () => {
-    const observer = new IntersectionObserver(
-        async (entries) => {
-            if (entries[0].isIntersecting) {
-                console.log("Intersecting");
-                const olderUsers = await getOlderUsers(filteredHackers[filteredHackers.length - 1].id)
-                const filteredUsers = olderUsers.filter(user => 
-                    user.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    user.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    user.school?.toLowerCase().includes(searchQuery.toLowerCase())
-                );
-                setFilteredHackers(prev => [...prev, ...filteredUsers]);
-            }
-        },
-        { threshold: 1.0 }
-    );
 
-    const sentinel = document.getElementById('sentinel');
-    if (sentinel) observer.observe(sentinel);
+  const fetchMoreUsers = async () => {
+    if (!userData) return;
 
-    return () => observer.disconnect();
+    const lastUser = filteredHackers ? filteredHackers[filteredHackers.length - 1] : null;
+    const {users, hasMore} = await getOlderUsers(PAGE_LIMIT, lastUser?.id);
+
+    if (!hasMore) {
+      setHasMoreUsers(false);
+    }
+
+    if (!users) return;
+
+    const filteredUsers: User[] = users
+      .filter(user => 
+        user.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.school?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+    const hScores = calculateHackerScores(userData, filteredUsers);
+    console.log('more hackers:', [...filteredHackers, ...filteredUsers]);
+
+    setFilteredHackers(prev => [...prev, ...filteredUsers]);
+    setHackerScores(hScores);
   }
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-        if (!userData) return;
+  const fetchMoreTeams = async () => {
+    if (!userData) return;
 
-        const allUsers: User[] = await getAllUsers();
-        const filteredUsers: User[] = [...mockHackers, ...allUsers]
-        .filter(user => 
-            user.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            user.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            user.school?.toLowerCase().includes(searchQuery.toLowerCase())
-        ).slice(0, 10);
+    const lastTeam = filteredTeams ? filteredTeams[filteredTeams.length - 1] : null;
+    const {teams, hasMore} = await getOlderTeams(PAGE_LIMIT, lastTeam?.id);
 
-      const hScores = calculateHackerScores(userData, filteredUsers);
+    if (!hasMore) {
+      setHasMoreTeams(false);
+    }
 
-      setFilteredHackers(filteredUsers);
-      setHackerScores(hScores);
-    };
+    if (!teams) return;
 
-    const fetchTeams = async () => {
-      if (!userData) return;
+    const filteredTeamsList: Team[] = teams
+      .filter(team => 
+        team.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
 
-      try {
-        const allTeams: Team[] = await getAllTeams();
-        const filtered = allTeams
-          .filter(team => 
-            team.name?.toLowerCase().includes(searchQuery.toLowerCase())
-          );
+    console.log('more teams:', [...filteredTeams, ...filteredTeamsList]);
 
-        setFilteredTeams(filtered);
-      } catch (error) {
-        console.error('Error fetching teams:', error);
-      }
-    };
-
-    fetchUsers();
-    fetchTeams();
-    setObserver();
-  }, [userData, searchQuery]);
+    setFilteredTeams(prev => [...prev, ...filteredTeamsList]);
+  }
 
   return (
     <div className="min-h-screen bg-[#111119] p-4">
@@ -106,12 +97,15 @@ export default function ExplorePage() {
             </TabsList>
             
             <TabsContent value="hackers" className="mt-6">
-              {usersLoading || scoresLoading ? (
-                <div>Loading hackers...</div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
-                  {filteredHackers?.map((user, index) => (
-                    <div key={user.id} className="flex items-center justify-between w-full bg-zinc-800/50 rounded-lg">
+                <InfiniteScroll
+                  isLoading={usersLoading}
+                  hasMore={hasMoreUsers}
+                  next={fetchMoreUsers}
+                  threshold={0.5}
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
+                    {filteredHackers?.map((user, index) => (
+                      <div key={user.id} className="flex items-center justify-between w-full bg-zinc-800/50 rounded-lg">
                       <div className="w-3/4">
                         <HackerPreview user={user} />
                       </div>
@@ -120,24 +114,30 @@ export default function ExplorePage() {
                       </div>
                     </div>
                   ))}
-                </div>
-              )}
+                  </div>
+                </InfiniteScroll>
             </TabsContent>
 
             <TabsContent value="teams" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
-                {filteredTeams?.map((team) => (
-                  <div 
-                    key={team.id} 
+              <InfiniteScroll
+                isLoading={teamsLoading}
+                hasMore={hasMoreTeams}
+                next={fetchMoreTeams}
+                threshold={0.5}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
+                  {filteredTeams?.map((team) => (
+                    <div 
+                      key={team.id} 
                     className="flex items-center justify-between gap-4 w-full"
                   >
                     <div className="flex-1">
                       <TeamPreview team={team} />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-              <div id="sentinel" className="h-1"></div>
+                  ))}
+                </div>
+              </InfiniteScroll>
             </TabsContent>
           </Tabs>
         </div>

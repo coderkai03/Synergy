@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, doc, getDoc, updateDoc, arrayRemove, deleteDoc, where, query, setDoc, addDoc, arrayUnion, runTransaction } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, updateDoc, arrayRemove, deleteDoc, where, query, setDoc, addDoc, arrayUnion, runTransaction, orderBy, limit, startAfter } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { Invite, Team } from '@/types/Teams';
 import { User } from '@/types/User';
@@ -171,9 +171,8 @@ export function useTeams() {
       return 'alreadyInTeam';
     }
 
-    const { id, ...teamWithoutId } = team;
     const teamRef = useCollection('teams');
-    const docRef = await addDoc(teamRef, teamWithoutId);
+    const docRef = await addDoc(teamRef, team);
 
     // Add teamId to user's teams collection
     const userRef = doc(useCollection('users'), team.hostId);
@@ -276,6 +275,44 @@ export function useTeams() {
     }
   };
 
+  const getOlderTeams = async (limitCount: number, lastTeamId?: string) => {
+    setLoading(true);
+    try {
+      const teamsRef = useCollection('teams');
+      let q;
+
+      if (lastTeamId) {
+        const lastTeamDoc = await getDoc(doc(teamsRef, lastTeamId));
+        q = query(teamsRef,
+          orderBy('id'), 
+          startAfter(lastTeamDoc),
+          limit(limitCount)
+        );
+      } else {
+        q = query(teamsRef,
+          orderBy('id'),
+          limit(limitCount) 
+        );
+      }
+
+      const teamDocs = await getDocs(q);
+      console.log("older team docs:", teamDocs);
+      const teams = teamDocs.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id } as Team));
+
+      console.log("older teams:", teams);
+
+      const hasMore = teams.length >= limitCount;
+
+      return { teams, hasMore };
+    } catch (error) {
+      console.error('Error fetching older teams:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return {
     userTeams,
     loading,
@@ -284,6 +321,7 @@ export function useTeams() {
     updateTeamInvitesByEmail,
     updateTeammates,
     getAllTeams,
+    getOlderTeams,
     getTeams,
     createTeam,
     leaveTeam,

@@ -1,5 +1,4 @@
 import { SignInButton } from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useUser } from "@clerk/nextjs";

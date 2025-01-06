@@ -28,9 +28,6 @@ import {
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { toast } from "react-hot-toast";
-import { db } from '@/firebaseConfig'
-import { doc, setDoc } from '@firebase/firestore'
 import {
   defaultUser,
   technologies_options,
@@ -42,12 +39,11 @@ import SkillsSection from "./slider-section";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { ItemSelect } from "./item-select";
 import { Textarea } from "./ui/textarea";
-import { useCollection } from "@/hooks/useCollection";
 
 export function AccountSetupComponent() {
   const router = useRouter();
   const { user } = useUser();
-  const { userData } = useFirebaseUser();
+  const { userData, createUser } = useFirebaseUser();
 
   const [formData, setFormData] = useState<User>({
     ...defaultUser,
@@ -132,21 +128,9 @@ export function AccountSetupComponent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      console.log("Submitting formData:", formData);
-      if (!user?.id) return;
-      const userDoc = doc(useCollection('users'), user.id);
-      await setDoc(userDoc, {
-        ...formData, 
-        email: user?.primaryEmailAddress?.emailAddress,
-      });
-      console.log("User data updated successfully");
-
-      // Navigate to the next page
+    const success = await createUser(formData);
+    if (success) {
       router.push("/hackathons");
-    } catch (error) {
-      console.error("Error saving to Firestore:", error);
-      toast.error("Failed to save your profile. Please try again.");
     }
   };
 
