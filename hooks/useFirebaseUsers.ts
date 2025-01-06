@@ -51,12 +51,12 @@ export function useFirebaseUser() {
     const userRef = doc(db, 'users', user.id);
     await updateDoc(userRef, {
       invites: invites.filter((_, i) => i !== index),
-      teams: accepted ? {
-        ...(userData?.teams || {}), // Spread existing teams
-        teams: arrayUnion(invites[index].teamId) // Add new team
-      } : userData?.teams // Keep existing teams if not accepted
+      teams: accepted 
+        ? arrayUnion(invites[index].teamId) // Simply add new team to array
+        : userData?.teams || [] // Keep existing teams array if not accepted
     });
-    console.log(`Updated user invites: ${accepted ? 'accepted' : 'declined'} invite to ${invites[index].teamId}`)
+    
+    console.log(`Updated user invites: ${accepted ? 'accepted' : 'declined'} invite to ${invites[index].teamId}`);
   }    
 
   const getUsers = async (userIds: string[]) => {
