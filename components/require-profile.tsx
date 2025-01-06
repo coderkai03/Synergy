@@ -10,9 +10,8 @@ interface RequireProfileProps {
 }
 
 export function RequireProfile({ children }: RequireProfileProps) {
-  const { userData } = useFirebaseUser();
+  const { userData, loading } = useFirebaseUser();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
   const [hasChecked, setHasChecked] = useState(false);
 
   const isProfileComplete = (user: User | null): boolean => {
@@ -22,36 +21,39 @@ export function RequireProfile({ children }: RequireProfileProps) {
       user.firstName,
       user.lastName,
       user.email,
-      user.bio,
       user.school,
       user.major,
       user.technologies?.length > 0,
       user.role_experience && Object.keys(user.role_experience).length > 0,
-      user.category_experience?.length > 0,
-    //   user.interests?.length > 0,
-      user.number_of_hackathons,
-      user.linkedin,
-      user.devpost,
-      user.github
+      user.category_experience?.length > 0
     ];
 
     return requiredFields.every(Boolean);
   };
 
   useEffect(() => {
-    if (userData !== undefined && !hasChecked) {
-      setIsLoading(false);
+    // Only check when loading is complete and we haven't checked yet
+    if (!loading && !hasChecked) {
       setHasChecked(true);
       
       if (!isProfileComplete(userData)) {
+        console.log('Profile incomplete:', userData);
         router.push('/account-setup');
       }
     }
-  }, [userData, hasChecked, router]);
+  }, [userData, loading, hasChecked, router]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  // Show loading state while we're checking the profile
+  if (loading || !hasChecked) {
+    return <div className="min-h-screen bg-[#111119] p-4 flex justify-center items-center">
+      <div className="container w-1/2 mx-auto">
+        <div className="bg-zinc-800 rounded-lg p-6 border border-zinc-700">
+          <h1 className="text-2xl font-bold mb-6 text-white">Loading...</h1>
+        </div>
+      </div>
+    </div>;
   }
 
+  // If we've checked and the profile is complete, render children
   return <>{children}</>;
 } 

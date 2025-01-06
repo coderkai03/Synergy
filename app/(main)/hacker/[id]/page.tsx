@@ -30,9 +30,6 @@ export default function HackerDetailPage() {
     return () => unsubscribe();
   }, [id]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   if (!hacker) {
     return <div>Hacker not found</div>;

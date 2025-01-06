@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
@@ -32,9 +32,9 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const router = useRouter();
   const { hackathons } = useHackathons();
   const { createTeam, teamNameExists } = useTeams();
-  console.log("HACKATHONID", hackathonId);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<Team>({
     id: '',
     name: "",
@@ -43,7 +43,15 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
     teammates: [user?.id || ""],
     requests: []
   });
-  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (hackathonId) {
+      setFormData(prev => ({
+        ...prev,
+        hackathonId
+      }));
+    }
+  }, [hackathonId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +73,7 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
 
     const exists = await teamNameExists(formData.name, formData.hackathonId);
     if (exists) {
-      toast.error("Team name already exists");
+      toast.error("Team already exists");
       setIsSubmitting(false);
       return;
     }
@@ -93,19 +101,19 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
   
-    const activeHackathons = hackathons
+    return hackathons
       .filter((hackathon) => {
         const endDate = new Date(hackathon.endDate);
         return endDate >= today;
       })
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    return activeHackathons;
   };
 
   const activeHackathons = getActiveHackathons(hackathons);
+  const selectedHackathon = activeHackathons.find(h => h.id === formData.hackathonId);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 text-white">
       <div className="space-y-2">
         <Label htmlFor="hackathon">Select Hackathon</Label>
         <Popover open={open} onOpenChange={setOpen}>
@@ -116,8 +124,8 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
               aria-expanded={open}
               className="w-full justify-between h-auto min-h-[2.5rem] py-2 bg-gray-800 border border-gray-700 hover:text-white shadow-sm rounded-lg hover:bg-gray-700"
             >
-              {hackathonId ? (
-                <HackathonPreview hackathon={activeHackathons.find(h => h.id === hackathonId)!} />
+              {selectedHackathon ? (
+                <HackathonPreview hackathon={selectedHackathon} />
               ) : (
                 "Select hackathon..."
               )}
