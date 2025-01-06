@@ -46,7 +46,7 @@ export function RequestsDialog({ teamId, requests }: RequestsDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2 bg-zinc-800 border-zinc-700 relative">
+        <Button variant="outline" className="gap-2 bg-white text-black border-zinc-700 relative hover:bg-white hover:text-black">
           <Mail className="h-4 w-4" />
           Requests
           {requests.length > 0 && (

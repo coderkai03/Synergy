@@ -71,15 +71,15 @@ export function AddTeammateDialog({ isHost, onAddTeammate }: AddTeammateDialogPr
           <div className="flex justify-end gap-2">
             <Button
               type="button"
-              variant="outline"
               onClick={() => setOpen(false)}
-              className="border-gray-700 text-black"
             >
               Cancel
             </Button>
             <Button
               type="submit"
+              variant="outline" 
               disabled={loading}
+              className="border-gray-700 text-black"
             >
               {loading ? "Adding..." : "Add Teammate"}
             </Button>

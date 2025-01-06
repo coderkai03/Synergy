@@ -44,17 +44,6 @@ export function RequireProfile({ children }: RequireProfileProps) {
     }
   }, [userData, loading, hasChecked, router]);
 
-  // Show loading state while we're checking the profile
-  if (loading || !hasChecked) {
-    return <div className="min-h-screen bg-[#111119] p-4 flex justify-center items-center">
-      <div className="container w-1/2 mx-auto">
-        <div className="bg-zinc-800 rounded-lg p-6 border border-zinc-700">
-          <h1 className="text-2xl font-bold mb-6 text-white">Loading...</h1>
-        </div>
-      </div>
-    </div>;
-  }
-
   // If we've checked and the profile is complete, render children
   return <>{children}</>;
 } 

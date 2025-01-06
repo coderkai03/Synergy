@@ -28,25 +28,43 @@ export default function HackathonTeamsScreen() {
   const [invites, setInvites] = useState<Invite[]>([])
   const [filteredTeams, setFilteredTeams] = useState<Team[]>([...userTeams]);
 
-  useEffect(() => {
-    const unsubscribe = subscribeToDoc<User>({
-      collectionName: 'users',
-      docId: user?.id || '',
-      onUpdate: (userData) => {
-        const newInvites = userData.invites || [];
-        setInvites(prevInvites => {
-          if (JSON.stringify(newInvites) !== JSON.stringify(prevInvites)) {
-            console.log('New invite received:', newInvites);
-            return newInvites;
-          }
-          return prevInvites;
-        });
-      },
-      enabled: !!user?.id
-    });
+  const unsubscribeTeams = subscribeToDoc<Team>({
+    collectionName: 'teams',
+    docId: userData?.id || '',
+    onUpdate: (teamData) => {
+      setTeams(prevTeams => {
+        const teamIndex = prevTeams.findIndex(t => t.id === teamData.id);
+        if (teamIndex >= 0) {
+          const newTeams = [...prevTeams];
+          newTeams[teamIndex] = teamData;
+          return newTeams;
+        }
+        return [...prevTeams, teamData];
+      });
+    },
+    enabled: !!userData?.id
+  });
 
+  const unsubscribeInvites = subscribeToDoc<User>({
+    collectionName: 'users',
+    docId: user?.id || '',
+    onUpdate: (userData) => {
+      const newInvites = userData.invites || [];
+      setInvites(prevInvites => {
+        if (JSON.stringify(newInvites) !== JSON.stringify(prevInvites)) {
+          console.log('New invite received:', newInvites);
+          return newInvites;
+        }
+        return prevInvites;
+      });
+    },
+    enabled: !!user?.id
+  });
+
+  useEffect(() => {
     return () => {
-      if (unsubscribe) unsubscribe();
+      if (unsubscribeInvites) unsubscribeInvites();
+      if (unsubscribeTeams) unsubscribeTeams();
     };
   }, [user?.id]);
 
@@ -91,9 +109,8 @@ export default function HackathonTeamsScreen() {
             <InviteDialog
               invites={invites}
               teams={teams}
-              hackathons={hackathons}
               setTeams={setTeams}
-              setHackathons={setHackathons}
+              setUserHackathons={setHackathons}
             />
           </div>
         </div>

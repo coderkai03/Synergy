@@ -18,12 +18,12 @@ import { AddTeammateDialog } from "@/components/add-teammate-dialog";
 import { subscribeToDoc } from "@/hooks/useDocSubscription";
 import { RequestsDialog } from "@/components/requests-dialog";
 import { JoinTeamDialog } from "@/components/join-team-dialog";
-import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "react-hot-toast";
 
 export default function TeamDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { getTeams, leaveTeam, updateTeamHost, updateTeamInvitesByEmail } = useTeams();
+  const { getTeams, leaveTeam, updateTeamHost, updateTeamInvitesByEmail, teammateExists } = useTeams();
   const { getHackathons } = useHackathons();
   const { getUsers, userData } = useFirebaseUser();
 
@@ -31,7 +31,7 @@ export default function TeamDetailPage() {
   const [team, setTeam] = useState<Team | null>(null);
   const [hackathon, setHackathon] = useState<Hackathon | null>(null);
   const [teammates, setTeammates] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   const isMember = team?.teammates.includes(userData?.id || '');
 
@@ -62,6 +62,12 @@ export default function TeamDetailPage() {
 
   const handleAddTeammate = async (email: string) => {
     if (!team || !userData) return;
+
+    if (await teammateExists(team.id, email)) {
+      toast.error('User is already in team!');
+      return;
+    }
+
     try {
       const invite: Invite = {
         teamId: team.id,
@@ -80,13 +86,13 @@ export default function TeamDetailPage() {
       if (!id) return;
       
       try {
-        setLoading(true);
+        // setLoading(true);
         const teams = await getTeams([id]);
         setTeam(teams[0]);
       } catch (error) {
         console.error("Error fetching team:", error);
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
@@ -125,10 +131,6 @@ export default function TeamDetailPage() {
       console.error("Error leaving team:", error);
     }
   };
-
-  if (loading) {
-    return <LoadingSkeleton />;
-  }
 
   if (!team || !hackathon || !teammates.length) {
     return <TeamNotFound />;
@@ -279,32 +281,32 @@ function TeamMemberCard({ teammate, isHost }: {
   );
 }
 
-function LoadingSkeleton() {
-  return (
-    <div className="mx-auto py-8 px-4 bg-[#111119]">
-      <Card className="bg-gray-900">
-        <CardHeader>
-          <Skeleton className="h-8 w-1/3 mb-2 bg-gray-800" />
-          <Skeleton className="h-4 w-1/4 mb-1 bg-gray-800" />
-          <Skeleton className="h-4 w-1/4 mb-1 bg-gray-800" />
-          <Skeleton className="h-4 w-1/4 bg-gray-800" />
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-8">
-            {[...Array(5)].map((_, i) => (
-              <div key={i}>
-                <Skeleton className="h-6 w-1/4 mb-3 bg-gray-800" />
-                <Skeleton className="h-4 w-full mb-2 bg-gray-800" />
-                <Skeleton className="h-4 w-full mb-2 bg-gray-800" />
-                <Skeleton className="h-4 w-3/4 bg-gray-800" />
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+// function LoadingSkeleton() {
+//   return (
+//     <div className="mx-auto py-8 px-4 bg-[#111119]">
+//       <Card className="bg-gray-900">
+//         <CardHeader>
+//           <Skeleton className="h-8 w-1/3 mb-2 bg-gray-800" />
+//           <Skeleton className="h-4 w-1/4 mb-1 bg-gray-800" />
+//           <Skeleton className="h-4 w-1/4 mb-1 bg-gray-800" />
+//           <Skeleton className="h-4 w-1/4 bg-gray-800" />
+//         </CardHeader>
+//         <CardContent>
+//           <div className="space-y-8">
+//             {[...Array(5)].map((_, i) => (
+//               <div key={i}>
+//                 <Skeleton className="h-6 w-1/4 mb-3 bg-gray-800" />
+//                 <Skeleton className="h-4 w-full mb-2 bg-gray-800" />
+//                 <Skeleton className="h-4 w-full mb-2 bg-gray-800" />
+//                 <Skeleton className="h-4 w-3/4 bg-gray-800" />
+//               </div>
+//             ))}
+//           </div>
+//         </CardContent>
+//       </Card>
+//     </div>
+//   );
+// }
 
 function TeamNotFound() {
   return (

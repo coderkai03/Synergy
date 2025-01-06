@@ -1,5 +1,6 @@
-import { collection, CollectionReference, DocumentData } from 'firebase/firestore';
+import { addDoc, collection, CollectionReference, DocumentData } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
+import { toast } from 'react-hot-toast';
 
 export function useCollection(collectionName: string): CollectionReference<DocumentData> {
     // Check if we're in test environment
@@ -20,6 +21,27 @@ export function useCollection(collectionName: string): CollectionReference<Docum
   
   return collection(db, actualCollectionName) as CollectionReference<DocumentData>;
 }
+
+export async function uploadFeedback(message: string) {
+  try {
+    const feedbackCollection = collection(db, 'feedback');
+    const timestamp = new Date();
+    
+    await addDoc(feedbackCollection, {
+      message,
+      timestamp,
+      userId: null // Optional: Add user ID if available
+    });
+
+    toast.success('Thanks for the feedback!');
+    console.log('Feedback uploaded successfully');
+    return true;
+  } catch (error) {
+    console.error('Error uploading feedback:', error);
+    return false;
+  }
+}
+
 
 // Usage example:
 // const usersCollection = useCollection<User>('users');

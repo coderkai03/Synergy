@@ -15,8 +15,8 @@ import InfiniteScroll from "@/components/ui/infinite-scroll";
 
 export default function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const { getOlderTeams, loading: teamsLoading } = useTeams();
   const { userData, getOlderUsers, loading: usersLoading } = useFirebaseUser();
+  const { getOlderTeams, loading: teamsLoading } = useTeams();
   const { calculateHackerScores } = useCompatibility();
 
   const PAGE_LIMIT = 10;
