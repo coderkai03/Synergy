@@ -67,15 +67,37 @@ export function AccountSetupComponent() {
     if (userData) {
       setFormData(prevFormData => ({
         ...userData,
+        firstName: userData.firstName ?? "",
+        lastName: userData.lastName ?? "",
+        email: userData.email ?? "",
+        profilePicture: userData.profilePicture ?? "",
+        bio: userData.bio ?? "",
+        school: userData.school ?? "",
+        major: userData.major ?? "",
+        technologies: userData.technologies ?? [],
+        category_experience: userData.category_experience ?? [],
+        interests: userData.interests ?? [],
+        linkedin: userData.linkedin ?? "",
+        devpost: userData.devpost ?? "",
+        github: userData.github ?? "",
+        number_of_hackathons: userData.number_of_hackathons ?? "",
         role_experience: {
           ...prevFormData.role_experience,
           ...userData.role_experience,
+          product_management: userData.role_experience?.product_management ?? -1,
+          software: userData.role_experience?.software ?? -1,
+          hardware: userData.role_experience?.hardware ?? -1,
           design: userData.role_experience?.design ?? -1
-        }
+        },
+        teams: userData.teams ?? [],
+        invites: userData.invites ?? []
       }));
     }
-    console.log('Updated formData:', formData);
   }, [userData]);
+
+  useEffect(() => {
+    console.log('Updated formData:', formData);
+  }, [formData]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
