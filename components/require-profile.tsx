@@ -18,6 +18,7 @@ export function RequireProfile({ children }: RequireProfileProps) {
     if (!user) return false;
 
     const requiredFields = [
+      user.id,
       user.firstName,
       user.lastName,
       user.email,
