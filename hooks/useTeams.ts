@@ -298,7 +298,8 @@ export function useTeams() {
       const teamDocs = await getDocs(q);
       console.log("older team docs:", teamDocs);
       const teams = teamDocs.docs
-        .map((doc) => ({ ...doc.data(), id: doc.id } as Team));
+        .map((doc) => ({ ...doc.data(), id: doc.id } as Team))
+        .filter((team) => !userTeams.some(userTeam => userTeam.id === team.id));
 
       console.log("older teams:", teams);
 
