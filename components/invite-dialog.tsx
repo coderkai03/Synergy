@@ -10,19 +10,18 @@ import { User } from "@/types/User"
 import { Hackathon } from "@/types/Hackathons"
 import { useHackathons } from "@/hooks/useHackathons"
 import { toast } from "react-hot-toast"
+import { InviteCard } from "@/components/invite-card"
 
 export function InviteDialog({
   invites,
   teams,
-  hackathons,
   setTeams, 
-  setHackathons 
+  setUserHackathons 
 }: { 
   invites: Invite[], 
   teams: Team[],
-  hackathons: Hackathon[],
   setTeams: (teams: Team[]) => void, 
-  setHackathons: (hackathons: Hackathon[]) => void 
+  setUserHackathons: (hackathons: Hackathon[]) => void 
 }) {
   const { user } = useUser();
   const { updateTeammates } = useTeams();
@@ -33,6 +32,7 @@ export function InviteDialog({
   const [isOpen, setIsOpen] = useState(false);
   const [inviters, setInviters] = useState<User[]>([]);
   const [teamInvites, setTeamInvites] = useState<Team[]>([]);
+  const [hackathons, setHackathons] = useState<Hackathon[]>([]);
 
   console.log('INV hackathons:', hackathons);
 
@@ -50,6 +50,11 @@ export function InviteDialog({
       const teams = await getTeams(teamIds);
       setTeamInvites(teams);
       console.log('teamInvites:', teams);
+
+      const hackathonIds = teams.map(team => team.hackathonId);
+      const hackathonDocs = await getHackathons(hackathonIds);
+      setHackathons(hackathonDocs);
+      console.log('hackathons:', hackathonDocs);
     };
 
     fetchInviters();
@@ -60,7 +65,9 @@ export function InviteDialog({
     if (!user?.id) return;
 
     const teamId = invites[inviteId].teamId;
-    updateTeammates(teamId, user.id);
+    const success = await updateTeammates(teamId, user.id);
+    if (!success) return;
+    
     updateUserInvites(inviteId, invites, true);
 
     const team = await getTeams([teamId]);
@@ -74,7 +81,7 @@ export function InviteDialog({
 
     const hackathonId = team[0].hackathonId;
     const hackathon = await getHackathons([hackathonId]);
-    setHackathons([...hackathons, hackathon[0]]);
+    setUserHackathons([...hackathons, hackathon[0]]);
 
     console.log(`Joined team from invite ${inviteId}`)
     setIsOpen(false);
@@ -94,7 +101,7 @@ export function InviteDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className="relative">
+        <Button variant="outline" size="icon" className="relative bg-white text-black hover:bg-zinc-200">
           <Mail className="h-4 w-4" />
           {invites?.length > 0 && (
             <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -103,36 +110,25 @@ export function InviteDialog({
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="bg-zinc-900 text-white border-zinc-700">
         <DialogHeader>
-          <DialogTitle>Team Invitations</DialogTitle>
+          <DialogTitle className="text-white">Team Invitations</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          {invites ? invites.map((invite, index) => (
-            <div key={index} className="flex flex-col p-3 border rounded">
-              <div className="text-sm text-muted-foreground mb-1">
-                from {inviters[index]?.firstName || 'Unknown'}
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium">
-                    Invited you to join {teamInvites[index]?.name}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {hackathons.find(h => h.id === teamInvites[index]?.hackathonId)?.name || 'Unknown Hackathon'}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => handleDecline(index)}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                  <Button variant="default" size="sm" onClick={() => handleJoin(index)}>
-                    Join
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )) : <div>No invites</div>}
+          {invites ? invites.map((invite, index) => {
+            const hackathon = hackathons.find(h => h.id === teamInvites[index]?.hackathonId);
+            return hackathon ? (
+              <InviteCard
+                key={index}
+                invite={invite}
+                inviter={inviters[index]}
+                team={teamInvites[index]}
+                hackathon={hackathon}
+                onDecline={() => handleDecline(index)}
+                onJoin={() => handleJoin(index)}
+              />
+            ) : null;
+          }) : <div className="text-zinc-400">No invites</div>}
         </div>
       </DialogContent>
     </Dialog>

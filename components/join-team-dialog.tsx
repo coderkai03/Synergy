@@ -37,7 +37,7 @@ export function JoinTeamDialog({ team, userData }: JoinTeamDialogProps) {
       <DialogTrigger asChild>
         <Button 
           variant={alreadyRequested ? "secondary" : "default"}
-          className="gap-2"
+          className="gap-2 bg-white text-black hover:bg-white"
           disabled={alreadyRequested}
         >
           <UserPlus className="h-4 w-4" />
@@ -46,8 +46,8 @@ export function JoinTeamDialog({ team, userData }: JoinTeamDialogProps) {
       </DialogTrigger>
       <DialogContent className="max-w-md bg-zinc-900 text-white">
         <DialogHeader>
-          <DialogTitle>Join {team.name}</DialogTitle>
-          <DialogDescription className="text-zinc-400">
+          <DialogTitle className="text-white">Join {team.name}</DialogTitle>
+          <DialogDescription className="text-white">
             Request to join this team?
           </DialogDescription>
         </DialogHeader>
@@ -57,14 +57,14 @@ export function JoinTeamDialog({ team, userData }: JoinTeamDialogProps) {
               variant="outline"
               onClick={() => setIsOpen(false)}
               disabled={isLoading}
-              className="bg-zinc-800 border-zinc-700"
+              className="bg-zinc-800 border-zinc-700 hover:bg-zinc-800 hover:text-white"
             >
               Cancel
             </Button>
             <Button
               onClick={handleJoinRequest}
               disabled={isLoading}
-              className="bg-white text-black"
+              className="bg-white text-black hover:bg-white"
             >
               {isLoading ? "Sending Request..." : "Send Join Request"}
             </Button>

@@ -85,6 +85,7 @@ export function useTeams() {
         .filter(id => id !== userId);
 
       if (userIds.length === 0) {
+        toast.error(``);
         throw new Error('No users found with the provided emails');
       }
 
@@ -113,9 +114,23 @@ export function useTeams() {
 
   const updateTeammates = async (teamId: string, teammateId: string) => {
     const teamRef = doc(useCollection('teams'), teamId);
+    const teamDoc = await getDoc(teamRef);
+    if (!teamDoc.exists()) {
+      toast.error(`Team ${teamId} not found`);
+      return false;
+    }
+
+    const currentTeammates = teamDoc.data().teammates || [];
+    if (currentTeammates.includes(teammateId)) {
+      toast.error(`User ${teammateId} already in team ${teamId}`);
+      return false;
+    }
+
     await updateDoc(teamRef, {
       teammates: arrayUnion(teammateId)
     });
+
+    return true;
   }
 
   const updateTeamHost = async (teamId: string, hostId: string) => {
@@ -239,8 +254,13 @@ export function useTeams() {
 
       // add teamId to user's teams collection
       const userRef = doc(useCollection('users'), userId);
+      const userDoc = await getDoc(userRef);
+      const userInvites = userDoc.data()?.invites || [];
+      const updatedInvites = userInvites.filter((invite: Invite) => invite.teamId !== teamId);
+      
       await updateDoc(userRef, {
-        teams: arrayUnion(teamId)
+        teams: arrayUnion(teamId),
+        invites: updatedInvites
       });
     }
   }
@@ -262,12 +282,6 @@ export function useTeams() {
             requests: [...currentRequests, userId]
           });
         }
-
-        // add teamId to user's teams collection
-        const userRef = doc(useCollection('users'), userId);
-        await transaction.update(userRef, {
-          teams: arrayUnion(teamId)
-        });
       });
     } catch (error) {
       console.error('Error updating team requests:', error);
@@ -314,6 +328,13 @@ export function useTeams() {
     }
   }
 
+  const teammateExists = async (teamId: string, teammateEmail: string) => {
+    const usersRef = useCollection('users');
+    const q = query(usersRef, where('email', '==', teammateEmail), where('teams', 'array-contains', teamId));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  }
+
   return {
     userTeams,
     loading,
@@ -330,7 +351,8 @@ export function useTeams() {
     deleteTeam,
     teamNameExists,
     updateRequests,
-    updateTeamRequests
+    updateTeamRequests,
+    teammateExists
   };
 }
 

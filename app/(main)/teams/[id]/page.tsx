@@ -19,11 +19,12 @@ import { subscribeToDoc } from "@/hooks/useDocSubscription";
 import { RequestsDialog } from "@/components/requests-dialog";
 import { JoinTeamDialog } from "@/components/join-team-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "react-hot-toast";
 
 export default function TeamDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { getTeams, leaveTeam, updateTeamHost, updateTeamInvitesByEmail } = useTeams();
+  const { getTeams, leaveTeam, updateTeamHost, updateTeamInvitesByEmail, teammateExists } = useTeams();
   const { getHackathons } = useHackathons();
   const { getUsers, userData } = useFirebaseUser();
 
@@ -62,6 +63,12 @@ export default function TeamDetailPage() {
 
   const handleAddTeammate = async (email: string) => {
     if (!team || !userData) return;
+
+    if (await teammateExists(team.id, email)) {
+      toast.error('User is already in team!');
+      return;
+    }
+
     try {
       const invite: Invite = {
         teamId: team.id,
@@ -125,10 +132,6 @@ export default function TeamDetailPage() {
       console.error("Error leaving team:", error);
     }
   };
-
-  if (loading) {
-    return <LoadingSkeleton />;
-  }
 
   if (!team || !hackathon || !teammates.length) {
     return <TeamNotFound />;
