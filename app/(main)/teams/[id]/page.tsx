@@ -18,7 +18,6 @@ import { AddTeammateDialog } from "@/components/add-teammate-dialog";
 import { subscribeToDoc } from "@/hooks/useDocSubscription";
 import { RequestsDialog } from "@/components/requests-dialog";
 import { JoinTeamDialog } from "@/components/join-team-dialog";
-import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "react-hot-toast";
 
 export default function TeamDetailPage() {
