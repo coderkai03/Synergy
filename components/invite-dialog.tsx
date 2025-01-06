@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Mail, X } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import { useEffect, useState } from "react"
 import { Invite, Team } from "@/types/Teams"
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers"
@@ -120,7 +120,6 @@ export function InviteDialog({
             return hackathon ? (
               <InviteCard
                 key={index}
-                invite={invite}
                 inviter={inviters[index]}
                 team={teamInvites[index]}
                 hackathon={hackathon}

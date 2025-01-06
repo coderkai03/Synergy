@@ -15,12 +15,13 @@ export function TeamListSection({
   hackathons,
 }: TeamListSectionProps) {
   const [requestCounts, setRequestCounts] = useState<Record<string, number>>({});
+  const teamsCollection = useCollection('teams');
 
   useEffect(() => {
     if (!teams?.length) return;
 
     const unsubscribes = teams.map(team => {
-      const teamRef = doc(useCollection('teams'), team.id);
+      const teamRef = doc(teamsCollection, team.id);
       return onSnapshot(teamRef, (doc) => {
         const teamData = doc.data();
         setRequestCounts(prev => ({
@@ -31,7 +32,7 @@ export function TeamListSection({
     });
 
     return () => unsubscribes.forEach(unsubscribe => unsubscribe());
-  }, [teams]);
+  }, [teams, teamsCollection]);
 
   return (
     <div className="my-4">

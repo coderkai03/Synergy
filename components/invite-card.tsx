@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { X } from 'lucide-react';
-import { Invite, Team } from "@/types/Teams";
+import { Team } from "@/types/Teams";
 import { User } from "@/types/User";
 import { Hackathon } from "@/types/Hackathons";
 
 interface InviteCardProps {
-  invite: Invite;
   inviter: User;
   team: Team;
   hackathon: Hackathon;
@@ -13,7 +12,7 @@ interface InviteCardProps {
   onJoin: () => void;
 }
 
-export function InviteCard({ invite, inviter, team, hackathon, onDecline, onJoin }: InviteCardProps) {
+export function InviteCard({ inviter, team, hackathon, onDecline, onJoin }: InviteCardProps) {
   return (
     <div className="flex flex-col p-3 border border-zinc-700 rounded bg-zinc-800">
       <div className="text-sm text-zinc-400 mb-3">
