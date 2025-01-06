@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { TeamPreview } from "@/components/team-preview";
@@ -15,9 +15,9 @@ import InfiniteScroll from "@/components/ui/infinite-scroll";
 
 export default function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const { getAllTeams, getOlderTeams, loading: teamsLoading } = useTeams();
-  const { userData, getAllUsers, loading: usersLoading, getOlderUsers } = useFirebaseUser();
-  const { calculateHackerScores, loading: scoresLoading } = useCompatibility();
+  const { getOlderTeams, loading: teamsLoading } = useTeams();
+  const { userData, getOlderUsers, loading: usersLoading } = useFirebaseUser();
+  const { calculateHackerScores } = useCompatibility();
 
   const PAGE_LIMIT = 10;
   
