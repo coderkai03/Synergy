@@ -191,16 +191,11 @@ export function useTeams() {
       teammates: arrayRemove(userId)
     });
 
-    // remove teamId from user's teams object
+    // remove teamId from user's teams array
     const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
-    if (userDoc.exists()) {
-      const currentTeams = userDoc.data().teams || {};
-      const { [teamId]: _, ...remainingTeams } = currentTeams; // Remove the specific team
-      await updateDoc(userRef, {
-        teams: remainingTeams
-      });
-    }
+    await updateDoc(userRef, {
+      teams: arrayRemove(teamId)
+    });
   }
 
   const deleteTeam = async (teamId: string, hostId: string) => {

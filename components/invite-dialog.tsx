@@ -34,6 +34,8 @@ export function InviteDialog({
   const [inviters, setInviters] = useState<User[]>([]);
   const [teamInvites, setTeamInvites] = useState<Team[]>([]);
 
+  console.log('INV hackathons:', hackathons);
+
   useEffect(() => {
     const fetchInviters = async () => {
       if (!invites?.length) return;
