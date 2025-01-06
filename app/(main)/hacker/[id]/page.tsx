@@ -14,7 +14,7 @@ export default function HackerDetailPage() {
   const id = params.id as string;
 
   const [hacker, setHacker] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+//   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = subscribeToDoc<User>({
@@ -22,7 +22,7 @@ export default function HackerDetailPage() {
       docId: id,
       onUpdate: (userData) => {
         setHacker(userData);
-        setLoading(false);
+        //setLoading(false);
       },
       enabled: !!id
     });
