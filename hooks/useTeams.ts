@@ -189,6 +189,11 @@ export function useTeams() {
     const teamRef = useCollection('teams');
     const docRef = await addDoc(teamRef, team);
 
+    // Add id to the doc after creation
+    await updateDoc(docRef, {
+      id: docRef.id
+    });
+
     // Add teamId to user's teams collection
     const userRef = doc(useCollection('users'), team.hostId);
     await updateDoc(userRef, {
