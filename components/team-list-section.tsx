@@ -38,7 +38,7 @@ export function TeamListSection({
   return (
     <div className="my-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-max">
-        {teams?.length > 0 && hackathons?.length > 0 ? (
+        {teams?.length > 0 && hackathons?.length > 0 && (
           teams.map((team) => {
             const hackathon = hackathons.find(h => h.id === team.hackathonId);
             return hackathon ? (
@@ -52,8 +52,6 @@ export function TeamListSection({
               </div>
             ) : null;
           })
-        ) : (
-          <div className="col-span-3 flex items-center justify-center h-40 text-gray-400">No teams found</div>
         )}
       </div>
     </div>
