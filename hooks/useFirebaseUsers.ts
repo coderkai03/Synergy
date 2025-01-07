@@ -5,7 +5,7 @@ import { arrayUnion, doc, getDoc, getDocs, orderBy,startAfter,  query, setDoc, u
 import { User } from '@/types/User';
 import { Invite } from '@/types/Teams';
 import { useUser } from '@clerk/nextjs';
-import { useCollection } from './useCollection';
+import { testLog, useCollection } from './useCollection';
 import { toast } from 'react-hot-toast';
 
 export function useFirebaseUser() {
@@ -23,7 +23,7 @@ export function useFirebaseUser() {
       const data = await getUsers([user.id]);
       setUserData(data[0] as User);
       setLoading(false);
-      console.log('userData:', data[0]);
+      testLog('userData:', data[0]);
     }
 
     fetchUserData();
@@ -31,18 +31,18 @@ export function useFirebaseUser() {
 
   const createUser = async (formData: User) => {
     try {
-      console.log("Submitting formData:", formData);
+      testLog("Submitting formData:", formData);
       if (!user?.id) return;
       const userDoc = doc(useCollection('users'), user.id);
       await setDoc(userDoc, {
         ...formData, 
         email: user?.primaryEmailAddress?.emailAddress,
       });
-      console.log("User data updated successfully");
+      testLog("User data updated successfully");
 
       return true;
     } catch (error) {
-      console.error("Error saving to Firestore:", error);
+      testLog("Error saving to Firestore:", error);
       toast.error("Failed to save your profile. Please try again.");
       return false;
     }
@@ -60,7 +60,7 @@ export function useFirebaseUser() {
         : userData?.teams || [] // Keep existing teams array if not accepted
     });
     
-    console.log(`Updated user invites: ${accepted ? 'accepted' : 'declined'} invite to ${invites[index].teamId}`);
+    testLog(`Updated user invites: ${accepted ? 'accepted' : 'declined'} invite to ${invites[index].teamId}`);
   }    
 
   const getUsers = async (userIds: string[]) => {
@@ -73,16 +73,6 @@ export function useFirebaseUser() {
         id: userId
       } as User;
     }));
-    setLoading(false);
-    return users;
-  }
-  
-  const getAllUsers = async () => {
-    setLoading(true);
-    const userDocs = await getDocs(useCollection('users'));
-    const users = userDocs.docs
-      .map((doc) => ({ ...doc.data(), id: doc.id } as User))
-      .filter((u) => u.id !== user?.id);
     setLoading(false);
     return users;
   }
@@ -108,19 +98,19 @@ export function useFirebaseUser() {
       }
 
       const userDocs = await getDocs(q);
-      console.log("older user docs:", userDocs);
+      testLog("older user docs:", userDocs);
       const users = userDocs.docs
         .map((doc) => ({ ...doc.data(), id: doc.id } as User))
         .filter((u) => u.id !== user?.id);
 
-      console.log("older users:", users);
+      testLog("older users:", users);
 
       // Return false if we got fewer docs than requested
       const hasMore = users.length >= limitCount;
 
       return { users, hasMore };
     } catch (error) {
-      console.error('Error fetching older users:', error);
+      testLog('Error fetching older users:', error);
       throw error;
     } finally {
       setLoading(false);
@@ -134,7 +124,6 @@ export function useFirebaseUser() {
     updateUserInvites,
     getUsers,
     createUser,
-    getAllUsers,
     getOlderUsers
   };
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/User";
+import { testLog } from "@/hooks/useCollection";
 
 interface RequireProfileProps {
   children: React.ReactNode;
@@ -38,7 +39,7 @@ export function RequireProfile({ children }: RequireProfileProps) {
       setHasChecked(true);
       
       if (!isProfileComplete(userData)) {
-        console.log('Profile incomplete:', userData);
+        testLog('Profile incomplete:', userData);
         router.push('/account-setup');
       }
     }

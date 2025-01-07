@@ -34,11 +34,20 @@ export async function uploadFeedback(message: string, userId?: string) {
     });
 
     toast.success('Thanks for the feedback!');
-    console.log('Feedback uploaded successfully');
+    testLog('Feedback uploaded successfully');
     return true;
   } catch (error) {
-    console.error('Error uploading feedback:', error);
+    testLog('Error uploading feedback:', error);
     return false;
+  }
+}
+
+export function testLog(...args: any[]) {
+  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  const isTest = publishableKey?.includes('pk_test');
+
+  if (isTest) {
+    console.log(...args);
   }
 }
 

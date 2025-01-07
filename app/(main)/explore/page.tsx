@@ -11,6 +11,7 @@ import { Search } from "lucide-react";
 import { User } from "@/types/User";
 import { Team } from "@/types/Teams";
 import { useCompatibility } from "@/hooks/useCompatibility";
+import { testLog } from "@/hooks/useCollection";
 import InfiniteScroll from "@/components/ui/infinite-scroll";
 import Loading from "@/components/loading";
 import NotFound from "@/components/not-found";
@@ -50,7 +51,7 @@ export default function ExplorePage() {
       );
 
     const hScores = calculateHackerScores(userData, filteredUsers);
-    console.log('more hackers:', [...filteredHackers, ...filteredUsers]);
+    testLog('more hackers:', [...filteredHackers, ...filteredUsers]);
 
     setFilteredHackers(prev => [...prev, ...filteredUsers]);
     setHackerScores(hScores);
@@ -73,7 +74,7 @@ export default function ExplorePage() {
         team.name?.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
-    console.log('more teams:', [...filteredTeams, ...filteredTeamsList]);
+    testLog('more teams:', [...filteredTeams, ...filteredTeamsList]);
 
     setFilteredTeams(prev => [...prev, ...filteredTeamsList]);
   }

@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { User } from '@/types/User';
 import { Team } from '@/types/Teams';
-import { useFirebaseUser } from './useFirebaseUsers';
+import { testLog } from './useCollection';
 
 export function useCompatibility() {
   const [loading, setLoading] = useState(false);
@@ -80,7 +80,7 @@ export function useCompatibility() {
         categoryScore * weights.categoryAlignment
       );
 
-      console.log({
+      testLog({
         roleScore,
         expScore,
         techScore,
@@ -92,13 +92,11 @@ export function useCompatibility() {
     });
   }, []);
 
-  const calculateTeamScores = useCallback(async (userData: User, team: Team) => {
+  const calculateTeamScores = useCallback(async (userData: User, team: Team, exploreUsers: User[]) => {
     if (!userData) return 0;
 
     // Get all teammate user objects
-    const { getAllUsers } = useFirebaseUser();
-    const allUsers = await getAllUsers();
-    const teammates = allUsers.filter(user => team.teammates.includes(user.id));
+    const teammates = exploreUsers.filter(user => team.teammates.includes(user.id));
 
     // Calculate compatibility score with each teammate
     const teammateScores = teammates.map(teammate => 

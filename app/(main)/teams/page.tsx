@@ -17,6 +17,7 @@ import { Plus } from "lucide-react"
 import { RequireProfile } from "@/components/require-profile"
 import Loading from "@/components/loading"
 import NoTeams from "@/components/no-teams"
+import { testLog } from "@/hooks/useCollection";
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()
@@ -56,7 +57,7 @@ export default function HackathonTeamsScreen() {
       const newInvites = userData.invites || [];
       setInvites(prevInvites => {
         if (JSON.stringify(newInvites) !== JSON.stringify(prevInvites)) {
-          console.log('New invite received:', newInvites);
+          testLog('New invite received:', newInvites);
           return newInvites;
         }
         return prevInvites;
@@ -75,14 +76,14 @@ export default function HackathonTeamsScreen() {
 
 
   useEffect(() => {
-    console.log('userTeams', userTeams)
+    testLog('userTeams', userTeams)
 
     if (!userTeams?.length) {
-      console.log("No userTeams found, returning early");
+      testLog("No userTeams found, returning early");
       return;
     }
 
-    console.log('checked userTeams', userTeams)
+    testLog('checked userTeams', userTeams)
 
     setInvites(userData?.invites || []);
     setTeams(userTeams);
@@ -90,7 +91,7 @@ export default function HackathonTeamsScreen() {
     setFilteredTeams(userTeams
       .sort((a, b) => a.name.localeCompare(b.name)));
 
-    console.log('filteredTeams', filteredTeams);
+    testLog('filteredTeams', filteredTeams);
 
     const fetchHackathons = async () => {
       const hackathonIds = userTeams.map(team => team.hackathonId);

@@ -7,6 +7,7 @@ import { useUser } from "@clerk/nextjs"
 import { useHackathons } from "@/hooks/useHackathons"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { testLog } from "@/hooks/useCollection"
 
 interface TeamPreviewProps {
   team: Team;
@@ -24,14 +25,14 @@ export function TeamPreview({ team }: TeamPreviewProps) {
     const fetchHackathon = async () => {
       const hackathons = await getHackathons([team.hackathonId]);
       setHackathon(hackathons[0]);
-      console.log('team:', team);
-      console.log('hackathon:', hackathons[0]);
+      testLog('team:', team);
+      testLog('hackathon:', hackathons[0]);
     };
     fetchHackathon();
   }, [team.hackathonId]);
 
   const onTeamClick = (id: string) => {
-    console.log('url:', `/teams/${id}`);
+    testLog('url:', `/teams/${id}`);
     router.push(`/teams/${id}`);
   };
 

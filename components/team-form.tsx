@@ -26,6 +26,7 @@ import {
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTeams } from "@/hooks/useTeams";
+import { testLog } from "@/hooks/useCollection";
 
 export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const { user } = useUser();
@@ -78,7 +79,7 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
       return;
     }
 
-    console.log("TEAM", formData);
+    testLog("TEAM", formData);
 
     try {
       const teamId = await createTeam(formData);

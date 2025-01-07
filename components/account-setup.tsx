@@ -29,6 +29,7 @@ import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { ItemSelect } from "./item-select";
 import { Textarea } from "./ui/textarea";
 import NotFound from "./not-found";
+import { testLog } from "@/hooks/useCollection";
 
 export function AccountSetupComponent() {
   const router = useRouter();
@@ -50,7 +51,7 @@ export function AccountSetupComponent() {
   const [currentSection, setCurrentSection] = useState(0);
   
   useEffect(() => {
-    console.log('Current userData:', userData);
+    testLog('Current userData:', userData);
     if (userData) {
       setFormData(prevFormData => ({
         ...userData,
@@ -84,7 +85,7 @@ export function AccountSetupComponent() {
   }, [userData]);
 
   useEffect(() => {
-    console.log('Updated formData:', formData);
+    testLog('Updated formData:', formData);
   }, [formData]);
 
   const handleChange = (
@@ -104,7 +105,7 @@ export function AccountSetupComponent() {
   };
 
   const handleSliderChange = (role: string) => (value: number[]) => {
-    console.log(`Role: ${role}, Value: ${value}`);
+    testLog(`Role: ${role}, Value: ${value}`);
     setFormData({
       ...formData,
       role_experience: {

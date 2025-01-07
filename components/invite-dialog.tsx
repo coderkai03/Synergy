@@ -11,6 +11,8 @@ import { Hackathon } from "@/types/Hackathons"
 import { useHackathons } from "@/hooks/useHackathons"
 import { toast } from "react-hot-toast"
 import { InviteCard } from "@/components/invite-card"
+import { testLog } from "@/hooks/useCollection";
+
 
 export function InviteDialog({
   invites,
@@ -34,27 +36,27 @@ export function InviteDialog({
   const [teamInvites, setTeamInvites] = useState<Team[]>([]);
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
 
-  console.log('INV hackathons:', hackathons);
+  testLog('INV hackathons:', hackathons);
 
   useEffect(() => {
     const fetchInviters = async () => {
       if (!invites?.length) return;
-      console.log('invites:', invites);
+      testLog('invites:', invites);
 
       const inviterIds = invites.map(invite => invite.inviterId);
       const users = await getUsers(inviterIds);
       setInviters(users);
-      console.log('inviters:', users);
+      testLog('inviters:', users);
 
       const teamIds = invites.map(invite => invite.teamId);
       const teams = await getTeams(teamIds);
       setTeamInvites(teams);
-      console.log('teamInvites:', teams);
+      testLog('teamInvites:', teams);
 
       const hackathonIds = teams.map(team => team.hackathonId);
       const hackathonDocs = await getHackathons(hackathonIds);
       setHackathons(hackathonDocs);
-      console.log('hackathons:', hackathonDocs);
+      testLog('hackathons:', hackathonDocs);
     };
 
     fetchInviters();
@@ -83,7 +85,7 @@ export function InviteDialog({
     const hackathon = await getHackathons([hackathonId]);
     setUserHackathons([...hackathons, hackathon[0]]);
 
-    console.log(`Joined team from invite ${inviteId}`)
+    testLog(`Joined team from invite ${inviteId}`)
     setIsOpen(false);
   }
 
@@ -92,7 +94,7 @@ export function InviteDialog({
 
     updateUserInvites(inviteId, invites, false);
 
-    console.log(`Declined invite ${inviteId}`)
+    testLog(`Declined invite ${inviteId}`)
     setIsOpen(false);
   }
 
