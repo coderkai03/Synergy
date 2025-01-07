@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Team } from "@/types/Teams";
 import { User } from "@/types/User";
 import { useTeams } from "@/hooks/useTeams";
+import { useRouter } from "next/navigation";
 
 interface JoinTeamDialogProps {
   team: Team;
@@ -16,11 +17,19 @@ interface JoinTeamDialogProps {
 export function JoinTeamDialog({ team, userData }: JoinTeamDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  
+  const router = useRouter();
+
   const { updateTeamRequests } = useTeams();
+  
 
   const alreadyRequested = team.requests?.includes(userData.id);
 
   const handleJoinRequest = async () => {
+    if (!userData) {
+      router.push("/account-setup");
+    }
+
     setIsLoading(true);
     try {
       await updateTeamRequests(team.id, userData.id);
