@@ -4,13 +4,16 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { uploadFeedback } from "@/hooks/useCollection";
+import { useUser } from "@clerk/nextjs";
 
 export function Feedback() {
+  const { user } = useUser();
+
   const [isOpen, setIsOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
 
   const handleSubmit = () => {
-    uploadFeedback(feedback);
+    uploadFeedback(feedback, user?.id);
     setFeedback("");
     setIsOpen(false);
   };

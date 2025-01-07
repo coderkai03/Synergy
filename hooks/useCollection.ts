@@ -22,7 +22,7 @@ export function useCollection(collectionName: string): CollectionReference<Docum
   return collection(db, actualCollectionName) as CollectionReference<DocumentData>;
 }
 
-export async function uploadFeedback(message: string) {
+export async function uploadFeedback(message: string, userId?: string) {
   try {
     const feedbackCollection = collection(db, 'feedback');
     const timestamp = new Date();
@@ -30,7 +30,7 @@ export async function uploadFeedback(message: string) {
     await addDoc(feedbackCollection, {
       message,
       timestamp,
-      userId: null // Optional: Add user ID if available
+      userId: userId || null
     });
 
     toast.success('Thanks for the feedback!');
