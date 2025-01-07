@@ -15,7 +15,6 @@ import { TeamListSection } from "@/components/team-list-section"
 import { subscribeToDoc } from "@/hooks/useDocSubscription"
 import { Plus } from "lucide-react"
 import { RequireProfile } from "@/components/require-profile"
-import NotFound from "@/components/not-found"
 import Loading from "@/components/loading"
 import NoTeams from "@/components/no-teams"
 

@@ -1,5 +1,4 @@
-import { Plus, Search } from 'lucide-react';
-import { RequireProfile } from './require-profile';
+import { Search } from 'lucide-react';
 import { Button } from './ui/button';
 import SynergyLogo from './synergy-logo';
 import { useRouter } from 'next/navigation';
