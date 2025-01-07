@@ -17,6 +17,7 @@ import { Plus } from "lucide-react"
 import { RequireProfile } from "@/components/require-profile"
 import NotFound from "@/components/not-found"
 import Loading from "@/components/loading"
+import NoTeams from "@/components/no-teams"
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()
@@ -101,17 +102,6 @@ export default function HackathonTeamsScreen() {
   }, [userTeams?.length]);
 
   if (
-    (!userLoading &&
-    !teamLoading &&
-    !hackathonLoading) &&
-    (!userTeams?.length &&
-    !hackathons?.length &&
-    !invites?.length)
-  ) {
-    return <NotFound />;
-  }
-
-  if (
     userLoading ||
     teamLoading ||
     hackathonLoading
@@ -139,10 +129,14 @@ export default function HackathonTeamsScreen() {
           </div>
         </div>
         <div className="space-y-8">
-          <TeamListSection
-            teams={filteredTeams}
-            hackathons={hackathons}
-          />
+          {filteredTeams?.length > 0 && hackathons?.length > 0 ? (
+            <TeamListSection
+              teams={filteredTeams}
+              hackathons={hackathons}
+            />
+          ) : (
+            <NoTeams />
+          )}
         </div>
       </>
     )
