@@ -7,12 +7,8 @@ import { Label } from "@/components/ui/label"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-// import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -20,26 +16,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import {
   defaultUser,
   technologies_options,
   category_experience_options,
-  // interests_options,
   User
 } from "@/types/User";
 import SkillsSection from "./slider-section";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { ItemSelect } from "./item-select";
 import { Textarea } from "./ui/textarea";
-import Loading from "./loading";
 import NotFound from "./not-found";
 
 export function AccountSetupComponent() {
@@ -125,8 +113,6 @@ export function AccountSetupComponent() {
       },
     });
   };
-
-  // const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -393,10 +379,8 @@ export function AccountSetupComponent() {
                         currentSection === 4 && (
                         !formData.firstName || 
                         !formData.lastName ||
-                        // !formData.phone ||
                         !formData.school ||
                         !formData.major ||
-                        // !formData.gradYear ||
                         !formData.number_of_hackathons ||
                         !formData.devpost ||
                         !formData.github ||
@@ -416,7 +400,6 @@ export function AccountSetupComponent() {
           </Card>
         ) : (
           <div className="flex items-center justify-center">
-            {/* <Loading /> */}
           </div>
         )}
       </div>
