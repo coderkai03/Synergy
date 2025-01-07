@@ -15,19 +15,22 @@ import { TeamListSection } from "@/components/team-list-section"
 import { subscribeToDoc } from "@/hooks/useDocSubscription"
 import { Plus } from "lucide-react"
 import { RequireProfile } from "@/components/require-profile"
+import NotFound from "@/components/not-found"
+import Loading from "@/components/loading"
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()
   const { user } = useUser()
-  const { userData } = useFirebaseUser();
-  const { getHackathons } = useHackathons();
-  const { userTeams } = useTeams();
+  const { userData, loading: userLoading } = useFirebaseUser();
+  const { loading: hackathonLoading, getHackathons } = useHackathons();
+  const { loading: teamLoading, userTeams } = useTeams();
 
   const [teams, setTeams] = useState<Team[]>([])
   const [hackathons, setHackathons] = useState<Hackathon[]>([])
   const [invites, setInvites] = useState<Invite[]>([])
   const [filteredTeams, setFilteredTeams] = useState<Team[]>([...userTeams]);
 
+  // Subscribe to teams
   const unsubscribeTeams = subscribeToDoc<Team>({
     collectionName: 'teams',
     docId: userData?.id || '',
@@ -45,6 +48,7 @@ export default function HackathonTeamsScreen() {
     enabled: !!userData?.id
   });
 
+  // Subscribe to invites
   const unsubscribeInvites = subscribeToDoc<User>({
     collectionName: 'users',
     docId: user?.id || '',
@@ -61,6 +65,7 @@ export default function HackathonTeamsScreen() {
     enabled: !!user?.id
   });
 
+  // Unsubscribe from teams and invites
   useEffect(() => {
     return () => {
       if (unsubscribeInvites) unsubscribeInvites();
@@ -95,10 +100,29 @@ export default function HackathonTeamsScreen() {
     fetchHackathons();
   }, [userTeams?.length]);
 
-  return (
-    <div className="p-4 min-h-screen bg-[#111119]">
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
+  if (
+    (!userLoading &&
+    !teamLoading &&
+    !hackathonLoading) &&
+    (!userTeams?.length &&
+    !hackathons?.length &&
+    !invites?.length)
+  ) {
+    return <NotFound />;
+  }
+
+  if (
+    userLoading ||
+    teamLoading ||
+    hackathonLoading
+  ) {
+    return <Loading />;
+  }
+
+  const teamsPage = () => {
+    return (
+      <>
+      <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-white">My Teams</h1>
           <div className="flex gap-4">
             <RequireProfile>
@@ -120,6 +144,14 @@ export default function HackathonTeamsScreen() {
             hackathons={hackathons}
           />
         </div>
+      </>
+    )
+  }
+
+  return (
+    <div className="p-4 min-h-screen bg-[#111119]">
+      <main className="container mx-auto px-4 py-8">
+        {teamsPage()}
       </main>
     </div>
   )

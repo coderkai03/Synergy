@@ -142,6 +142,7 @@ export function useTeams() {
 
   const getTeams = async (teamIds: string[]) => {
     console.log('teamIds', teamIds)
+    setLoading(true);
     
     try {
       console.log('Starting Promise.all')
@@ -165,19 +166,24 @@ export function useTeams() {
         } as Team;
       }));
       console.log('Promise.all completed', teams);
+      setLoading(false);
       return teams.filter(team => team !== null) as Team[];
     } catch (error) {
       console.error('Error in getTeams:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   }
 
   const getAllTeams = async () => {
+    setLoading(true);
     const teamDocs = await getDocs(useCollection('teams'));
     const teams = teamDocs.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id
     } as Team));
+    setLoading(false);
     return teams;
   }
 

@@ -8,8 +8,10 @@ import { useCollection } from './useCollection';
 
 export function useHackathons() {
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const fetchHackathons = async () => {
       try {
         const hackathonsRef = useCollection("hackathons");
@@ -21,12 +23,15 @@ export function useHackathons() {
       setHackathons(hackathonsData as Hackathon[]);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
   fetchHackathons()
   }, [])
 
   const getHackathons = async (ids: string[]) => {
+    setLoading(true);
     const hackathons = await Promise.all(ids.map(async (id) => {
       try {
         const hackathonRef = doc(useCollection('hackathons'), id);
@@ -38,9 +43,10 @@ export function useHackathons() {
       }
     }));
 
+    setLoading(false);
     return hackathons as Hackathon[];
   }
 
-  return { hackathons, getHackathons };
+  return { hackathons, getHackathons, loading };
 }
 

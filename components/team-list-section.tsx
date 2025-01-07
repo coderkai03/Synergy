@@ -15,10 +15,11 @@ export function TeamListSection({
   hackathons,
 }: TeamListSectionProps) {
   const [requestCounts, setRequestCounts] = useState<Record<string, number>>({});
+
   const teamsCollection = useCollection('teams');
 
   useEffect(() => {
-    if (!teams?.length) return;
+    if (!teams?.length || !hackathons?.length) return;
 
     const unsubscribes = teams.map(team => {
       const teamRef = doc(teamsCollection, team.id);
@@ -37,12 +38,12 @@ export function TeamListSection({
   return (
     <div className="my-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-max">
-        {hackathons && teams?.length > 0 ? (
+        {teams?.length > 0 && hackathons?.length > 0 ? (
           teams.map((team) => {
             const hackathon = hackathons.find(h => h.id === team.hackathonId);
             return hackathon ? (
               <div key={team.id} className="relative">
-                {requestCounts[team.id] > 0 && (
+                {teams.length > 0 && hackathons.length > 0 && requestCounts[team.id] > 0 && (
                   <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
                     {requestCounts[team.id]}
                   </div>

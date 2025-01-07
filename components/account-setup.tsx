@@ -39,11 +39,13 @@ import SkillsSection from "./slider-section";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { ItemSelect } from "./item-select";
 import { Textarea } from "./ui/textarea";
+import Loading from "./loading";
+import NotFound from "./not-found";
 
 export function AccountSetupComponent() {
   const router = useRouter();
   const { user } = useUser();
-  const { userData, createUser } = useFirebaseUser();
+  const { userData, createUser, loading: userLoading } = useFirebaseUser();
 
   const [formData, setFormData] = useState<User>({
     ...defaultUser,
@@ -139,32 +141,28 @@ export function AccountSetupComponent() {
     setCurrentSection(prev => prev + 1);
   };
 
+  if (
+    (!userData &&
+    !userLoading) &&
+    !userData
+  ) {
+    return <NotFound />;
+  }
+
   return (
-    <div className="justify-center min-h-screen bg-[#111119] p-4">
-      <div className="flex justify-center">
-        <Card className="felx fex-col items-center space-y-6 w-1/2 bg-[#111119] text-white border-none pt-5">
-          <CardHeader>
-            <CardTitle>Account Setup</CardTitle>
-            <CardDescription>
-              Complete your profile to find the perfect hackathon partners and
-              enhance your experience.
-            </CardDescription>
-          </CardHeader>
-
-          {userData ? (
+    <div className="flex items-start justify-center min-h-screen bg-[#111119] p-4 pt-24">
+      <div className="w-full max-w-2xl">
+        {userData ? (
+          <Card className="items-center space-y-6 w-full bg-[#111119] text-white border-none pt-5">
             <form onSubmit={
-              currentSection === 4 ? handleSubmit : handleNext
-            }>
-              <CardContent className="space-y-6 text-white">
+                currentSection === 4 ? handleSubmit : handleNext
+              }>
+                <CardContent className="space-y-6 text-white">
 
-              {/* Personal Information section */}
-              {currentSection === 0 && (
-                <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
+                {/* Personal Information section */}
+                {currentSection === 0 && (
+                  <div className="bg-zinc-800 rounded-lg p-4 space-y-4">
                     <h2 className="text-lg font-semibold text-white">Personal Information</h2>
-                    <ChevronDown className="w-5 h-5 text-zinc-400" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="p-4 pt-0 space-y-4">
                     <div className="grid grid-cols-1 md:grid-rows-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="firstName">First Name</Label>
@@ -185,30 +183,6 @@ export function AccountSetupComponent() {
                         />
                       </div>
                     </div>
-                    {/* <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        className="bg-zinc-700 border-amber-500/50" 
-                        value={formData.phone}
-                        onChange={handleChange}
-                      />
-                    </div> */}
-
-                    {/* <div className="space-y-2">
-                      <Label htmlFor="profilePicture">Profile Picture URL</Label>
-                      <Input
-                        id="profilePicture"
-                        name="profilePicture"
-                        className="bg-zinc-700 border-amber-500/50"
-                        value={formData.profilePicture}
-                        onChange={handleChange}
-                        placeholder="https://example.com/your-photo.jpg"
-                        required
-                      />
-                    </div> */}
-
                     <div className="space-y-2">
                       <Label htmlFor="bio">Bio</Label>
                       <Textarea
@@ -221,73 +195,46 @@ export function AccountSetupComponent() {
                         required
                       />
                     </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              )}
+                  </div>
+                )}
 
-              {/* Educational Background section */}
-              {currentSection === 1 && (
-                <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
+                {/* Educational Background section */}
+                {currentSection === 1 && (
+                  <div className="bg-zinc-800 rounded-lg p-4 space-y-4">
                     <h2 className="text-lg font-semibold text-white">Education</h2>
-                <ChevronDown className="w-5 h-5 text-zinc-400" />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="p-4 pt-0 space-y-4">
-                <div className="grid grid-cols-1 md:grid-rows-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="school">School</Label>
-                    <Input id="school" className="bg-zinc-700 border-amber-500/50" 
-                      name="school"
-                      value={formData.school}
-                      onChange={handleChange}
-                      placeholder="Your School"
-                      required 
-                      />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="major">Major</Label>
-                    <Input
-                      id="major"
-                      name="major"
-                      value={formData.major}
-                      onChange={handleChange}
-                      placeholder="Your Major"
-                      required
-                      className="bg-zinc-700 border-amber-500/50"
-                    />
-                  </div>
-                      {/* <div className="space-y-2">
-                        <Label htmlFor="gradYear">Graduation Year</Label>
-                        <Select
-                          name="gradYear"
-                          value={formData.gradYear}
-                          onValueChange={handleSelectChange("gradYear")}
-                        >
-                          <SelectTrigger className="bg-zinc-700 border-amber-500/50 text-white-500">
-                            <SelectValue placeholder="Select graduation year"/>
-                          </SelectTrigger>
-                          <SelectContent className="bg-zinc-700 border-amber-500/50 text-white hover:bg-[##FFAD08]">
-                            {[2024, 2025, 2026, 2027, 2028, 2029, 2030].map((year) => (
-                              <SelectItem key={year} value={year.toString()}>
-                                {year}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div> */}
+                    <div className="grid grid-cols-1 md:grid-rows-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="school">School</Label>
+                        <Input 
+                          id="school" 
+                          className="bg-zinc-700 border-amber-500/50" 
+                          name="school"
+                          value={formData.school}
+                          onChange={handleChange}
+                          placeholder="Your School"
+                          required 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="major">Major</Label>
+                        <Input
+                          id="major"
+                          name="major"
+                          value={formData.major}
+                          onChange={handleChange}
+                          placeholder="Your Major"
+                          required
+                          className="bg-zinc-700 border-amber-500/50"
+                        />
+                      </div>
                     </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              )}
+                  </div>
+                )}
 
-              {/* Technical Skills section */}
-              {currentSection === 2 && (
-                <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
+                {/* Technical Skills section */}
+                {currentSection === 2 && (
+                  <div className="bg-zinc-800 rounded-lg p-4 space-y-4">
                     <h2 className="text-lg font-semibold text-white">Skills and Interests</h2>
-                    <ChevronDown className="w-5 h-5 text-zinc-400" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="p-4 pt-0 space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="programming_languages" className="text-white">Programming Languages</Label>
                       <ItemSelect
@@ -312,7 +259,6 @@ export function AccountSetupComponent() {
                         maxItems={10}
                       />
                     </div>
-
                     <div className="space-y-2">
                       <Label htmlFor="category_experience" className="text-white">Category Experience</Label>
                       <ItemSelect
@@ -337,54 +283,13 @@ export function AccountSetupComponent() {
                         maxItems={10}
                       />
                     </div>
+                  </div>
+                )}
 
-                    {/* <div className="space-y-2">
-                      <Label htmlFor="interests" className="text-white">Interests</Label>
-                      <div className="flex flex-wrap gap-2">
-                        {formData.interests.map((interest, index) => (
-                          <div key={index} className="flex items-center bg-zinc-700 rounded px-2 py-1">
-                            <span className="text-white">{interest}</span>
-                            <button
-                              onClick={() => {
-                                setFormData(prev => ({
-                                  ...prev,
-                                  interests: prev.interests.filter((_, i) => i !== index)
-                                }));
-                              }}
-                              className="ml-2 text-zinc-400 hover:text-white"
-                            >
-                              ×
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                      <Input
-                        className="mt-2 bg-zinc-700 border-amber-500/50 w-1/2"
-                        placeholder="Type an interest and press Enter"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && e.currentTarget.value.trim()) {
-                            e.preventDefault();
-                            setFormData(prev => ({
-                              ...prev,
-                              interests: [...prev.interests, e.currentTarget.value.trim().replace(/ /g, '-')]
-                            }));
-                            e.currentTarget.value = '';
-                          }
-                        }}
-                      />
-                    </div> */}
-                  </CollapsibleContent>
-                </Collapsible>
-              )}
-
-              {/* Online Profiles section */}
-              {currentSection === 3 && (
-                <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
+                {/* Online Profiles section */}
+                {currentSection === 3 && (
+                  <div className="bg-zinc-800 rounded-lg p-4 space-y-4">
                     <h2 className="text-lg font-semibold text-white">Online Profiles</h2>
-                    <ChevronDown className="w-5 h-5 text-zinc-400" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="p-4 pt-0 space-y-4">
                     <div className="grid grid-cols-1 md:grid-rows-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="devpost">Devpost Link</Label>
@@ -394,7 +299,7 @@ export function AccountSetupComponent() {
                           value={formData.devpost}
                           onChange={handleChange}
                           placeholder="https://devpost.com/yourusername"
-                    required
+                          required
                           className="bg-zinc-700 border-amber-500/50"
                         />
                       </div>
@@ -406,7 +311,7 @@ export function AccountSetupComponent() {
                           value={formData.github}
                           onChange={handleChange}
                           placeholder="https://github.com/yourusername"
-                    required
+                          required
                           className="bg-zinc-700 border-amber-500/50"
                         />
                       </div>
@@ -423,18 +328,13 @@ export function AccountSetupComponent() {
                         />
                       </div>
                     </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              )}
+                  </div>
+                )}
 
-              {/* Hackathon Experience section */}
-              {currentSection === 4 && (
-                <Collapsible defaultOpen className="bg-zinc-800 rounded-lg">
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left">
+                {/* Hackathon Experience section */}
+                {currentSection === 4 && (
+                  <div className="bg-zinc-800 rounded-lg p-4 space-y-6">
                     <h2 className="text-lg font-semibold text-white">Hackathon Experience</h2>
-                    <ChevronDown className="w-5 h-5 text-zinc-400" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="p-4 pt-0 space-y-6">
                     <div className="grid grid-cols-1 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="hackathonsAttended">Number of Hackathons Attended</Label>
@@ -467,60 +367,58 @@ export function AccountSetupComponent() {
                         </div>
                       </div>
                       <div className="border-t border-zinc-700 my-4"></div>
-
                       <SkillsSection formData={formData} handleSliderChange={handleSliderChange}/>
                     </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              )}
-
-            </CardContent>
-            <CardFooter>
-              {/* Navigation Buttons */}
-              <div className="flex justify-between w-full">
-                {currentSection > 0 && (
-                  <Button
-                    type="button"
-                    className="bg-zinc-700 hover:bg-zinc-600"
-                    onClick={() => setCurrentSection(currentSection - 1)}
-                  >
-                    Back
-                  </Button>
+                  </div>
                 )}
-                <div className={currentSection === 0 ? "w-full flex justify-end" : ""}>
-                  <Button
-                    type="submit" 
-                    className="bg-amber-500 hover:bg-amber-600"
-                    disabled={
-                      currentSection === 4 && (
-                      !formData.firstName || 
-                      !formData.lastName ||
-                      // !formData.phone ||
-                      !formData.school ||
-                      !formData.major ||
-                      // !formData.gradYear ||
-                      !formData.number_of_hackathons ||
-                      !formData.devpost ||
-                      !formData.github ||
-                      !formData.technologies.length ||
-                      !formData.category_experience.length ||
-                      !formData.role_experience ||
-                      Object.values(formData.role_experience || {}).some(value => value === -1)
-                    )
-                  }
-                  >
-                    {currentSection === 4 ? "Finish" : "Next"}
-                  </Button>
+
+              </CardContent>
+              <CardFooter>
+                {/* Navigation Buttons */}
+                <div className="flex justify-between w-full">
+                  {currentSection > 0 && (
+                    <Button
+                      type="button"
+                      className="bg-zinc-700 hover:bg-zinc-600"
+                      onClick={() => setCurrentSection(currentSection - 1)}
+                    >
+                      Back
+                    </Button>
+                  )}
+                  <div className={currentSection === 0 ? "w-full flex justify-end" : ""}>
+                    <Button
+                      type="submit" 
+                      className="bg-amber-500 hover:bg-amber-600"
+                      disabled={
+                        currentSection === 4 && (
+                        !formData.firstName || 
+                        !formData.lastName ||
+                        // !formData.phone ||
+                        !formData.school ||
+                        !formData.major ||
+                        // !formData.gradYear ||
+                        !formData.number_of_hackathons ||
+                        !formData.devpost ||
+                        !formData.github ||
+                        !formData.technologies.length ||
+                        !formData.category_experience.length ||
+                        !formData.role_experience ||
+                        Object.values(formData.role_experience || {}).some(value => value === -1)
+                      )
+                    }
+                    >
+                      {currentSection === 4 ? "Finish" : "Next"}
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </CardFooter>
+              </CardFooter>
             </form>
-          ) : (
-            <div className="flex justify-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-amber-500"></div>
-            </div>
-          )}
-        </Card>
+          </Card>
+        ) : (
+          <div className="flex items-center justify-center">
+            {/* <Loading /> */}
+          </div>
+        )}
       </div>
     </div>
   );

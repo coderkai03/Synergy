@@ -10,11 +10,13 @@ import { Hackathon } from "@/types/Hackathons";
 import { HackathonCard } from "@/components/hackathon-card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
+import Loading from "./loading";
+import NotFound from "./not-found";
 
 export function HackathonsListComponent() {
   //currently pulling from constants, will need to pull from database
-  const { hackathons } = useHackathons();
-  const { userData } = useFirebaseUser();
+  const { hackathons, loading: hackathonLoading } = useHackathons();
+  const { userData, loading: userLoading } = useFirebaseUser();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter] = useState("");
@@ -52,6 +54,22 @@ export function HackathonsListComponent() {
   // Use these functions directly in your JSX
   const activeHackathons = getActiveHackathons(hackathons);
   const filteredHackathons = filterHackathons(activeHackathons);
+
+  if (
+    userLoading ||
+    hackathonLoading
+  ) {
+    return <Loading />;
+  }
+
+  if (
+    !userData &&
+    !hackathonLoading &&
+    !userLoading &&
+    !hackathons
+  ) {
+    return <NotFound />;
+  }
 
   return (
     <div className="min-h-screen bg-[#111119] p-4">

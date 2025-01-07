@@ -19,19 +19,20 @@ import { subscribeToDoc } from "@/hooks/useDocSubscription";
 import { RequestsDialog } from "@/components/requests-dialog";
 import { JoinTeamDialog } from "@/components/join-team-dialog";
 import { toast } from "react-hot-toast";
+import NotFound from "@/components/not-found";
+import Loading from "@/components/loading";
 
 export default function TeamDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { getTeams, leaveTeam, updateTeamHost, updateTeamInvitesByEmail, teammateExists } = useTeams();
-  const { getHackathons } = useHackathons();
-  const { getUsers, userData } = useFirebaseUser();
+  const { loading: teamLoading, getTeams, leaveTeam, updateTeamHost, updateTeamInvitesByEmail, teammateExists } = useTeams();
+  const { loading: hackathonLoading, getHackathons } = useHackathons();
+  const { loading: userLoading, getUsers, userData } = useFirebaseUser();
 
   const id = params.id as string;
   const [team, setTeam] = useState<Team | null>(null);
   const [hackathon, setHackathon] = useState<Hackathon | null>(null);
   const [teammates, setTeammates] = useState<User[]>([]);
-  // const [loading, setLoading] = useState(true);
 
   const isMember = team?.teammates.includes(userData?.id || '');
 
@@ -132,98 +133,119 @@ export default function TeamDetailPage() {
     }
   };
 
-  if (!team || !hackathon || !teammates.length) {
-    return <TeamNotFound />;
+  if (
+    !userData &&
+    !teamLoading &&
+    !hackathonLoading &&
+    !userLoading &&
+    !team &&
+    !hackathon
+  ) {
+    return <NotFound />;
   }
 
-  return (
-    <div className="mx-auto py-8 px-4 bg-[#111119] text-white min-h-screen">
-      <div className="container mx-auto px-4 py-8">
+  if (
+    userLoading ||
+    teamLoading ||
+    hackathonLoading
+  ) {
+    return <Loading />;
+  }
+
+  const teamContent = () => {
+    if (!team || !hackathon) {
+      return;
+    }
+
+    return (
+      <>
         <CardHeader>
           <div className="flex items-start gap-6">
             <div className="flex items-start gap-6">
               <div className="w-32 h-32 rounded-lg overflow-hidden">
-                <Image
-                  src={hackathon.image}
-                  alt={`${hackathon.name} image`}
-                  width={128}
-                  height={128}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <div className="flex-1">
-                <CardTitle className="text-3xl font-bold mb-2 text-white">{team.name}</CardTitle>
-                {hackathon && (
-                  <div className="text-gray-300 space-y-1">
-                    <p className="flex items-center">
-                      <Users className="w-4 h-4 mr-2" />
-                      {hackathon.name}
-                    </p>
-                    <p className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      {hackathon.date}
-                    </p>
-                    <p className="flex items-center">
-                      <MapPin className="w-4 h-4 mr-2" />
-                      {hackathon.isOnline ? 'Online' : hackathon.location}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-col gap-4">
-              {userData && (
-                <>
-                  {isMember ? (
-                    <LeaveTeamDialog
-                      team={team}
-                      userData={userData}
-                      teammates={teammates}
-                      onLeaveTeam={handleLeaveTeam}
-                    />
-                  ) : (
-                    <JoinTeamDialog
-                      team={team}
-                      userData={userData}
-                    />
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-8">
-            <TeamSection title="Team Members">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold text-white">Team Members</h3>
-                <div className="flex gap-4">
-                  {userData && userData.id === team.hostId && (
-                    <>
-                      <RequestsDialog
-                        teamId={team.id}
-                        requests={team.requests}
-                      />
-                      <AddTeammateDialog
-                        isHost={userData.id === team.hostId}
-                        onAddTeammate={handleAddTeammate}
-                      />
-                    </>
+                  <Image
+                    src={hackathon.image}
+                    alt={`${hackathon.name} image`}
+                    width={128}
+                    height={128}
+                    className="object-cover w-full h-full" />
+                </div>
+                <div className="flex-1">
+                  <CardTitle className="text-3xl font-bold mb-2 text-white">{team.name}</CardTitle>
+                  {hackathon && (
+                    <div className="text-gray-300 space-y-1">
+                      <p className="flex items-center">
+                        <Users className="w-4 h-4 mr-2" />
+                        {hackathon.name}
+                      </p>
+                      <p className="flex items-center">
+                        <Calendar className="w-4 h-4 mr-2" />
+                        {hackathon.date}
+                      </p>
+                      <p className="flex items-center">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        {hackathon.isOnline ? 'Online' : hackathon.location}
+                      </p>
+                    </div>
                   )}
                 </div>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {teammates.map((teammate, index) => (
-                  <TeamMemberCard
-                    key={index}
-                    teammate={teammate}
-                    isHost={index === 0}
-                  />
-                ))}
+              <div className="flex flex-col gap-4">
+                {userData && (
+                  <>
+                    {isMember ? (
+                      <LeaveTeamDialog
+                        team={team}
+                        userData={userData}
+                        teammates={teammates}
+                        onLeaveTeam={handleLeaveTeam} />
+                    ) : (
+                      <JoinTeamDialog
+                        team={team}
+                        userData={userData} />
+                    )}
+                  </>
+                )}
               </div>
-            </TeamSection>
-          </div>
-        </CardContent>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-8">
+              <TeamSection title="Team Members">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-semibold text-white">Team Members</h3>
+                  <div className="flex gap-4">
+                    {userData && userData.id === team.hostId && (
+                      <>
+                        <RequestsDialog
+                          teamId={team.id}
+                          requests={team.requests} />
+                        <AddTeammateDialog
+                          isHost={userData.id === team.hostId}
+                          onAddTeammate={handleAddTeammate} />
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {teammates.map((teammate, index) => (
+                    <TeamMemberCard
+                      key={index}
+                      teammate={teammate}
+                      isHost={index === 0} />
+                  ))}
+                </div>
+              </TeamSection>
+            </div>
+          </CardContent>
+        </>
+    )
+  }
+
+  return (
+    <div className="mx-auto py-8 px-4 bg-[#111119] text-white min-h-screen">
+      <div className="container min-h-screen mx-auto px-4 py-8">
+        {teamContent()}
       </div>
     </div>
   );
@@ -278,47 +300,5 @@ function TeamMemberCard({ teammate, isHost }: {
         )}
       </CardContent>
     </Card>
-  );
-}
-
-// function LoadingSkeleton() {
-//   return (
-//     <div className="mx-auto py-8 px-4 bg-[#111119]">
-//       <Card className="bg-gray-900">
-//         <CardHeader>
-//           <Skeleton className="h-8 w-1/3 mb-2 bg-gray-800" />
-//           <Skeleton className="h-4 w-1/4 mb-1 bg-gray-800" />
-//           <Skeleton className="h-4 w-1/4 mb-1 bg-gray-800" />
-//           <Skeleton className="h-4 w-1/4 bg-gray-800" />
-//         </CardHeader>
-//         <CardContent>
-//           <div className="space-y-8">
-//             {[...Array(5)].map((_, i) => (
-//               <div key={i}>
-//                 <Skeleton className="h-6 w-1/4 mb-3 bg-gray-800" />
-//                 <Skeleton className="h-4 w-full mb-2 bg-gray-800" />
-//                 <Skeleton className="h-4 w-full mb-2 bg-gray-800" />
-//                 <Skeleton className="h-4 w-3/4 bg-gray-800" />
-//               </div>
-//             ))}
-//           </div>
-//         </CardContent>
-//       </Card>
-//     </div>
-//   );
-// }
-
-function TeamNotFound() {
-  return (
-    <div className="mx-auto py-8 px-4 bg-[#111119] min-h-screen">
-      <Card className="bg-gray-900">
-        <CardHeader>
-          <CardTitle className="text-white">Team not found</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-300">Sorry, we couldn&apos;t find the team you&apos;re looking for. It may have been removed or you may have entered an incorrect URL.</p>
-        </CardContent>
-      </Card>
-    </div>
   );
 }

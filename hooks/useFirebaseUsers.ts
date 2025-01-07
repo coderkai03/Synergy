@@ -16,6 +16,7 @@ export function useFirebaseUser() {
   const { user } = useUser();
 
   useEffect(() => {
+    setLoading(true);
     if (!user?.id) return;
 
     const fetchUserData = async () => {
@@ -63,6 +64,7 @@ export function useFirebaseUser() {
   }    
 
   const getUsers = async (userIds: string[]) => {
+    setLoading(true);
     const users = await Promise.all(userIds.map(async (userId) => {
       const userRef = doc(useCollection('users'), userId);
       const userDoc = await getDoc(userRef);
@@ -71,14 +73,17 @@ export function useFirebaseUser() {
         id: userId
       } as User;
     }));
+    setLoading(false);
     return users;
   }
   
   const getAllUsers = async () => {
+    setLoading(true);
     const userDocs = await getDocs(useCollection('users'));
     const users = userDocs.docs
       .map((doc) => ({ ...doc.data(), id: doc.id } as User))
       .filter((u) => u.id !== user?.id);
+    setLoading(false);
     return users;
   }
 
