@@ -1,30 +1,22 @@
 "use client";
 
-import * as React from "react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-
-import { Calendar, Globe2, MapPin, Search, Users } from "lucide-react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useUser } from "@clerk/nextjs";
-import { useMemo, useState, useEffect } from "react";
+import { useState } from "react";
 import { useHackathons } from "@/hooks/useHackathons";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { Hackathon } from "@/types/Hackathons";
+import { HackathonCard } from "@/components/hackathon-card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
-import { useTeams } from "@/hooks/useTeams";
-import { Team } from "@/types/Teams";
-import { User } from "@/types/User";
+import Loading from "./loading";
+import NotFound from "./not-found";
 
 export function HackathonsListComponent() {
   //currently pulling from constants, will need to pull from database
-  const { user } = useUser();
-  const { userData } = useFirebaseUser();
-  const { hackathons } = useHackathons();
-  const { userTeams } = useTeams();
+  const { hackathons, loading: hackathonLoading } = useHackathons();
+  const { userData, loading: userLoading } = useFirebaseUser();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter] = useState("");
@@ -63,9 +55,21 @@ export function HackathonsListComponent() {
   const activeHackathons = getActiveHackathons(hackathons);
   const filteredHackathons = filterHackathons(activeHackathons);
 
-  useEffect(() => {
-    console.log('userTeams:', userTeams);
-  }, []);
+  if (
+    userLoading ||
+    hackathonLoading
+  ) {
+    return <Loading />;
+  }
+
+  if (
+    !userData &&
+    !hackathonLoading &&
+    !userLoading &&
+    !hackathons
+  ) {
+    return <NotFound />;
+  }
 
   return (
     <div className="min-h-screen bg-[#111119] p-4">
@@ -91,133 +95,60 @@ export function HackathonsListComponent() {
         </motion.p>
 
         {/* Search and Filter */}
-        <div className="mb-8 space-y-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
-                <Button variant="secondary" className="bg-amber-500 hover:bg-amber-600 text-white h-12">
-                  Filter by category
-                </Button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content className="w-56 bg-white border rounded-md shadow-lg">
-                <div className="p-2 space-y-2">
-                  <DropdownMenu.Item asChild>
-                    <label className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="online"
-                        checked={locationFilter == "online"}
-                        onCheckedChange={() => setLocationFilter("online")}
-                        />
-                      <span>Online</span>
-                    </label>
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item asChild>
-                    <label className="flex items-center space-x-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" className="bg-amber-500 hover:bg-amber-600 text-white h-12">
+                Filter by category
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56 bg-white border rounded-md shadow-lg">
+              <div className="p-2 space-y-2">
+                <DropdownMenuItem asChild>
+                  <label className="flex items-center space-x-2">
                     <Checkbox 
-                        id="in-person"
-                        checked={locationFilter == "in-person"}
-                        onCheckedChange={() => setLocationFilter("in-person")}
+                      id="online"
+                      checked={locationFilter == "online"}
+                      onCheckedChange={() => setLocationFilter("online")}
                       />
-                      <span>In-person</span>
-                    </label>
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item asChild>
-                    <label className="flex items-center space-x-2">
-                    <Checkbox 
-                        id="all"
-                        checked={locationFilter == "all"}
-                        onCheckedChange={() => setLocationFilter("all")}
-                      />
-                      <span>No Filter</span>
-                    </label>
-                  </DropdownMenu.Item>
-                </div>
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          </div>
+                    <span>Online</span>
+                  </label>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <label className="flex items-center space-x-2">
+                  <Checkbox 
+                      id="in-person"
+                      checked={locationFilter == "in-person"}
+                      onCheckedChange={() => setLocationFilter("in-person")}
+                    />
+                    <span>In-person</span>
+                  </label>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <label className="flex items-center space-x-2">
+                  <Checkbox 
+                      id="all"
+                      checked={locationFilter == "all"}
+                      onCheckedChange={() => setLocationFilter("all")}
+                    />
+                    <span>No Filter</span>
+                  </label>
+                </DropdownMenuItem>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Hackathon Grid */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-4">
           {filteredHackathons.map((hackathon) => (
-            <Card
-              key={hackathon.name}
-              className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#4A4A4A] border-none"
-            >
-              <CardHeader className="p-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={hackathon.image}
-                  alt={hackathon.name}
-                  className="w-full h-[200px] object-cover object-top rounded-t-lg"
-                />
-              </CardHeader>
-              <CardContent className="grid gap-3 p-4">
-                <h3 className="text-xl font-semibold text-white line-clamp-1">
-                  {hackathon.name}
-                </h3>
-                <div className="flex items-center gap-2 text-sm text-white">
-                  <Calendar className="h-4 w-4 text-white" />
-                  <time dateTime={hackathon.date}>
-                    {new Date(`${hackathon.date}T00:00:00`).toLocaleDateString(
-                      "en-US",
-                      {
-                        month: "short",
-                        day: "numeric",
-                      }
-                    )}
-                    {" - "}
-                    {new Date(
-                      `${hackathon.endDate}T00:00:00`
-                    ).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </time>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-white">
-                  {hackathon.isOnline ? (
-                    <Globe2 className="h-4 w-4 text-white" />
-                  ) : (
-                    <MapPin className="h-4 w-4 text-white" />
-                  )}
-                  {hackathon.location}
-                </div>
-                {hackathon.participants && (
-                  <div className="flex items-center gap-2 text-sm text-white">
-                    <Users className="h-4 w-4 text-white" />
-                    {`${hackathon.participants} hackers`}
-                  </div>
-                )}
-                <div className="mt-4 flex gap-3">
-                  {userTeams.some(team => team.hackathonId === hackathon.id) ? (
-                    <Button disabled className="flex-1 bg-gray-500 font-bold text-white">
-                      Applied
-                    </Button>
-                  ) : (
-                    <Button 
-                      asChild 
-                      className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-white hover:text-white"
-                    >
-                      <Link href={userData ? `/hackathons/${hackathon.id}` : '/account-setup'}>
-                        Form Team
-                      </Link>
-                    </Button>
-                  )}
-                  <Button asChild variant="outline" className="flex-1 bg-[#4A4A4A] border-[#ffac4c] text-[#ffac4c] hover:bg-[#FFAD08]/10 hover:text-[#ffac4c]">
-                    <Link
-                      href={hackathon.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Website
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <HackathonCard
+              key={hackathon.id}
+              hackathon={hackathon}
+              userData={userData}
+            />
           ))}
         </div>
       </main>

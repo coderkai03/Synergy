@@ -4,14 +4,17 @@ import { useState, useEffect } from 'react';
 import { collection, getDoc, doc, getDocs } from '@firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { Hackathon } from '@/types/Hackathons';
+import { useCollection } from './useCollection';
 
 export function useHackathons() {
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const fetchHackathons = async () => {
       try {
-        const hackathonsRef = collection(db, "hackathons");
+        const hackathonsRef = useCollection("hackathons");
         const hackathonsSnap = await getDocs(hackathonsRef);
         const hackathonsData = hackathonsSnap.docs.map((doc) => ({
         ...doc.data(),
@@ -20,15 +23,18 @@ export function useHackathons() {
       setHackathons(hackathonsData as Hackathon[]);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
   fetchHackathons()
   }, [])
 
   const getHackathons = async (ids: string[]) => {
+    setLoading(true);
     const hackathons = await Promise.all(ids.map(async (id) => {
       try {
-        const hackathonRef = doc(db, 'hackathons', id);
+        const hackathonRef = doc(useCollection('hackathons'), id);
         const hackathon = await getDoc(hackathonRef);
         return {...hackathon.data(), id} as Hackathon;
       } catch (err) {
@@ -37,8 +43,10 @@ export function useHackathons() {
       }
     }));
 
+    setLoading(false);
     return hackathons as Hackathon[];
   }
 
-  return { hackathons, getHackathons };
+  return { hackathons, getHackathons, loading };
 }
+

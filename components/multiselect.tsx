@@ -58,10 +58,7 @@ export function Multiselect({
         <div className="flex flex-col items-center relative">
           <div className="w-full">
             <div className="my-2 p-1 flex border border-gray-200 bg-[#111119] rounded">
-              <button
-                type="button"
-                aria-haspopup="listbox"
-                aria-expanded={isOpen}
+              <div
                 className="flex flex-auto flex-wrap"
                 onClick={toggleDropdown}
               >
@@ -77,7 +74,10 @@ export function Multiselect({
                       <div className="flex flex-auto flex-row-reverse">
                         <button
                           type="button"
-                          onClick={() => removeItem(item)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeItem(item);
+                          }}
                           aria-label={`Remove ${item}`}
                         >
                           <X className="cursor-pointer hover:text-zinc-800 rounded-full w-4 h-4 ml-2" />
@@ -97,7 +97,7 @@ export function Multiselect({
                     )}
                   </div>
                 </div>
-              </button>
+              </div>
             </div>
           </div>
           {isOpen && (

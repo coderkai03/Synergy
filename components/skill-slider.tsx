@@ -1,6 +1,7 @@
 import React from 'react';
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { testLog } from "@/hooks/useCollection";
 
 function SkillSlider({ 
   label, 
@@ -15,6 +16,7 @@ function SkillSlider({
   onValueChange: (value: number[]) => void;
   id: string;
 }) {
+  testLog(value);
   return (
     <div className="mb-8">
       <div className="flex items-center w-full">
