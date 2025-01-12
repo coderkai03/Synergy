@@ -16,13 +16,21 @@ import { testLog } from "@/hooks/useCollection";
 
 export function InviteDialog({
   invites,
-  teams,
-  setTeams, 
+  inviteTeams,
+  activeTeams,
+  userHackathons,
+  setInvites,
+  setInviteTeams, 
+  setActiveTeams,
   setUserHackathons 
 }: { 
   invites: Invite[], 
-  teams: Team[],
-  setTeams: (teams: Team[]) => void, 
+  inviteTeams: Team[],
+  activeTeams: Team[],
+  userHackathons: Hackathon[],
+  setInvites: (invites: Invite[]) => void,
+  setInviteTeams: (teams: Team[]) => void, 
+  setActiveTeams: (teams: Team[]) => void,
   setUserHackathons: (hackathons: Hackathon[]) => void 
 }) {
   const { user } = useUser();
@@ -70,29 +78,42 @@ export function InviteDialog({
     const success = await updateTeammates(teamId, user.id);
     if (!success) return;
     
-    updateUserInvites(inviteId, invites, true);
+    await updateUserInvites(inviteId, invites, true);
+    const updatedInvites = invites.filter(invite => invite.teamId !== teamId);
+    setInvites(updatedInvites);
 
     const team = await getTeams([teamId]);
-    
-    if (team[0].teammates.length < 4) {
-      setTeams([...teams, team[0]]);
-    } else {
+    if (!team[0]) {
+      toast.error("Team not found");
+      return;
+    };
+
+    if (team[0].teammates.length >= 4) {
       toast.error("Team is already full");
       return;
     }
 
+    const updatedInviteTeams = inviteTeams.filter(t => t.id !== teamId);
+    setInviteTeams(updatedInviteTeams);
+
+    const updatedActiveTeams = [...activeTeams, team[0]];
+    setActiveTeams(updatedActiveTeams);
+
     const hackathonId = team[0].hackathonId;
     const hackathon = await getHackathons([hackathonId]);
-    setUserHackathons([...hackathons, hackathon[0]]);
+    const updatedUserHackathons = [...userHackathons, hackathon[0]];
+    setUserHackathons(updatedUserHackathons);
 
-    testLog(`Joined team from invite ${inviteId}`)
+    testLog(`Joined team from invite ${inviteId}`);
     setIsOpen(false);
   }
 
-  const handleDecline = (inviteId: number) => {
+  const handleDecline = async (inviteId: number) => {
     if (!user?.id) return;
 
-    updateUserInvites(inviteId, invites, false);
+    await updateUserInvites(inviteId, invites, false);
+    const updatedInvites = invites.filter(invite => invite.teamId !== invites[inviteId].teamId);
+    setInvites(updatedInvites);
 
     testLog(`Declined invite ${inviteId}`)
     setIsOpen(false);
@@ -117,7 +138,7 @@ export function InviteDialog({
           <DialogTitle className="text-white">Team Invitations</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          {invites ? invites.map((invite, index) => {
+          {invites ? invites.map((_, index) => {
             const hackathon = hackathons.find(h => h.id === teamInvites[index]?.hackathonId);
             return hackathon ? (
               <InviteCard

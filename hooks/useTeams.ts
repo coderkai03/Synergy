@@ -28,7 +28,7 @@ export function useTeams() {
 
         const teamsData: string[] = userDoc.exists() ? userDoc.data()?.teams || [] : [];
         const teams = await getTeams(teamsData);
-        testLog('teamsData', teamsData)
+        testLog('teams', teams)
 
         setUserTeams(teams);
         setLoading(false);
@@ -240,6 +240,7 @@ export function useTeams() {
   }
 
   const updateRequests = async (teamId: string, userId: string, accepted: boolean) => {
+    setLoading(true);
     const teamRef = doc(useCollection('teams'), teamId);
     // remove userId from requests
     await updateDoc(teamRef, {
@@ -263,6 +264,7 @@ export function useTeams() {
         invites: updatedInvites
       });
     }
+    setLoading(false);
   }
 
   const updateTeamRequests = async (teamId: string, userId: string) => {

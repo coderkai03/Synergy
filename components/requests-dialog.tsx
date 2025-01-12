@@ -9,37 +9,54 @@ import { User } from "@/types/User";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { useEffect, useState } from "react";
 import { useTeams } from "@/hooks/useTeams";
+import { toast } from "react-hot-toast";
 
 interface RequestsDialogProps {
   teamId: string;
   requests: string[];
+  teammates: User[];
+  setTeammates: (teammates: User[]) => void;
 }
 
-export function RequestsDialog({ teamId, requests }: RequestsDialogProps) {
+export function RequestsDialog({ 
+  teamId,
+  requests,
+  teammates,
+  setTeammates,
+}: RequestsDialogProps) {
   const { getUsers } = useFirebaseUser();
-  const { updateRequests } = useTeams();
+  const { loading: teamsLoading, updateRequests } = useTeams();
 
   const [requestUsers, setRequestUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log('requests', requests);
     const fetchUsers = async () => {
       if (!requests.length) return;
       const users = await getUsers(requests);
       setRequestUsers(users);
     };
     fetchUsers();
-  }, [requests, getUsers]);
+  }, [requests]);
 
   const handleUpdateRequests = async (userId: string, isAccepted: boolean) => {
-    setLoading(true);
     try {
       await updateRequests(teamId, userId, isAccepted);
+
+      if (isAccepted) {
+        const updatedUsers = await getUsers([userId]);
+        if (updatedUsers[0]) {
+          const updatedTeammates = [...teammates, updatedUsers[0]];
+          setTeammates(updatedTeammates);
+        }
+      }
+
       setRequestUsers(prev => prev.filter(user => user.id !== userId));
+      
+      toast.success(isAccepted ? "Request accepted!" : "Request declined");
     } catch (error) {
-      console.error('Error accepting request:', error);
-    } finally {
-      setLoading(false);
+      console.error('Error handling request:', error);
+      toast.error("Failed to update request");
     }
   };
 
@@ -49,9 +66,9 @@ export function RequestsDialog({ teamId, requests }: RequestsDialogProps) {
         <Button variant="outline" className="gap-2 bg-white text-black border-zinc-700 relative hover:bg-white hover:text-black">
           <Mail className="h-4 w-4" />
           Requests
-          {requests.length > 0 && (
+          {requestUsers.length > 0 && (
             <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              {requests.length}
+              {requestUsers.length}
             </div>
           )}
         </Button>
@@ -83,7 +100,7 @@ export function RequestsDialog({ teamId, requests }: RequestsDialogProps) {
                     <Button
                       size="sm"
                       variant="destructive"
-                      disabled={loading}
+                      disabled={teamsLoading}
                       onClick={() => handleUpdateRequests(user.id, false)}
                     >
                       <X className="h-4 w-4" />
@@ -91,7 +108,7 @@ export function RequestsDialog({ teamId, requests }: RequestsDialogProps) {
                     <Button
                       size="sm"
                       variant="default"
-                      disabled={loading}
+                      disabled={teamsLoading}
                       className="bg-green-500 hover:bg-green-600"
                       onClick={() => handleUpdateRequests(user.id, true)}
                     >

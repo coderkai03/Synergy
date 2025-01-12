@@ -12,17 +12,19 @@ import { User } from "@/types/User"
 import { Hackathon } from "@/types/Hackathons"
 import { Button } from "@/components/ui/button"
 import { TeamListSection } from "@/components/team-list-section"
-import { subscribeToDoc } from "@/hooks/useDocSubscription"
 import { Plus } from "lucide-react"
 import { RequireProfile } from "@/components/require-profile"
 import Loading from "@/components/loading"
 import NoTeams from "@/components/no-teams"
 import { testLog } from "@/hooks/useCollection";
+import { onSnapshot } from "firebase/firestore"
+import { doc } from "firebase/firestore"
+import { db } from "@/firebaseConfig"
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()
   const { user } = useUser()
-  const { userData, loading: userLoading } = useFirebaseUser();
+  const { loading: userLoading, userData } = useFirebaseUser();
   const { loading: hackathonLoading, getHackathons } = useHackathons();
   const { loading: teamLoading, userTeams } = useTeams();
 
@@ -30,50 +32,6 @@ export default function HackathonTeamsScreen() {
   const [hackathons, setHackathons] = useState<Hackathon[]>([])
   const [invites, setInvites] = useState<Invite[]>([])
   const [filteredTeams, setFilteredTeams] = useState<Team[]>([...userTeams]);
-
-  // Subscribe to teams
-  const unsubscribeTeams = subscribeToDoc<Team>({
-    collectionName: 'teams',
-    docId: userData?.id || '',
-    onUpdate: (teamData) => {
-      setTeams(prevTeams => {
-        const teamIndex = prevTeams.findIndex(t => t.id === teamData.id);
-        if (teamIndex >= 0) {
-          const newTeams = [...prevTeams];
-          newTeams[teamIndex] = teamData;
-          return newTeams;
-        }
-        return [...prevTeams, teamData];
-      });
-    },
-    enabled: !!userData?.id
-  });
-
-  // Subscribe to invites
-  const unsubscribeInvites = subscribeToDoc<User>({
-    collectionName: 'users',
-    docId: user?.id || '',
-    onUpdate: (userData) => {
-      const newInvites = userData.invites || [];
-      setInvites(prevInvites => {
-        if (JSON.stringify(newInvites) !== JSON.stringify(prevInvites)) {
-          testLog('New invite received:', newInvites);
-          return newInvites;
-        }
-        return prevInvites;
-      });
-    },
-    enabled: !!user?.id
-  });
-
-  // Unsubscribe from teams and invites
-  useEffect(() => {
-    return () => {
-      if (unsubscribeInvites) unsubscribeInvites();
-      if (unsubscribeTeams) unsubscribeTeams();
-    };
-  }, [user?.id]);
-
 
   useEffect(() => {
     testLog('userTeams', userTeams)
@@ -87,13 +45,13 @@ export default function HackathonTeamsScreen() {
 
     setInvites(userData?.invites || []);
     setTeams(userTeams);
-
     setFilteredTeams(userTeams
       .sort((a, b) => a.name.localeCompare(b.name)));
 
     testLog('filteredTeams', filteredTeams);
 
     const fetchHackathons = async () => {
+      if (!userTeams?.length) return;
       const hackathonIds = userTeams.map(team => team.hackathonId);
       const hackathons = await getHackathons(hackathonIds);
       setHackathons(hackathons as Hackathon[]);
@@ -106,6 +64,9 @@ export default function HackathonTeamsScreen() {
     teamLoading ||
     hackathonLoading
   ) {
+    testLog('teams: ', teamLoading);
+    testLog('hackathons: ', hackathonLoading);
+    testLog('user: ', userLoading);
     return <Loading />;
   }
 
@@ -122,8 +83,12 @@ export default function HackathonTeamsScreen() {
             </RequireProfile>
             <InviteDialog
               invites={invites}
-              teams={teams}
-              setTeams={setTeams}
+              inviteTeams={teams}
+              activeTeams={filteredTeams}
+              userHackathons={hackathons}
+              setInvites={setInvites}
+              setInviteTeams={setTeams}
+              setActiveTeams={setFilteredTeams}
               setUserHackathons={setHackathons}
             />
           </div>

@@ -7,32 +7,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GraduationCap, Briefcase, Code, Trophy } from 'lucide-react';
-import { subscribeToDoc } from "@/hooks/useDocSubscription";
+import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
+import NotFound from "@/components/not-found";
 
 export default function HackerDetailPage() {
   const params = useParams();
   const id = params.id as string;
+  const { getUsers } = useFirebaseUser();
 
   const [hacker, setHacker] = useState<User | null>(null);
-//   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = subscribeToDoc<User>({
-      collectionName: 'users',
-      docId: id,
-      onUpdate: (userData) => {
-        setHacker(userData);
-        //setLoading(false);
-      },
-      enabled: !!id
-    });
+    const fetchHacker = async () => {
+      const hacker = await getUsers([id]);
+      if (hacker) {
+        setHacker(hacker[0]);
+      }
+    };
 
-    return () => unsubscribe();
+    fetchHacker();
   }, [id]);
 
-
   if (!hacker) {
-    return <div>Hacker not found</div>;
+    return <NotFound />
   }
 
   return (

@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useHackathons } from "@/hooks/useHackathons";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { Hackathon } from "@/types/Hackathons";
@@ -15,12 +15,21 @@ import NotFound from "./not-found";
 
 export function HackathonsListComponent() {
   //currently pulling from constants, will need to pull from database
-  const { hackathons, loading: hackathonLoading } = useHackathons();
+  const { getAllHackathons, loading: hackathonLoading } = useHackathons();
   const { userData, loading: userLoading } = useFirebaseUser();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("all");
+  const [hackathons, setHackathons] = useState<Hackathon[]>([]);
+
+  useEffect(() => {
+    const fetchHackathons = async () => {
+      const hackathons = await getAllHackathons();
+      setHackathons(hackathons);
+    };
+    fetchHackathons();
+  }, []);
 
   // Simple function to filter hackathons by date
   const getActiveHackathons = (hackathons: Hackathon[]) => {

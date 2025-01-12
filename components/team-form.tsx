@@ -31,17 +31,18 @@ import { testLog } from "@/hooks/useCollection";
 export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const { user } = useUser();
   const router = useRouter();
-  const { hackathons } = useHackathons();
+  const { getAllHackathons } = useHackathons();
   const { createTeam, teamNameExists } = useTeams();
 
+  const [hackathons, setHackathons] = useState<Hackathon[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<Team>({
     id: '',
     name: "",
     hackathonId: hackathonId || "",
-    hostId: user?.id || "",
-    teammates: [user?.id || ""],
+    hostId: "",
+    teammates: [],
     requests: []
   });
 
@@ -53,6 +54,10 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
       }));
     }
   }, [hackathonId]);
+
+  useEffect(() => {
+    getAllHackathons().then(setHackathons);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,6 +87,8 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
     testLog("TEAM", formData);
 
     try {
+      formData.hostId = user?.id || "";
+      formData.teammates = [user?.id || ""];
       const teamId = await createTeam(formData);
 
       if (teamId && teamId !== 'alreadyInTeam') {

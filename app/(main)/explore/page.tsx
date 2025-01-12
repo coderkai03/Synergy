@@ -37,12 +37,6 @@ export default function ExplorePage() {
     const lastUser = filteredHackers ? filteredHackers[filteredHackers.length - 1] : null;
     const {users, hasMore} = await getOlderUsers(PAGE_LIMIT, lastUser?.id);
 
-    if (!hasMore) {
-      setHasMoreUsers(false);
-    }
-
-    if (!users) return;
-
     const filteredUsers: User[] = users
       .filter(user => 
         user.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -55,6 +49,7 @@ export default function ExplorePage() {
 
     setFilteredHackers(prev => [...prev, ...filteredUsers]);
     setHackerScores(hScores);
+    setHasMoreUsers(hasMore);
   }
 
   const fetchMoreTeams = async () => {
@@ -62,12 +57,6 @@ export default function ExplorePage() {
 
     const lastTeam = filteredTeams ? filteredTeams[filteredTeams.length - 1] : null;
     const {teams, hasMore} = await getOlderTeams(PAGE_LIMIT, lastTeam?.id);
-
-    if (!hasMore) {
-      setHasMoreTeams(false);
-    }
-
-    if (!teams) return;
 
     const filteredTeamsList: Team[] = teams
       .filter(team => 
@@ -77,6 +66,7 @@ export default function ExplorePage() {
     testLog('more teams:', [...filteredTeams, ...filteredTeamsList]);
 
     setFilteredTeams(prev => [...prev, ...filteredTeamsList]);
+    setHasMoreTeams(hasMore);
   }
 
   if (

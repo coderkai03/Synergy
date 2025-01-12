@@ -1,34 +1,51 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { collection, getDoc, doc, getDocs } from '@firebase/firestore';
+import { collection, getDoc, doc, getDocs, startAfter, orderBy, query, limit } from '@firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { Hackathon } from '@/types/Hackathons';
 import { useCollection } from './useCollection';
 
 export function useHackathons() {
-  const [hackathons, setHackathons] = useState<Hackathon[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const getOlderHackathons = async (limitCount: number, lastHackathonId?: string) => {
     setLoading(true);
-    const fetchHackathons = async () => {
-      try {
-        const hackathonsRef = useCollection("hackathons");
-        const hackathonsSnap = await getDocs(hackathonsRef);
-        const hackathonsData = hackathonsSnap.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id
-      }));
-      setHackathons(hackathonsData as Hackathon[]);
+    try {
+      const hackathonsRef = useCollection('hackathons');
+      let q;
+      
+      if (lastHackathonId) {
+        const lastHackathonDoc = await getDoc(doc(hackathonsRef, lastHackathonId));
+        console.log(`Last doc after ${lastHackathonId}: `, lastHackathonDoc);
+        q = query(hackathonsRef, 
+          orderBy('date', 'desc'),
+          startAfter(lastHackathonDoc), 
+          limit(limitCount)
+        );
+      } else {
+        console.log("Last doc [no id]: ");
+        q = query(hackathonsRef, 
+          orderBy('date', 'desc'),
+          limit(limitCount)
+        );
+      }
+
+      const hackathonsSnap = await getDocs(q);
+      const hackathons = hackathonsSnap.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id } as Hackathon));
+      console.log("Fetched: ", hackathons.map(h => h.id));
+
+      // Return false if we got fewer docs than requested
+      const hasMore = hackathons.length >= limitCount;
+
+      return { hackathons, hasMore };
     } catch (error) {
-      console.error("Error fetching data:", error);
+      throw error;
     } finally {
       setLoading(false);
     }
-  };
-  fetchHackathons()
-  }, [])
+  }
 
   const getHackathons = async (ids: string[]) => {
     setLoading(true);
@@ -47,6 +64,21 @@ export function useHackathons() {
     return hackathons as Hackathon[];
   }
 
-  return { hackathons, getHackathons, loading };
+  const getAllHackathons = async () => {
+    setLoading(true);
+    const hackathons = await getDocs(useCollection('hackathons'));
+    setLoading(false);
+    return hackathons.docs.map(doc => ({
+      ...doc.data(),
+      id: doc.id
+    } as Hackathon));
+  }
+
+  return {
+    getOlderHackathons,
+    getHackathons,
+    getAllHackathons,
+    loading
+  };
 }
 

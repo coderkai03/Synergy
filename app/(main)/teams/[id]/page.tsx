@@ -15,16 +15,20 @@ import { Calendar, MapPin, Users, Crown } from 'lucide-react';
 import Image from "next/image";
 import { LeaveTeamDialog } from "@/components/leave-team-dialog";
 import { AddTeammateDialog } from "@/components/add-teammate-dialog";
-import { subscribeToDoc } from "@/hooks/useDocSubscription";
 import { RequestsDialog } from "@/components/requests-dialog";
 import { JoinTeamDialog } from "@/components/join-team-dialog";
 import { toast } from "react-hot-toast";
 import NotFound from "@/components/not-found";
 import Loading from "@/components/loading";
+import { doc, onSnapshot } from "firebase/firestore";
+import { DocumentSnapshot } from "firebase/firestore";
+import { db } from "@/firebaseConfig";
+import { testLog } from "@/hooks/useCollection";
 
 export default function TeamDetailPage() {
   const params = useParams();
   const router = useRouter();
+  
   const { loading: teamLoading, getTeams, leaveTeam, updateTeamHost, updateTeamInvitesByEmail, teammateExists } = useTeams();
   const { loading: hackathonLoading, getHackathons } = useHackathons();
   const { loading: userLoading, getUsers, userData } = useFirebaseUser();
@@ -33,33 +37,9 @@ export default function TeamDetailPage() {
   const [team, setTeam] = useState<Team | null>(null);
   const [hackathon, setHackathon] = useState<Hackathon | null>(null);
   const [teammates, setTeammates] = useState<User[]>([]);
+  const [requests, setRequests] = useState<string[]>([]);
 
   const isMember = team?.teammates.includes(userData?.id || '');
-
-  useEffect(() => {
-    const unsubscribeTeams = subscribeToDoc<Team>({
-      collectionName: 'teams',
-      docId: id,
-      onUpdate: (teamData) => {
-        setTeam(teamData);
-      },
-      enabled: !!id
-    });
-
-    const unsubscribeUsers = subscribeToDoc<User[]>({
-      collectionName: 'users',
-      docId: team?.teammates?.join(',') || '',
-      onUpdate: (usersData) => {
-        setTeammates(usersData);
-      },
-      enabled: !!team?.teammates?.length
-    });
-
-    return () => {
-      if (unsubscribeTeams) unsubscribeTeams();
-      if (unsubscribeUsers) unsubscribeUsers();
-    };
-  }, [id]);
 
   const handleAddTeammate = async (email: string) => {
     if (!team || !userData) return;
@@ -106,6 +86,10 @@ export default function TeamDetailPage() {
         if (team.hackathonId) {
           const hackathons = await getHackathons([team.hackathonId]);
           setHackathon(hackathons[0]);
+        }
+
+        if (team.requests) {
+          setRequests(team.requests);
         }
 
         if (team.teammates) {
@@ -219,7 +203,9 @@ export default function TeamDetailPage() {
                       <>
                         <RequestsDialog
                           teamId={team.id}
-                          requests={team.requests} />
+                          requests={requests}
+                          teammates={teammates}
+                          setTeammates={setTeammates} />
                         <AddTeammateDialog
                           isHost={userData.id === team.hostId}
                           onAddTeammate={handleAddTeammate} />

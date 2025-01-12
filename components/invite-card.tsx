@@ -21,7 +21,7 @@ export function InviteCard({ inviter, team, hackathon, onDecline, onJoin }: Invi
       <div className="flex items-center justify-between">
         <div className="space-y-2">
           <div className="font-medium text-white">
-            Invited you to join <a href={`/teams/${team?.id}`} className="hover:underline text-yellow-400">{team?.name}</a>
+            Invited you to join <a href={`/teams/${team?.id}`} className="underline text-yellow-400">{team?.name}</a>
           </div>
           <div className="text-sm text-zinc-400">
             {hackathon?.name || 'Unknown Hackathon'}
