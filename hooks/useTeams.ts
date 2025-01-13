@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { collection, getDocs, doc, getDoc, updateDoc, arrayRemove, deleteDoc, where, query, setDoc, addDoc, arrayUnion, runTransaction, orderBy, limit, startAfter } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { Invite, Team } from '@/types/Teams';
-import { User } from '@/types/User';
 import { useUser } from '@clerk/nextjs';
 import toast from 'react-hot-toast';
 import { useCollection, testLog } from './useCollection';
@@ -12,34 +11,30 @@ export function useTeams() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [userTeams, setUserTeams] = useState<Team[]>([]);
 
-  useEffect(() => {
-    async function fetchTeams() {
-      testLog('fetching teams for user:', user?.id)
+  const getUserTeams = async () => {
+    setLoading(true);
+    testLog('fetching teams for user:', user?.id)
 
-      if (!user?.id) return;
-      testLog('user?.id', user?.id)
+    if (!user?.id) return;
+    testLog('user?.id', user?.id)
 
-      try {
-        const userRef = doc(useCollection('users'), user?.id);
-        const userDoc = await getDoc(userRef);
-        testLog('userDoc', userDoc.data())
+    try {
+      const userRef = doc(useCollection('users'), user?.id);
+      const userDoc = await getDoc(userRef);
+      testLog('userDoc', userDoc.data())
 
-        const teamsData: string[] = userDoc.exists() ? userDoc.data()?.teams || [] : [];
-        const teams = await getTeams(teamsData);
-        testLog('teams', teams)
+      const teamsData: string[] = userDoc.exists() ? userDoc.data()?.teams || [] : [];
+      const teams = await getTeams(teamsData);
+      testLog('teams', teams)
 
-        setUserTeams(teams);
-        setLoading(false);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch teams');
-        setLoading(false);
-      }
+      return teams;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch teams');
+    } finally {
+      setLoading(false);
     }
-    fetchTeams();
-  }, [user?.id]);
-  
+  }  
 
   const updateTeamInvites = async (teammateIds: string[], userId: string, invite: Invite) => {
     try {
@@ -166,7 +161,6 @@ export function useTeams() {
         } as Team;
       }));
       testLog('Promise.all completed', teams);
-      setLoading(false);
       return teams.filter(team => team !== null) as Team[];
     } catch (error) {
       testLog('Error in getTeams:', error);
@@ -176,7 +170,7 @@ export function useTeams() {
     }
   }
 
-  const createTeam = async (team: Team) => {
+  const createTeam = async (team: Team, userTeams: Team[]) => {
     if (userTeams.some(userTeam => userTeam.hackathonId === team.hackathonId)) {
       return 'alreadyInTeam';
     }
@@ -291,7 +285,25 @@ export function useTeams() {
     }
   };
 
-  const getOlderTeams = async (limitCount: number, lastTeamId?: string) => {
+  const getAllTeams = async (userTeamIds: string[]) => {
+    setLoading(true);
+    try {
+      const teamsRef = useCollection('teams');
+      const q = query(teamsRef, orderBy('id'));
+      const querySnapshot = await getDocs(q);
+      const teams = querySnapshot.docs
+        .map(doc => ({ ...doc.data(), id: doc.id } as Team))
+        .filter((team) => !userTeamIds.includes(team.id));
+      return teams;
+    } catch (error) {
+      console.error('Error fetching all teams:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getExploreTeams = async (userTeamIds: string[], limitCount: number, lastTeamId?: string) => {
     setLoading(true);
     try {
       const teamsRef = useCollection('teams');
@@ -310,16 +322,15 @@ export function useTeams() {
           limit(limitCount) 
         );
       }
-
+      testLog('USERTEAMS:', userTeamIds);
       const teamDocs = await getDocs(q);
-      testLog("older team docs:", teamDocs);
       const teams = teamDocs.docs
         .map((doc) => ({ ...doc.data(), id: doc.id } as Team))
-        .filter((team) => !userTeams.some(userTeam => userTeam.id === team.id));
+        .filter((team) => !userTeamIds.includes(team.id))
+        .slice(0, limitCount);
 
-      testLog("older teams:", teams);
-
-      const hasMore = teams.length >= limitCount;
+      testLog('TEAMS LEFT/LIMIT:', teams.length, limitCount);
+      const hasMore = teams.length !== 0;
 
       return { teams, hasMore };
     } catch (error) {
@@ -338,13 +349,14 @@ export function useTeams() {
   }
 
   return {
-    userTeams,
     loading,
     error,
+    getUserTeams,
     updateTeamInvites,
     updateTeamInvitesByEmail,
     updateTeammates,
-    getOlderTeams,
+    getAllTeams,
+    getExploreTeams,
     getTeams,
     createTeam,
     leaveTeam,

@@ -5,10 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useTeams } from "@/hooks/useTeams"
 import { useHackathons } from "@/hooks/useHackathons"
 import { Invite, Team } from "@/types/Teams"
-import { useUser } from "@clerk/nextjs"
 import { InviteDialog } from "@/components/invite-dialog"
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers"
-import { User } from "@/types/User"
 import { Hackathon } from "@/types/Hackathons"
 import { Button } from "@/components/ui/button"
 import { TeamListSection } from "@/components/team-list-section"
@@ -17,21 +15,26 @@ import { RequireProfile } from "@/components/require-profile"
 import Loading from "@/components/loading"
 import NoTeams from "@/components/no-teams"
 import { testLog } from "@/hooks/useCollection";
-import { onSnapshot } from "firebase/firestore"
-import { doc } from "firebase/firestore"
-import { db } from "@/firebaseConfig"
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()
-  const { user } = useUser()
   const { loading: userLoading, userData } = useFirebaseUser();
   const { loading: hackathonLoading, getHackathons } = useHackathons();
-  const { loading: teamLoading, userTeams } = useTeams();
+  const { loading: teamLoading, getUserTeams } = useTeams();
 
   const [teams, setTeams] = useState<Team[]>([])
+  const [userTeams, setUserTeams] = useState<Team[]>([])
   const [hackathons, setHackathons] = useState<Hackathon[]>([])
   const [invites, setInvites] = useState<Invite[]>([])
   const [filteredTeams, setFilteredTeams] = useState<Team[]>([...userTeams]);
+
+  useEffect(() => {
+    const fetchUserTeams = async () => {
+      const teams = await getUserTeams();
+      setUserTeams(teams || []);
+    }
+    fetchUserTeams();
+  }, [userData]);
 
   useEffect(() => {
     testLog('userTeams', userTeams)
@@ -57,7 +60,7 @@ export default function HackathonTeamsScreen() {
       setHackathons(hackathons as Hackathon[]);
     };
     fetchHackathons();
-  }, [userTeams?.length]);
+  }, [userTeams]);
 
   if (
     userLoading ||

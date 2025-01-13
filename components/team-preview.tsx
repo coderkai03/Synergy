@@ -49,6 +49,9 @@ export function TeamPreview({ team }: TeamPreviewProps) {
               )}
               <span>{team.name}</span>
             </div>
+            <div className="flex flex-col items-end gap-2">
+              <p className="text-sm text-gray-300">{team.teammates.length}/4 teammates</p>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -67,17 +70,6 @@ export function TeamPreview({ team }: TeamPreviewProps) {
               <div className="flex items-center space-x-2">
                 <MapPin className="w-4 h-4 text-gray-400" />
                 <p className="text-sm text-gray-300 truncate">{hackathon.isOnline ? 'Online' : hackathon.location}</p>
-              </div>
-
-              <div className="flex items-center space-x-2 my-4">
-                <div className="flex -space-x-2">
-                  {team.teammates.slice(0, 3).map((teammate, index) => (
-                    <Avatar key={index} className="border-2 border-gray-800">
-                      <AvatarFallback className="bg-gray-600 text-white">{teammate[0]}</AvatarFallback>
-                    </Avatar>
-                  ))}
-                </div>
-                <p className="text-sm text-gray-300">{team.teammates.length} teammates</p>
               </div>
             </div>
 

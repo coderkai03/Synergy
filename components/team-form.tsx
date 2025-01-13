@@ -31,10 +31,11 @@ import { testLog } from "@/hooks/useCollection";
 export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const { user } = useUser();
   const router = useRouter();
-  const { getAllHackathons } = useHackathons();
-  const { createTeam, teamNameExists } = useTeams();
+  const { loading: hackathonLoading, getAllHackathons } = useHackathons();
+  const { loading: teamLoading, createTeam, teamNameExists, getUserTeams } = useTeams();
 
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
+  const [userTeams, setUserTeams] = useState<Team[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<Team>({
@@ -45,6 +46,14 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
     teammates: [],
     requests: []
   });
+
+  useEffect(() => {
+    const fetchUserTeams = async () => {
+      const teams = await getUserTeams();
+      setUserTeams(teams || []);
+    }
+    fetchUserTeams();
+  }, []);
 
   useEffect(() => {
     if (hackathonId) {
@@ -89,7 +98,7 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
     try {
       formData.hostId = user?.id || "";
       formData.teammates = [user?.id || ""];
-      const teamId = await createTeam(formData);
+      const teamId = await createTeam(formData, userTeams);
 
       if (teamId && teamId !== 'alreadyInTeam') {
         router.push(`/teams/${teamId}`);

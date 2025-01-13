@@ -20,10 +20,6 @@ import { JoinTeamDialog } from "@/components/join-team-dialog";
 import { toast } from "react-hot-toast";
 import NotFound from "@/components/not-found";
 import Loading from "@/components/loading";
-import { doc, onSnapshot } from "firebase/firestore";
-import { DocumentSnapshot } from "firebase/firestore";
-import { db } from "@/firebaseConfig";
-import { testLog } from "@/hooks/useCollection";
 
 export default function TeamDetailPage() {
   const params = useParams();

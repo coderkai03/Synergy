@@ -72,10 +72,10 @@ export function usePosts() {
         }));
         
         setPosts(postsData);
-        setLoading(false);
       } catch (err) {
         console.error("Error fetching posts:", err);
         setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
         setLoading(false);
       }
     };
