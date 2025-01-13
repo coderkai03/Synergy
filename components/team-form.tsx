@@ -27,8 +27,6 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTeams } from "@/hooks/useTeams";
 import { testLog } from "@/hooks/useCollection";
-import Loading from "./loading";
-import NotFound from "./not-found";
 
 export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const { user } = useUser();
