@@ -34,7 +34,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "scripts/uploadHackathons.js"
-  ],
+, "scripts/updateHackathons.js"  ],
   "exclude": [
     "node_modules"
   ]

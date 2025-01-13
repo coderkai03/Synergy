@@ -25,19 +25,26 @@ export function HackathonCard({ hackathon, userData }: HackathonCardProps) {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#4A4A4A] border-none flex flex-col">
       <CardHeader className="p-0">
-        {hackathon.image ? (
-          <Image
-            src={hackathon.image}
-            alt={hackathon.name}
-            width={400}
-            height={200}
-            className="w-full h-auto object-top rounded-t-lg"
-          />
-        ) : ( // Doesn't work; MUST FIX
-          <div className="flex items-center justify-center h-[200px] w-full bg-gray-800 border border-gray-700 shadow-sm rounded-t-lg">
-            {getIconSize('xl')}
-          </div>
-        )}
+        <Link 
+          href={hackathon.website}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cursor-pointer"
+        >
+          {hackathon.image ? (
+            <Image
+              src={hackathon.image}
+              alt={hackathon.name}
+              width={400}
+              height={200}
+              className="w-full h-auto object-top rounded-t-lg hover:opacity-80 transition-opacity"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-[200px] w-full bg-gray-800 border border-gray-700 shadow-sm rounded-t-lg hover:opacity-80 transition-opacity">
+              {getIconSize('xl')}
+            </div>
+          )}
+        </Link>
       </CardHeader>
       <CardContent className="grid gap-3 p-4 mt-auto">
         <h3 className="text-xl font-semibold text-white line-clamp-1">
@@ -62,23 +69,19 @@ export function HackathonCard({ hackathon, userData }: HackathonCardProps) {
         <div className="mt-4 flex gap-3">
           <Button 
             asChild 
-            className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-white hover:text-white"
+            variant="outline"
+            className="flex-1 bg-[#4A4A4A] border-[#ffac4c] border-2 text-[#ffac4c] hover:bg-[#FFAD08]/10 hover:text-[#ffac4c] font-bold"
           >
             <Link href={userData ? `/teams/create${hackathon.id ? `?hackathonId=${hackathon.id}` : ''}` : '/account-setup'}>
               Form Team
             </Link>
           </Button>
           <Button 
-            asChild 
-            variant="outline" 
-            className="flex-1 bg-[#4A4A4A] border-[#ffac4c] text-[#ffac4c] hover:bg-[#FFAD08]/10 hover:text-[#ffac4c]"
+            asChild
+            className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-white hover:text-white"
           >
-            <Link
-              href={hackathon.website}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Website
+            <Link href={`/explore`}>
+              Explore
             </Link>
           </Button>
         </div>

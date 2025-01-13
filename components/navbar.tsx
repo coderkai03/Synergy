@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { LogIn, LogOut, Menu, User } from "lucide-react";
+import { LogIn, LogOut, Menu, User, ChevronDown } from "lucide-react";
 import { useClerk, useUser, SignInButton } from "@clerk/nextjs";
 import SynergyLogo from "./synergy-logo";
 
@@ -17,19 +17,15 @@ export default function Navbar() {
 
     const navItems = () => {
         return (
-            <>
-                {isTest && <Link 
+            <div className="flex items-center gap-4 space-x-4">
+                {isTest &&
+                    <Link 
                         href="/home"
                         className="text-white hover:text-amber-100"
                     >
                         Home
-                    </Link>}
-                    <Link 
-                        href="/account-setup"
-                        className="text-white hover:text-amber-100"
-                    >
-                        Profile
                     </Link>
+                }
                     <Link 
                         href="/teams"
                         className="text-white hover:text-amber-100"
@@ -48,15 +44,40 @@ export default function Navbar() {
                     >
                         Hackathons
                     </Link>
+                    <Link 
+                        href="/teams/create"
+                        className="text-white hover:text-amber-100"
+                    >
+                        Create
+                    </Link>
                     {user ? (
-                        <Link 
-                            href="#"
-                            onClick={() => signOut()}
-                            className="inline-flex items-center gap-2 text-white hover:text-amber-100"
-                        >
-                            <span>Sign out</span>
-                            <LogOut className="h-4 w-4" />
-                        </Link>
+                        <DropdownMenu.Root>
+                            <DropdownMenu.Trigger asChild>
+                                <button className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-zinc-700 hover:bg-zinc-600 text-white hover:text-amber-100 transition-colors">
+                                    <User className="h-5 w-5" />
+                                </button>
+                            </DropdownMenu.Trigger>
+                            <DropdownMenu.Content className="mt-2 w-32 space-y-2 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2" align="end">
+                                <DropdownMenu.Item asChild>
+                                    <Link 
+                                        href="/account-setup"
+                                        className="flex items-center gap-2 rounded hover:bg-amber-100 hover:text-black px-2 py-1"
+                                    >
+                                        <User className="h-4 w-4" />
+                                        <span>Profile</span>
+                                    </Link>
+                                </DropdownMenu.Item>
+                                <DropdownMenu.Item asChild>
+                                    <button 
+                                        onClick={() => signOut()}
+                                        className="flex w-full items-center gap-2 rounded hover:bg-amber-100 hover:text-black px-2 py-1"
+                                    >
+                                        <LogOut className="h-4 w-4" />
+                                        <span>Sign out</span>
+                                    </button>
+                                </DropdownMenu.Item>
+                            </DropdownMenu.Content>
+                        </DropdownMenu.Root>
                     ) : (
                         <button className="inline-flex items-center gap-2 text-white hover:text-amber-100">
                             <SignInButton
@@ -71,7 +92,7 @@ export default function Navbar() {
                             </SignInButton>
                         </button>
                     )}
-            </>
+            </div>
         )
     }
 
