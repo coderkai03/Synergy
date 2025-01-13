@@ -1,7 +1,6 @@
 import { Team } from "@/types/Teams"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Calendar, MapPin, Users, Crown } from 'lucide-react'
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Hackathon } from "@/types/Hackathons"
 import { useUser } from "@clerk/nextjs"
 import { useHackathons } from "@/hooks/useHackathons"

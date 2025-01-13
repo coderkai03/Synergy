@@ -27,12 +27,14 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTeams } from "@/hooks/useTeams";
 import { testLog } from "@/hooks/useCollection";
+import Loading from "./loading";
+import NotFound from "./not-found";
 
 export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const { user } = useUser();
   const router = useRouter();
-  const { loading: hackathonLoading, getAllHackathons } = useHackathons();
-  const { loading: teamLoading, createTeam, teamNameExists, getUserTeams } = useTeams();
+  const { getAllHackathons } = useHackathons();
+  const { createTeam, teamNameExists, getUserTeams } = useTeams();
 
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
   const [userTeams, setUserTeams] = useState<Team[]>([]);
