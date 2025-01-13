@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { LogIn, LogOut, Menu, User, ChevronDown } from "lucide-react";
+import { LogIn, LogOut, Menu, User } from "lucide-react";
 import { useClerk, useUser, SignInButton } from "@clerk/nextjs";
 import SynergyLogo from "./synergy-logo";
 
