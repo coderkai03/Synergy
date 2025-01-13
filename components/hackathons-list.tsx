@@ -153,11 +153,13 @@ export function HackathonsListComponent() {
         {/* Hackathon Grid */}
         <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-4">
           {filteredHackathons.map((hackathon) => (
-            <HackathonCard
-              key={hackathon.id}
-              hackathon={hackathon}
-              userData={userData}
-            />
+            <div key={hackathon.id}>
+              <HackathonCard
+                hackathon={hackathon}
+                userData={userData}
+                previewOnly={false}
+              />
+            </div>
           ))}
         </div>
       </main>

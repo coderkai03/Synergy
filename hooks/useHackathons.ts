@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { collection, getDoc, doc, getDocs, startAfter, orderBy, query, limit } from '@firebase/firestore';
+import { collection, getDoc, doc, getDocs, startAfter, orderBy, query, limit, where } from '@firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { Hackathon } from '@/types/Hackathons';
 import { useCollection } from './useCollection';
@@ -74,10 +74,35 @@ export function useHackathons() {
     } as Hackathon));
   }
 
+  const getUpcomingHackathons = async (limitCount: number) => {
+    try {
+      const allHackathons = await getAllHackathons();
+      const now = new Date();
+      
+      const upcomingHackathons = allHackathons
+        .filter(h => new Date(h.date) >= now)
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .slice(0, limitCount);
+
+      console.log("upcoming hackathons: ", upcomingHackathons.map(h => h.id));
+
+      if (upcomingHackathons.length === 0) {
+        console.log("No upcoming hackathons found");
+        return [];
+      }
+
+      return upcomingHackathons;
+    } catch (error) {
+      console.error("Error fetching upcoming hackathons:", error);
+      throw error;
+    }
+  }
+
   return {
     getOlderHackathons,
     getHackathons,
     getAllHackathons,
+    getUpcomingHackathons,
     loading
   };
 }
