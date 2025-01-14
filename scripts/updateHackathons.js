@@ -1,56 +1,65 @@
-const puppeteer = require('puppeteer');
+const fs = require('fs');
+const cheerio = require('cheerio');
+const admin = require('firebase-admin');
+const dotenv = require('dotenv');
 
-const scrapeMLH = async () => {
-  console.log("Scraping MLH")
-  const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-  console.log("Browser launched")
-  const page = await browser.newPage();
-  console.log("Page created")
-  await page.goto('https://mlh.io/seasons/2025/events');
-  console.log("Page navigated")
+dotenv.config();
 
-  const hackathons = await page.evaluate(() => {
-    console.log("Evaluating page");
-    const events = [];
-    const eventElements = document.querySelectorAll('div[itemtype="http://schema.org/Event"]');
-    console.log("Found events:", eventElements.length);
+// Initialize Firebase Admin with service account
+const serviceAccount = require('../serviceAccountKey.json');
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
-    eventElements.forEach(eventElement => {
-      try {
-        console.log("Processing event element");
-        
-        const id = eventElement.getAttribute('data-event-id') || 
-                  eventElement.querySelector('.event-name')?.textContent?.trim().toLowerCase().replace(/[^a-z0-9]/g, '') || '';
-        
-        const name = eventElement.querySelector('.event-name[itemprop="name"]')?.textContent?.trim() || '';
-        
-        const date = eventElement.querySelector('meta[itemprop="startDate"]')?.getAttribute('content') || '';
-        const endDate = eventElement.querySelector('meta[itemprop="endDate"]')?.getAttribute('content') || '';
-        
-        const city = eventElement.querySelector('.event-location [itemprop="city"]')?.textContent?.trim() || '';
-        const state = eventElement.querySelector('.event-location [itemprop="state"]')?.textContent?.trim() || '';
-        const location = `${city}, ${state}`.replace(/, $/, '');
-        
-        const website = eventElement.querySelector('.event-link')?.getAttribute('href') || '';
-        const image = eventElement.querySelector('.image-wrap img')?.getAttribute('src') || '';
-        const isOnline = eventElement.querySelector('.event-hybrid-notes span')?.textContent?.trim().includes('Digital') || false;
+const db = admin.firestore();
 
-        console.log("Extracted event:", { id, name, date });
-        events.push({ id, name, date, endDate, location, website, image, isOnline });
-      } catch (error) {
-        console.error("Error processing event:", error);
-      }
-    });
+// Read MLH HTML file
+const mlhHtml = fs.readFileSync('../mlh-spring2025.txt', 'utf8');
+const $ = cheerio.load(mlhHtml);
 
-    console.log("Total events processed:", events.length);
-    return events;
+// Extract hackathon data
+const hackathons = [];
+
+$('.event').each((i, element) => {
+  const $event = $(element);
+  
+  const id = $event.attr('class').split(' ')[1].split('-')[1];
+  const name = $event.find('.event-name').text();
+  const date = $event.find('.event-date').text().trim();
+  const endDate = $event.find('meta[itemprop="endDate"]').attr('content');
+  const city = $event.find('span[itemprop="city"]').text();
+  const state = $event.find('span[itemprop="state"]').text();
+  const location = `${city}, ${state}`;
+  const website = $event.find('.event-link').attr('href');
+  const image = $event.find('.event-logo img').attr('src');
+  const isOnline = $event.find('.event-hybrid-notes span').text().trim() === 'Digital Only';
+
+  hackathons.push({
+    name,
+    date,
+    endDate,
+    location,
+    website,
+    image,
+    isOnline
   });
+});
 
-  console.log("Scraped Hackathons:", hackathons);
-  await browser.close();
-  return hackathons;
-};
+// Upload to Firestore
+async function uploadToFirestore() {
+  try {
+    const batch = db.batch();
+    
+    for (const hackathon of hackathons) {
+      const docRef = db.collection('hackathons').doc();
+      batch.set(docRef, hackathon);
+    }
 
-scrapeMLH().then(data => {
-  console.log('Scraped Hackathons:', data);
-}).catch(console.error);
+    await batch.commit();
+    console.log(`Successfully uploaded ${hackathons.length} hackathons to Firestore`);
+  } catch (error) {
+    console.error('Error uploading to Firestore:', error);
+  }
+}
+
+uploadToFirestore();
