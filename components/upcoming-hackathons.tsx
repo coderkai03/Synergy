@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Hackathon } from '@/types/Hackathons'
 import { HackathonCard } from './hackathon-card'
 import { User } from '@/types/User'
-import Loading from './loading'
 import { Button } from './ui/button'
 import Link from 'next/link'
 

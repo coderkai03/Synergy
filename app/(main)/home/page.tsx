@@ -13,7 +13,7 @@ import Loading from '@/components/loading'
 export default function DashboardPage() {
     const { userData } = useFirebaseUser();
     const { loading: hackathonLoading, getUpcomingHackathons } = useHackathons();
-    const { loading: teamLoading, getTeams, checkIfUserHasTeam } = useTeams();
+    const { loading: teamLoading, checkIfUserHasTeam } = useTeams();
 
     const [userTeam, setUserTeam] = useState<Team | null>(null);
     const [upcomingHackathons, setUpcomingHackathons] = useState<Hackathon[]>([]);

@@ -56,7 +56,7 @@ export function NextHackathon({
               <TeamPreview team={userTeam} />
             ) : (
               <div className="flex flex-col gap-4 items-center justify-center h-full">
-                <p className="text-lg text-white">You don't have a team yet.</p>
+                <p className="text-lg text-white">You don&apos;t have a team yet.</p>
                 <Link href={`/teams/create?hackathonId=${hackathon.id}`}>
                   <Button className="bg-amber-500 hover:bg-amber-600 text-white w-40">
                       Create Team
