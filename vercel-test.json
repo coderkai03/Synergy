@@ -1,0 +1,22 @@
+{
+  "builds": [
+    {
+      "src": "backend/api/generate-profile.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "app/**/*",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/generate-profile",
+      "dest": "backend/api/generate-profile.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "app/$1"
+    }
+  ]
+}
