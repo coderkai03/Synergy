@@ -45,7 +45,7 @@ export function NextHackathon({
                 <HackathonCard
                     hackathon={hackathon}
                     userData={userData}
-                    previewOnly={true}
+                    previewOnly={false}
                 />
             ) : (
                 <div>Loading...</div>

@@ -53,10 +53,21 @@ export function testLog(...args: any[]) {
 }
 
 export async function fetchFile(filePath: string) {
-  const fileRef = ref(storage, filePath);
-  const downloadURL = await getDownloadURL(fileRef);
-  console.log("File URL:", downloadURL);
-  return downloadURL;
+  let processedPath = filePath;
+  if (filePath.includes('(1)')) {
+    processedPath = filePath.replace('(1)', '');
+  } else if (filePath.includes('(2)')) {
+    processedPath = filePath.replace('(2)', '(1)');
+  }
+  const fileRef = ref(storage, processedPath);
+  try {
+    const downloadURL = await getDownloadURL(fileRef);
+    console.log("File URL:", downloadURL);
+    return downloadURL;
+  } catch (error) {
+    console.log("File not found, using original path");
+    return await getDownloadURL(ref(storage, filePath));
+  }
 }
 
 // Usage example:
