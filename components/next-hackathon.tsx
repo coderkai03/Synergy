@@ -1,6 +1,5 @@
 "use client"
 
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { TeamPreview } from '@/components/team-preview'
@@ -22,9 +21,22 @@ export function NextHackathon({
     hackathon
 }: NextHackathonProps) {
   return (
-    <Card className="mb-8 bg-[#111119] text-white w-full">
+    <Card className="w-full transition-colors bg-transparent text-white border border-gray-700">
       <CardHeader>
-        <CardTitle className="text-white">Next Hackathon</CardTitle>
+        <CardTitle className="flex justify-between items-center">
+          <span>Next Hackathon</span>
+          <div className="flex items-center gap-4">
+            <span className="border-r border-gray-600 pr-4">Next Team</span>
+            <Link href="/teams">
+              <Button
+                variant="outline"
+                className="border-[#ffac4c] border-2 text-[#ffac4c] hover:text-[#ffac4c] bg-transparent hover:bg-transparent cursor-pointer"
+              >
+                All Teams
+              </Button>
+            </Link>
+          </div>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col md:flex-row gap-4">
@@ -39,7 +51,7 @@ export function NextHackathon({
                 <div>Loading...</div>
             )}
           </div>
-          <div className="flex-1 flex items-center justify-center">
+          <div className="flex-1 flex items-center justify-center border-l border-gray-600 pl-4">
             {userTeam ? (
               <TeamPreview team={userTeam} />
             ) : (
@@ -52,7 +64,7 @@ export function NextHackathon({
                 </Link>
                 <Link href="/explore">
                   <Button
-                      variant="outline"
+                      variant="outline" 
                       className="border-[#ffac4c] border-2 text-[#ffac4c] hover:text-[#ffac4c] bg-transparent hover:bg-transparent cursor-pointer w-40">Explore Teams</Button>
                 </Link>
               </div>

@@ -119,7 +119,7 @@ export function AccountSetupComponent() {
     e.preventDefault();
     const success = await createUser(formData);
     if (success) {
-      router.push("/hackathons");
+      router.push("/home");
     }
   };
 

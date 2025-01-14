@@ -5,6 +5,8 @@ import { Hackathon } from '@/types/Hackathons'
 import { HackathonCard } from './hackathon-card'
 import { User } from '@/types/User'
 import Loading from './loading'
+import { Button } from './ui/button'
+import Link from 'next/link'
 
 interface UpcomingHackathonsProps {
   hackathons: Hackathon[]
@@ -16,9 +18,19 @@ export function UpcomingHackathons({
     userData
 }: UpcomingHackathonsProps) {
   return (
-    <Card className="bg-[#111119] text-white">
+    <Card className="w-full transition-colors bg-transparent text-white border border-gray-700">
       <CardHeader>
-        <CardTitle className="text-white">Upcoming Hackathons</CardTitle>
+        <CardTitle className="flex justify-between items-center">
+          <span>Upcoming Hackathons</span>
+          <Link href="/hackathons">
+            <Button
+              variant="outline"
+              className="border-[#ffac4c] border-2 text-[#ffac4c] hover:text-[#ffac4c] bg-transparent hover:bg-transparent cursor-pointer"
+            >
+              View All
+            </Button>
+          </Link>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-4">

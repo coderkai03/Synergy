@@ -7,6 +7,14 @@ const nextConfig = {
       // Add any other domains you need to load images from
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/backend/api/:path*',
+        destination: 'http://localhost:5000/backend/api/:path*' // Adjust port if different
+      }
+    ]
+  }
 }
 
 export default nextConfig

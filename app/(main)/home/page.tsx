@@ -13,25 +13,20 @@ import Loading from '@/components/loading'
 export default function DashboardPage() {
     const { userData } = useFirebaseUser();
     const { loading: hackathonLoading, getUpcomingHackathons } = useHackathons();
-    const { loading: teamLoading, getTeams } = useTeams();
+    const { loading: teamLoading, getTeams, checkIfUserHasTeam } = useTeams();
 
     const [userTeam, setUserTeam] = useState<Team | null>(null);
     const [upcomingHackathons, setUpcomingHackathons] = useState<Hackathon[]>([]);
 
   useEffect(() => {
-    const fetchUserTeam = async () => {
-      if (!userData) return;
-
-      const teams = await getTeams([userData.id]);
-      setUserTeam(teams[0]);
-    }
-
     const fetchUpcomingHackathons = async () => {
       const hackathons = await getUpcomingHackathons(4);
+      const teamForHackathon = await checkIfUserHasTeam(userData?.teams, hackathons[0].id);
+
+      setUserTeam(teamForHackathon ? teamForHackathon[0] : null);
       setUpcomingHackathons(hackathons);
     }
 
-    fetchUserTeam();
     fetchUpcomingHackathons();
   }, [userData]);
 
@@ -43,14 +38,17 @@ export default function DashboardPage() {
           {/* <div className="w-full">
               <h1 className="text-2xl font-bold mb-4 text-white text-left">Hey {user?.firstName} 👋</h1>
           </div> */}
-          <NextHackathon
-            userData={userData}
-            userTeam={userTeam}
-            hackathon={upcomingHackathons[0]}
-          />
-          <UpcomingHackathons
-            hackathons={upcomingHackathons}
-            userData={userData} />
+          <div className="flex flex-col gap-4">
+            <NextHackathon
+              userData={userData}
+              userTeam={userTeam}
+              hackathon={upcomingHackathons[0]}
+            />
+            <UpcomingHackathons
+              hackathons={upcomingHackathons}
+              userData={userData}
+            />
+          </div>
       </div>
     </div>
   )
