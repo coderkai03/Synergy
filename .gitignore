@@ -35,3 +35,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# mlh
+mlh-spring2025.txt
+mlh-spring2025.html
+/mlh-spring2025_files/

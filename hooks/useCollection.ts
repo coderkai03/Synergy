@@ -1,6 +1,7 @@
 import { addDoc, collection, CollectionReference, DocumentData } from 'firebase/firestore';
-import { db } from '@/firebaseConfig';
+import { db, storage } from '@/firebaseConfig';
 import { toast } from 'react-hot-toast';
+import { ref, getDownloadURL } from 'firebase/storage';
 
 export function useCollection(collectionName: string): CollectionReference<DocumentData> {
     // Check if we're in test environment
@@ -51,6 +52,12 @@ export function testLog(...args: any[]) {
   }
 }
 
+export async function fetchFile(filePath: string) {
+  const fileRef = ref(storage, filePath);
+  const downloadURL = await getDownloadURL(fileRef);
+  console.log("File URL:", downloadURL);
+  return downloadURL;
+}
 
 // Usage example:
 // const usersCollection = useCollection<User>('users');

@@ -1,5 +1,20 @@
 import { useState } from 'react';
-import { collection, getDocs, doc, getDoc, updateDoc, arrayRemove, deleteDoc, where, query, setDoc, addDoc, arrayUnion, runTransaction, orderBy, limit, startAfter } from 'firebase/firestore';
+import {
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc,
+  arrayRemove,
+  deleteDoc,
+  where,
+  query,
+  addDoc,
+  arrayUnion,
+  runTransaction,
+  orderBy,
+  limit,
+  startAfter
+} from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { Invite, Team } from '@/types/Teams';
 import { useUser } from '@clerk/nextjs';

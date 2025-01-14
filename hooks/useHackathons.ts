@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { collection, getDoc, doc, getDocs, startAfter, orderBy, query, limit, where } from '@firebase/firestore';
-import { db } from '@/firebaseConfig';
+import { useState } from 'react';
+import { getDoc, doc, getDocs, startAfter, orderBy, query, limit } from '@firebase/firestore';
 import { Hackathon } from '@/types/Hackathons';
-import { useCollection } from './useCollection';
+import { useCollection, fetchFile } from './useCollection';
 
 export function useHackathons() {
   const [loading, setLoading] = useState(false);
@@ -32,8 +31,11 @@ export function useHackathons() {
       }
 
       const hackathonsSnap = await getDocs(q);
-      const hackathons = hackathonsSnap.docs
-        .map((doc) => ({ ...doc.data(), id: doc.id } as Hackathon));
+      const hackathons = await Promise.all(hackathonsSnap.docs
+        .map(async (doc) => {
+          const imageUrl = await fetchFile(doc.data()?.image);
+          return { ...doc.data(), id: doc.id, image: imageUrl } as Hackathon;
+        }));
       console.log("Fetched: ", hackathons.map(h => h.id));
 
       // Return false if we got fewer docs than requested
@@ -53,7 +55,8 @@ export function useHackathons() {
       try {
         const hackathonRef = doc(useCollection('hackathons'), id);
         const hackathon = await getDoc(hackathonRef);
-        return {...hackathon.data(), id} as Hackathon;
+        const imageUrl = await fetchFile(hackathon.data()?.image);
+        return {...hackathon.data(), id, image: imageUrl} as Hackathon;
       } catch (err) {
         console.error("Error fetching hackathon:", err);
         return null;
@@ -68,10 +71,15 @@ export function useHackathons() {
     setLoading(true);
     const hackathons = await getDocs(useCollection('hackathons'));
     setLoading(false);
-    return hackathons.docs.map(doc => ({
-      ...doc.data(),
-      id: doc.id
-    } as Hackathon));
+    const hackathonsWithImages = await Promise.all(hackathons.docs.map(async (doc) => {
+      const imageUrl = await fetchFile(doc.data().image);
+      return {
+        ...doc.data(),
+        id: doc.id,
+        image: imageUrl
+      } as Hackathon;
+    }));
+    return hackathonsWithImages;
   }
 
   const getUpcomingHackathons = async (limitCount: number) => {
