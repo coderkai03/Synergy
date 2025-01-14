@@ -348,6 +348,34 @@ export function useTeams() {
     return !querySnapshot.empty;
   }
 
+  const checkIfUserHasTeam = async (teams: string[] | undefined, hackathonId: string) => {
+    if (!teams) return false;
+
+    setLoading(true);
+    try {
+      // Get all team docs for the user's teams
+      const teamDocs = await Promise.all(
+        teams.map(async (teamId) => {
+          const teamRef = doc(useCollection('teams'), teamId);
+          const teamDoc = await getDoc(teamRef);
+          return teamDoc.exists() ? teamDoc.data() : null;
+        })
+      );
+
+      // Filter out null values and check if any team has the hackathonId
+      const teamForHackathon = teamDocs
+        .filter((team): team is Team => team !== null)
+        .filter(team => team.hackathonId === hackathonId);
+
+      return teamForHackathon;
+    } catch (error) {
+      testLog('Error checking if user has team:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return {
     loading,
     error,
@@ -365,7 +393,8 @@ export function useTeams() {
     teamNameExists,
     updateRequests,
     updateTeamRequests,
-    teammateExists
+    teammateExists,
+    checkIfUserHasTeam
   };
 }
 

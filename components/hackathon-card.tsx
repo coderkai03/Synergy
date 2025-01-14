@@ -10,9 +10,14 @@ import SynergyLogo from "./synergy-logo";
 interface HackathonCardProps {
   hackathon: Hackathon;
   userData: User | null;
+  previewOnly: boolean;
 }
 
-export function HackathonCard({ hackathon, userData }: HackathonCardProps) {
+export function HackathonCard({
+  hackathon, 
+  userData, 
+  previewOnly
+}: HackathonCardProps) {
   const { getIconSize } = SynergyLogo();
 
   const formatDate = (dateString: string) => {
@@ -23,13 +28,13 @@ export function HackathonCard({ hackathon, userData }: HackathonCardProps) {
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#4A4A4A] border-none flex flex-col">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-[#4A4A4A] border-none flex flex-col max-w-sm">
       <CardHeader className="p-0">
         <Link 
           href={hackathon.website}
           target="_blank"
           rel="noopener noreferrer"
-          className="cursor-pointer"
+          className="cursor-pointer block h-[250px]"
         >
           {hackathon.image ? (
             <Image
@@ -37,7 +42,7 @@ export function HackathonCard({ hackathon, userData }: HackathonCardProps) {
               alt={hackathon.name}
               width={400}
               height={200}
-              className="w-full h-auto object-top rounded-t-lg hover:opacity-80 transition-opacity"
+              className="w-full h-[250px] object-cover rounded-t-lg hover:opacity-80 transition-opacity"
             />
           ) : (
             <div className="flex items-center justify-center h-[200px] w-full bg-gray-800 border border-gray-700 shadow-sm rounded-t-lg hover:opacity-80 transition-opacity">
@@ -46,7 +51,7 @@ export function HackathonCard({ hackathon, userData }: HackathonCardProps) {
           )}
         </Link>
       </CardHeader>
-      <CardContent className="grid gap-3 p-4 mt-auto">
+      <CardContent className="grid gap-2 p-4 mt-auto">
         <h3 className="text-xl font-semibold text-white line-clamp-1">
           {hackathon.name}
         </h3>
@@ -66,7 +71,7 @@ export function HackathonCard({ hackathon, userData }: HackathonCardProps) {
           )}
           {hackathon.location}
         </div>
-        <div className="mt-4 flex gap-3">
+        {!previewOnly && <div className="mt-4 flex gap-3">
           <Button 
             asChild 
             variant="outline"
@@ -84,7 +89,7 @@ export function HackathonCard({ hackathon, userData }: HackathonCardProps) {
               Explore
             </Link>
           </Button>
-        </div>
+        </div>}
       </CardContent>
     </Card>
   );
