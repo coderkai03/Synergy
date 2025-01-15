@@ -8,6 +8,7 @@ import { Team } from "@/types/Teams";
 import { User } from "@/types/User";
 import { useTeams } from "@/hooks/useTeams";
 import { useRouter } from "next/navigation";
+import { RequireProfile } from "./require-profile";
 
 interface JoinTeamDialogProps {
   team: Team;
@@ -44,14 +45,17 @@ export function JoinTeamDialog({ team, userData }: JoinTeamDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button 
-          variant={alreadyRequested ? "secondary" : "default"}
-          className="gap-2 bg-white text-black hover:bg-white"
-          disabled={alreadyRequested}
-        >
-          <UserPlus className="h-4 w-4" />
-          {alreadyRequested ? "Request Pending" : "Join Team"}
-        </Button>
+        <RequireProfile>
+          <Button
+            variant={alreadyRequested ? "secondary" : "default"}
+            className="gap-2 bg-white text-black hover:bg-white"
+            disabled={alreadyRequested}
+            onClick={() => setIsOpen(true)}
+          >
+            <UserPlus className="h-4 w-4" />
+            {alreadyRequested ? "Request Pending" : "Join Team"}
+          </Button>
+        </RequireProfile>
       </DialogTrigger>
       <DialogContent className="max-w-md bg-zinc-900 text-white">
         <DialogHeader>

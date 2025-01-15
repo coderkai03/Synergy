@@ -1,25 +1,29 @@
 import { Search } from 'lucide-react';
 import { Button } from './ui/button';
-import SynergyLogo from './synergy-logo';
 import Link from 'next/link';
+import { RequireProfile } from './require-profile';
 
 export default function NoTeams() {
-  const { getIconSize } = SynergyLogo();
-  
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] bg-[#111119]">
-      <div className="flex text-xl my-10 sm:text-xl font-bold text-white leading-none">
-        {getIconSize('lg')} ucks to be solo...
-      </div>
-    <div className="flex gap-4 justify-center">
+      <div className="flex flex-col gap-4 items-center justify-center h-full">
+        <p className="text-lg text-white text-center">
+          You don&apos;t have any teams yet.
+        </p>
         <Link href="/explore">
-            <Button variant="outline" className="gap-2 text-black text-lg">
-                <Search className="w-4 h-4" /> Explore Teams
-            </Button>
+          <Button className="bg-amber-500 hover:bg-amber-600 text-white w-40">
+            <Search className="w-4 h-4 mr-2" /> Explore Teams
+          </Button>
         </Link>
-    </div>
-      <div className="flex text-xl my-10 sm:text-xl font-bold text-white leading-none">
-        ...or create one!
+        <RequireProfile>
+          <Link href="/teams/create">
+            <Button
+              variant="outline"
+              className="border-[#ffac4c] border-2 text-[#ffac4c] hover:text-[#ffac4c] bg-transparent hover:bg-transparent cursor-pointer w-40">
+              Create Team
+            </Button>
+          </Link>
+        </RequireProfile>
       </div>
     </div>
   );

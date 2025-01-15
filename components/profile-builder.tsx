@@ -14,6 +14,7 @@ import { useUser } from "@clerk/nextjs";
 import { defaultUser, User } from "@/types/User";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import NotFound from "./not-found";
+import { testLog } from "@/hooks/useCollection";
 
 export function ProfileBuilder() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export function ProfileBuilder() {
     setIsLoading(true);
     try {
       const username = link.split("/")[3];
-      console.log("Attempting to fetch for username:", username);
+      testLog("Attempting to fetch for username:", username);
       
       const response = await fetch('/backend/api/generate-profile', {
         method: 'POST',
@@ -49,7 +50,7 @@ export function ProfileBuilder() {
       }
 
       const data = await response.json();
-      console.log("Generated Profile:", data);
+      testLog("Generated Profile:", data);
       return data;
     } catch (error) {
       console.error("Error generating profile:", error);

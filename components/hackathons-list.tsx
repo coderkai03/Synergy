@@ -12,6 +12,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import Loading from "./loading";
 import NotFound from "./not-found";
+import { HackathonGrid } from "./hackathon-grid";
 
 export function HackathonsListComponent() {
   //currently pulling from constants, will need to pull from database
@@ -83,7 +84,7 @@ export function HackathonsListComponent() {
   return (
     <div className="min-h-screen bg-[#111119] p-4">
       {/* Hero Section */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 max-w-6xl">
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -150,18 +151,10 @@ export function HackathonsListComponent() {
           </DropdownMenu>
         </div>
 
-        {/* Hackathon Grid */}
-        <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-4">
-          {filteredHackathons.map((hackathon) => (
-            <div key={hackathon.id}>
-              <HackathonCard
-                hackathon={hackathon}
-                userData={userData}
-                previewOnly={false}
-              />
-            </div>
-          ))}
-        </div>
+        <HackathonGrid
+          hackathons={filteredHackathons}
+          userData={userData}
+        />
       </main>
     </div>
   );

@@ -1,6 +1,7 @@
 import { Team } from "@/types/Teams";
 import { Hackathon } from "@/types/Hackathons";
 import { TeamPreview } from "@/components/team-preview";
+import { testLog } from "@/hooks/useCollection";
 
 interface TeamListSectionProps {
   teams: Team[];
@@ -11,6 +12,7 @@ export function TeamListSection({
   teams,
   hackathons,
 }: TeamListSectionProps) {
+  testLog("TeamListSection", teams, hackathons);
 
   return (
     <div className="my-4">

@@ -10,6 +10,7 @@ import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { useEffect, useState } from "react";
 import { useTeams } from "@/hooks/useTeams";
 import { toast } from "react-hot-toast";
+import { testLog } from "@/hooks/useCollection";
 
 interface RequestsDialogProps {
   teamId: string;
@@ -30,7 +31,7 @@ export function RequestsDialog({
   const [requestUsers, setRequestUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    console.log('requests', requests);
+    testLog('requests', requests);
     const fetchUsers = async () => {
       if (!requests.length) return;
       const users = await getUsers(requests);

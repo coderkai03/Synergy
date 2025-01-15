@@ -91,6 +91,7 @@ export function AccountSetupComponent() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    testLog(`Field: ${e.target.name}, Value: ${e.target.value}`);
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -98,6 +99,7 @@ export function AccountSetupComponent() {
   };
 
   const handleSelectChange = (field: string) => (value: string) => {
+    testLog(`Field: ${field}, Value: ${value}`);
     setFormData({
       ...formData,
       [field]: value,
@@ -158,6 +160,7 @@ export function AccountSetupComponent() {
                           className="bg-zinc-700 border-amber-500/50" 
                           value={formData.firstName}
                           onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                          required
                         />
                       </div>
                       <div className="space-y-2">
@@ -167,6 +170,7 @@ export function AccountSetupComponent() {
                           className="bg-zinc-700 border-amber-500/50" 
                           value={formData.lastName}
                           onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                          required
                         />
                       </div>
                     </div>
@@ -329,6 +333,7 @@ export function AccountSetupComponent() {
                           name="hackathonsAttended"
                           value={formData.number_of_hackathons}
                           onValueChange={handleSelectChange("number_of_hackathons")}
+                          required
                         >
                           <SelectTrigger className="bg-zinc-700 border-amber-500/50">
                             <SelectValue placeholder="Select number of hackathons" />
@@ -377,20 +382,16 @@ export function AccountSetupComponent() {
                       type="submit" 
                       className="bg-amber-500 hover:bg-amber-600"
                       disabled={
-                        currentSection === 4 && (
-                        !formData.firstName || 
-                        !formData.lastName ||
-                        !formData.school ||
-                        !formData.major ||
-                        !formData.number_of_hackathons ||
-                        !formData.devpost ||
-                        !formData.github ||
-                        !formData.technologies.length ||
-                        !formData.category_experience.length ||
-                        !formData.role_experience ||
-                        Object.values(formData.role_experience || {}).some(value => value === -1)
-                      )
-                    }
+                        (currentSection === 0 && (!formData.firstName || !formData.lastName || !formData.bio)) ||
+                        (currentSection === 1 && (!formData.school || !formData.major)) ||
+                        // (currentSection === 2 && (!formData.technologies.length || !formData.category_experience.length)) ||
+                        (currentSection === 3 && (!formData.devpost || !formData.github || !formData.linkedin)) ||
+                        (currentSection === 4 && (
+                          !formData.number_of_hackathons ||
+                          !formData.role_experience ||
+                          Object.values(formData.role_experience || {}).some(value => value === -1)
+                        ))
+                      }
                     >
                       {currentSection === 4 ? "Finish" : "Next"}
                     </Button>

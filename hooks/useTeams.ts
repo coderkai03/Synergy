@@ -24,7 +24,7 @@ import { useCollection, testLog } from './useCollection';
 export function useTeams() {
   const { user } = useUser()
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const getUserTeams = async () => {
@@ -381,6 +381,7 @@ export function useTeams() {
       const teamForHackathon = teamDocs
         .filter((team): team is Team => team !== null)
         .filter(team => team.hackathonId === hackathonId);
+      testLog("teamForHackathon: ", teamForHackathon);
 
       return teamForHackathon;
     } catch (error) {

@@ -62,10 +62,10 @@ export async function fetchFile(filePath: string) {
   const fileRef = ref(storage, processedPath);
   try {
     const downloadURL = await getDownloadURL(fileRef);
-    console.log("File URL:", downloadURL);
+    testLog("File URL:", downloadURL);
     return downloadURL;
   } catch (error) {
-    console.log("File not found, using original path");
+    testLog("File not found, using original path");
     return await getDownloadURL(ref(storage, filePath));
   }
 }

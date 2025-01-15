@@ -10,6 +10,8 @@ import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Team } from "@/types/Teams";
 import Loading from "@/components/loading";
 import NotFound from "@/components/not-found";
+import { RequireProfile } from "@/components/require-profile";
+import Link from "next/link";
 
 export default function ExplorePage() {
   const PAGE_LIMIT = 8;
@@ -83,12 +85,13 @@ export default function ExplorePage() {
         </div>
 
         {/* Pagination Controls */}
-        <div className="flex items-center justify-between pt-4">
-          <Button
-            onClick={handlePrevPage}
-            disabled={currentPage <= 1}
-            variant="outline"
-            className="bg-zinc-800/50 text-white"
+        {paginatedTeams.length > 0 ? (
+          <div className="flex items-center justify-between pt-4">
+            <Button
+              onClick={handlePrevPage}
+              disabled={currentPage <= 1}
+              variant="outline"
+              className="bg-zinc-800/50 text-white"
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
             Previous
@@ -106,13 +109,24 @@ export default function ExplorePage() {
           >
             Next
             <ChevronRight className="h-4 w-4 ml-2" />
-          </Button>
-        </div>
-
-        {/* No Results */}
-        {filteredTeams.length === 0 && (
+            </Button>
+          </div>
+        ) : (
           <div className="text-center text-zinc-400 py-8">
-            No teams found matching your search.
+            No teams yet!
+            <br />
+            Check later or create your own.
+            <br />
+            <RequireProfile>
+              <Link href="teams/create">
+                <Button
+                  variant="default"
+                  className="mt-4 gap-2 bg-white text-black hover:bg-white"
+                >
+                  Create Team
+                </Button>
+              </Link>
+            </RequireProfile>
           </div>
         )}
       </main>

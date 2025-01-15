@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Hackathon } from '@/types/Hackathons'
-import { HackathonCard } from './hackathon-card'
+import { HackathonGrid } from './hackathon-grid'
 import { User } from '@/types/User'
 import { Button } from './ui/button'
 import Link from 'next/link'
@@ -32,17 +32,11 @@ export function UpcomingHackathons({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-4">
-          {hackathons ? hackathons.map((hackathon) => (
-            <div key={hackathon.id}>
-              <HackathonCard
-                hackathon={hackathon}
-                userData={userData}
-                previewOnly={false}
-                />
-            </div>
-          )) : <div>Loading...</div>}
-        </div>
+        {hackathons ? (
+          <HackathonGrid hackathons={hackathons} userData={userData} />
+        ) : (
+          <div>Loading...</div>
+        )}
       </CardContent>
     </Card>
   )

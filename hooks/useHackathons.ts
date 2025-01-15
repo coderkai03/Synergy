@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from 'react';
-import { getDoc, doc, getDocs, startAfter, orderBy, query, limit } from '@firebase/firestore';
+import { getDoc, doc, getDocs, startAfter, orderBy, query, limit, where } from '@firebase/firestore';
 import { Hackathon } from '@/types/Hackathons';
-import { useCollection, fetchFile } from './useCollection';
+import { useCollection, fetchFile, testLog } from './useCollection';
 
 export function useHackathons() {
   const [loading, setLoading] = useState(false);
@@ -16,14 +16,14 @@ export function useHackathons() {
       
       if (lastHackathonId) {
         const lastHackathonDoc = await getDoc(doc(hackathonsRef, lastHackathonId));
-        console.log(`Last doc after ${lastHackathonId}: `, lastHackathonDoc);
+        testLog(`Last doc after ${lastHackathonId}: `, lastHackathonDoc);
         q = query(hackathonsRef, 
           orderBy('date', 'desc'),
           startAfter(lastHackathonDoc), 
           limit(limitCount)
         );
       } else {
-        console.log("Last doc [no id]: ");
+        testLog("Last doc [no id]: ");
         q = query(hackathonsRef, 
           orderBy('date', 'desc'),
           limit(limitCount)
@@ -36,7 +36,7 @@ export function useHackathons() {
           const imageUrl = await fetchFile(doc.data()?.image);
           return { ...doc.data(), id: doc.id, image: imageUrl } as Hackathon;
         }));
-      console.log("Fetched: ", hackathons.map(h => h.id));
+      testLog("Fetched: ", hackathons.map(h => h.id));
 
       // Return false if we got fewer docs than requested
       const hasMore = hackathons.length >= limitCount;
@@ -85,17 +85,15 @@ export function useHackathons() {
   const getUpcomingHackathons = async (limitCount: number) => {
     try {
       const allHackathons = await getAllHackathons();
-      const now = new Date();
-      
+            
       const upcomingHackathons = allHackathons
-        .filter(h => new Date(h.date) >= now)
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
         .slice(0, limitCount);
 
-      console.log("upcoming hackathons: ", upcomingHackathons.map(h => h.id));
+      testLog("upcoming hackathons: ", upcomingHackathons.map(h => h.id));
 
       if (upcomingHackathons.length === 0) {
-        console.log("No upcoming hackathons found");
+        testLog("No upcoming hackathons found");
         return [];
       }
 

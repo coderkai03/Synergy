@@ -54,7 +54,7 @@ export function TeamPreview({ team }: TeamPreviewProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-row justify-between items-center">
+          <div className="flex flex-row justify-between items-center gap-8">
             <div className="flex flex-col space-y-2">
               <div className="flex items-center space-x-2">
                 <Users className="w-4 h-4 text-gray-400" />
