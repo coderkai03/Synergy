@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { useHackathons } from "@/hooks/useHackathons";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { Hackathon } from "@/types/Hackathons";
-import { HackathonCard } from "@/components/hackathon-card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import Loading from "./loading";

@@ -15,7 +15,6 @@ import { RequireProfile } from "@/components/require-profile"
 import Loading from "@/components/loading"
 import NoTeams from "@/components/no-teams"
 import { testLog } from "@/hooks/useCollection";
-import Link from "next/link";
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()
