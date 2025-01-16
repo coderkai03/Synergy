@@ -384,7 +384,7 @@ export function AccountSetupComponent() {
                       disabled={
                         (currentSection === 0 && (!formData.firstName || !formData.lastName || !formData.bio)) ||
                         (currentSection === 1 && (!formData.school || !formData.major)) ||
-                        // (currentSection === 2 && (!formData.technologies.length || !formData.category_experience.length)) ||
+                        (currentSection === 2 && (!formData.technologies.length || !formData.category_experience.length)) ||
                         (currentSection === 3 && (!formData.devpost || !formData.github || !formData.linkedin)) ||
                         (currentSection === 4 && (
                           !formData.number_of_hackathons ||
