@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { getDoc, doc, getDocs, startAfter, orderBy, query, limit, where } from '@firebase/firestore';
 import { Hackathon } from '@/types/Hackathons';
-import { useCollection, fetchFile, testLog } from './useCollection';
+import { useCollection, testLog } from './useCollection';
 
 export function useHackathons() {
   const [loading, setLoading] = useState(false);
@@ -33,8 +33,7 @@ export function useHackathons() {
       const hackathonsSnap = await getDocs(q);
       const hackathons = await Promise.all(hackathonsSnap.docs
         .map(async (doc) => {
-          const imageUrl = await fetchFile(doc.data()?.image);
-          return { ...doc.data(), id: doc.id, image: imageUrl } as Hackathon;
+          return { ...doc.data(), id: doc.id } as Hackathon;
         }));
       testLog("Fetched: ", hackathons.map(h => h.id));
 
@@ -55,8 +54,7 @@ export function useHackathons() {
       try {
         const hackathonRef = doc(useCollection('hackathons'), id);
         const hackathon = await getDoc(hackathonRef);
-        const imageUrl = await fetchFile(hackathon.data()?.image);
-        return {...hackathon.data(), id, image: imageUrl} as Hackathon;
+        return {...hackathon.data(), id} as Hackathon;
       } catch (err) {
         console.error("Error fetching hackathon:", err);
         return null;
@@ -72,11 +70,9 @@ export function useHackathons() {
     const hackathons = await getDocs(useCollection('hackathons'));
     setLoading(false);
     const hackathonsWithImages = await Promise.all(hackathons.docs.map(async (doc) => {
-      const imageUrl = await fetchFile(doc.data().image);
       return {
         ...doc.data(),
         id: doc.id,
-        image: imageUrl
       } as Hackathon;
     }));
     return hackathonsWithImages;

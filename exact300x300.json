@@ -1,0 +1,788 @@
+[
+  {
+    "hackathonName": "Global Hack Week: Beginners",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/152/thumb/IG.jpg?1728563412",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Goat Hacks 2025",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/193/thumb/hacktheworld_square.jpeg?1733114054",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hackville",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/196/thumb/mlh_thumbnail.png?1733866424",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "UofTHacks 12",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/199/thumb/DevPost_Banner.png?1734964150",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "uOttaHack 7",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/191/thumb/Background.png?1733112182",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack BI",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/197/thumb/HackBI_Cardinal_Originalish.png?1734969525",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "nwHacks 2025",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/030/thumb/MLH_Thumbnail_1.png?1733156791",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hoya Hacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/025/thumb/HH25_%281%29.png?1719525582",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "QHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/029/thumb/QHacks_New_Backsplash.png?1720470332",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "SwampHacks X",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/213/thumb/SH_Backsplash_01.png?1734727819",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "McHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/190/thumb/McHacks_12_background.png?1732577229",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Rose Hack 2025",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/045/thumb/banner.png?1736361279",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "TAMUhack",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/247/thumb/Frame_2.png?1736267668",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack@Davidson",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/208/thumb/_2025_in_the_middle_logo_for_hackDavidson.png?1733152395",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "InnovateHer",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/206/thumb/innovateher.PNG?1733152176",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Rice Datathon 2025",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/205/thumb/2025_big_desktop_logo.png?1733151967",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "ConUHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/064/thumb/background.png?1732654152",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack@Brown",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/203/thumb/image_%286%29.png?1733433774",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackRU",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/212/thumb/hrulogo_2.png?1733152796",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackViolet",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/248/thumb/HackViolet-Logo-Background__2_.png?1736346797",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "UTRA Hacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/249/thumb/Screen_Shot_2025-01-10_at_1.10.24_PM.png?1736543712",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "FemmeHacks 2025",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/228/thumb/600x200_%281%29.jpg?1736143886",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Global Hack Week: AI/ML",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/189/thumb/devpost_icon.jpg?1731520122",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "TartanHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/227/thumb/Screenshot_2025-01-13_at_3.26.37%E2%80%AFPM.png?1736800014",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "UGAHacks X",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/049/thumb/UHX_banner_300x300.png?1719921194",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "WiNGHacks 2025",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/218/thumb/Screenshot_2024-12-03_154904.png?1734618461",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackHERS 2025",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/221/thumb/Screenshot_2024-12-19_at_2.39.22%E2%80%AFPM.png?1734637240",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack_NCState",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/220/thumb/Screenshot_2024-12-19_at_2.32.21%E2%80%AFPM.png?1734636848",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackNYU",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/226/thumb/Screenshot_2025-01-03_at_3.31.22%E2%80%AFPM.png?1735936395",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackTU",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/243/thumb/MLH_Web_Banner.png?1736345954",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "ElleHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/223/thumb/Event_Backsplash_-_300x300px_-_ElleHacks.png?1735831232",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack(H)er413",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/051/thumb/Hac_H_er413_Backdrop_2024.png?1720005489",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hacklahoma",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/250/thumb/Screenshot_2025-01-15_at_3.16.04%E2%80%AFPM.png?1736972186",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Pearl Hacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/225/thumb/ph24_mini.png?1735935419",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Code Kshetra 2.0",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/222/thumb/MLH_Poster.png?1734962544",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hacklytics",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/056/thumb/Hacklytics_2025_MLH_Card_%281%29.png?1730754208",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "BrickHack 11",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/240/thumb/brickhack-square-bg.png?1736372229",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hackhound 3.O",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/244/thumb/social-hackhound-3.0__1_.png?1736178517",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HenHacks Hackathon",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/216/thumb/backsplash_%282%29.png?1733849806",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "RevolutionUC",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/063/thumb/REVUC_logo.png?1736205235",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Global Hack Week: Cloud",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/217/thumb/devpost_icon.jpg?1734546771",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "cmd-f 2025",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/035/thumb/Thumbnail_%281%29.png?1719253879",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "cuHacking",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/031/thumb/cuHacking_Logo_green.png?1733874586",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack This Fall 2025",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/192/thumb/backsplash.jpg?1732871423",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack Kosice",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/214/thumb/HK-background-MLH_%281%29.png?1733425069",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackKU",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/033/thumb/hackku_mlh_backsplash.png?1719531193",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "WEHack",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/032/thumb/23_24Logo_%282%29_%281%29.jpg?1719018915",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "AI Hackfest",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/215/thumb/devpost-thumbnail.jpg?1733842025",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Bitcamp 2025",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/061/thumb/bitcamp2025.jpeg?1720115387",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hacktech by Caltech",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/187/thumb/resized_%281%29.png?1731080191",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack Your Portfolio",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/020/thumb/devpost-thumbnail.png?1717692894",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack the 6ix",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/069/thumb/HT6_-_MHL_Banner_%282%29.png?1721054652",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Global Hack Week: AI/ML",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/022/thumb/devpost_icon.jpg?1718704540",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Global Hack Week: Cloud",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/023/thumb/devpost_icon.jpg?1718704618",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack the North",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/042/thumb/Banner_-_Square-_HTN2024.png?1719462966",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HopHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/057/thumb/HopHacks_Backsplash.png?1720108442",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "VTHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/028/thumb/bg.png?1718998139",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackMTY",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/067/thumb/Screenshot_2024-07-05_at_11.00.22%E2%80%AFPM.png?1720200640",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack The Mountains 5.0",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/027/thumb/Cover_Photo_%28MLH%29_300x300px.png?1718988613",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackWesTX",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/112/thumb/background_%281%29.png?1722608569",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackRice 14",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/039/thumb/IMG_1282.png?1719525009",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "PennApps",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/036/thumb/Group_3_%281%29.png?1719258394",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackGT 11",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/066/thumb/sq2.png?1727199601",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackTheSpace Season 2",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/104/thumb/MLH_Event_Background_300_x_300.png?1722597987",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "ShellHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/037/thumb/Banner_for_MLH.png?1721315006",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "TechNova",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/060/thumb/technova_backsplash.png?1720113300",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "GirlHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/055/thumb/GH24-MLH-BG.png?1721148941",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "hackUMBC",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/111/thumb/hackText24.f354d43fdc658e95656d_%282%29.png?1724175456",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "MHacks 2024",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/131/thumb/site-bg.png?1727107767",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "SteelHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/110/thumb/background-square_1.png?1722608365",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "sunhacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/105/thumb/Banner.png?1723685236",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "VandyHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/107/thumb/pNGjIWqy_400x400.jpg?1722608152",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "IdeaHack!",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/127/thumb/Screenshot_2024-09-29_075825.png?1727611123",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "BigRed//Hacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/123/thumb/brh-logo-CpBFz43O.png?1725773944",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Global Hack Week: Open Source",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/114/thumb/devpost_icon.jpg?1724255880",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack the Valley",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/125/thumb/Change_the_colors___Add_your_logo___3__%281%29.png?1725774439",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Knight Hacks VII",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/048/thumb/backsplash_%281%29.png?1719904216",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "YHack",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/124/thumb/4oUN6_V-_400x400.jpg?1725774266",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "DivHacks 2024: Tech for Social Good",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/044/thumb/Updated_Backsplash.png?1720013756",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackSMU VI",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/040/thumb/MainLogo_%281%29.png?1719461835",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Owlhacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/113/thumb/IMG_1399_%281%29.png?1724099960",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "StormHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/122/thumb/stormhacks_logo.png?1727571679",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackHarvard",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/128/thumb/HackHarvard_2024_Hack_4_Impact.png?1725774720",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Open Source Hackfest",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/070/thumb/devpost-thumbnail.jpg?1727156554",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "DubHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/038/thumb/Cover_-_MLH.png?1719524466",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack Dearborn 3",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/041/thumb/backsplash_mlh_hd3.png?1719462062",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackPSU",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/118/thumb/HackPSU_Fall_Logo_2024_%281%29.png?1726686946",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackUTA 2024",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/065/thumb/HackUTA_backsplash.jpg?1720191148",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "BYU-I-HACK",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/126/thumb/ihack.c73f7b0dfdaa204eaf03.png?1725774532",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Cal Hacks 11.0",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/117/thumb/Screenshot_2024-10-09_at_10.04.25%E2%80%AFAM.png?1728493482",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Make-A-Ton 7.0",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/130/thumb/MLH_Backsplash.png?1725905611",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "AI ATL",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/119/thumb/AI_ATL_MLH_Background.jpg?1726000632",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackRU",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/116/thumb/main_asset_dark_mode.png?1725547818",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackUNT",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/129/thumb/HackUNT_BackSplash.png?1725774797",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "NewHacks 2024",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/058/thumb/newhacks__with_backsplash_.png?1720109703",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "RowdyHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/120/thumb/Screenshot_2024-10-15_at_11.53.57%E2%80%AFAM.png?1729018483",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Technica",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/059/thumb/hero_img_no_chara_1.png?1720111515",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "TigerHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/150/thumb/tigerhackslogo.png?1728316816",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "YCP Hacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/148/thumb/fountainWhite_%281%29.png?1729690154",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "BostonHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/140/thumb/Backsplash%28300x300%29.png?1729005753",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "DurHack",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/034/thumb/DurHack_logo__with_background.png?1729858500",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HACK.COMS",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/133/thumb/hack.coms_small.png?1729710862",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackNC",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/151/thumb/Screenshot_2024-10-09_at_9.54.02%E2%80%AFAM.png?1728492858",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackNJIT 2024",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/142/thumb/hatguy3.eb8e6a15.png?1728314709",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackTX",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/141/thumb/Logo_-_Solid.png?1728314639",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Global Hack Week: Career",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/115/thumb/devpost_icon.jpg?1724330231",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack K-State",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/149/thumb/Screenshot_2024-10-16_at_9.32.28%E2%80%AFAM.png?1729096446",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackPrinceton Fall 2024",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/136/thumb/HACKHEIST_hacker.png?1728314319",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack This Fall 2024 (Virtual)",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/043/thumb/backsplash.png?1719495752",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack Trent",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/135/thumb/application-logo.ad0a9ec6f844c6d7af58.png?1729614783",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackUMass XII",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/052/thumb/300x300.png?1720108643",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "UniHack 6",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/047/thumb/UniHack_BackSplash_LOGO.png?1719534842",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "GreatUniHack",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/054/thumb/mlh_backsplash.png?1720441522",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "hackCBS",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/050/thumb/Backsplash_7.0.png?1719990363",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackRPI",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/068/thumb/2-_2024_Main_Event_Image_%28300_x_300_px%29.png?1726580552",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "MadHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/134/thumb/logo.BwvVz107_1IMNFG.png?1728052808",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "TAMU Datathon",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/145/thumb/banner_%281%29.png?1729690443",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "UB Hacking",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/138/thumb/1_%281%29.png?1729809841",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "WHACK (Wellesley College Hackathon)",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/146/thumb/whack-2.png?1728316393",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "DandyHacks '24",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/147/thumb/mlh_banner.PNG?1728316526",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackSheffield 9",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/139/thumb/Diamond.jpeg?1730381550",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "HackUTD",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/046/thumb/mlh_title_smol.jpg?1719532169",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "WesHack",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/144/thumb/weshack-mlh-poster.png?1729007020",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hack Western 11",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/062/thumb/Hack-Western-Logo.png?1720189590",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Global Hack Week: Data",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/153/thumb/IG.jpg?1728917585",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "PEC Hacks 2.0",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/186/thumb/banner_300x300.png?1730224175",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Hacks for Hackers",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/071/thumb/devpost-thumbnail.jpg?1721824504",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "Semicolon",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/201/thumb/Backsplash.png?1733153370",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "SheHacks+",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/198/thumb/Screenshot_2025-01-08_at_4.54.51%E2%80%AFPM.png?1736373426",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "DeltaHacks",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/188/thumb/LOGOS_dh_11_%28with_tiny_dinos%29.png?1731343811",
+    "width": 300,
+    "height": 300
+  },
+  {
+    "hackathonName": "SB Hacks XI",
+    "src": "https://s3.amazonaws.com/assets.mlh.io/events/splashes/000/213/211/thumb/Twitter_Banner.png?1733433684",
+    "width": 300,
+    "height": 300
+  }
+]

@@ -41,12 +41,12 @@ export function HackathonCard({
             <Image
               src={hackathon.image}
               alt={hackathon.name}
-              width={400}
+              width={200}
               height={200}
               className="w-full h-[200px] object-cover rounded-t-lg hover:opacity-80 transition-opacity"
             />
           ) : (
-            <div className="flex items-center justify-center h-[150px] w-full bg-gray-800 border border-gray-700 shadow-sm rounded-t-lg hover:opacity-80 transition-opacity">
+            <div className="flex items-center justify-center h-[200px] w-full bg-gray-800 border border-gray-700 shadow-sm rounded-t-lg hover:opacity-80 transition-opacity">
               {getIconSize('xl')}
             </div>
           )}
