@@ -26,6 +26,23 @@ export function HackerPreview({ user }: HackerPreviewProps) {
                 <h3 className="font-medium">{user.firstName} {user.lastName}</h3>
                 <p className="text-sm text-gray-300">{user.school} • {user.major}</p>
                 <p className="text-sm text-gray-300">{user.number_of_hackathons} Hackathons Attended</p>
+                <div className="flex gap-2 mt-1">
+                  {user.linkedin && (
+                    <a href={user.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">
+                      LinkedIn
+                    </a>
+                  )}
+                  {user.github && (
+                    <a href={user.github} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300">
+                      GitHub
+                    </a>
+                  )}
+                  {user.devpost && (
+                    <a href={user.devpost} target="_blank" rel="noopener noreferrer" className="text-teal-400 hover:text-teal-300">
+                      Devpost
+                    </a>
+                  )}
+                </div>
             </div>
             </div>
 
