@@ -1,6 +1,6 @@
 import toast from 'react-hot-toast';
 import { useCollection, testLog } from './useCollection';
-import { addDoc, where, query, getDocs } from 'firebase/firestore';
+import { setDoc, doc, getDoc } from 'firebase/firestore';
 
 export function useMatchRequests() {
   const matchRequestsCollection = useCollection('matchRequests');
@@ -8,14 +8,17 @@ export function useMatchRequests() {
   const createMatchRequest = async (userId: string, hackathonId: string) => {
     try {
       const matchRequest = {
-        userId,
-        hackathonId,
-        timestamp: new Date(),
+        users: {
+          [userId]: {
+            status: 'pending',
+            timestamp: new Date()
+          }
+        }
       };
 
-      const docRef = await addDoc(matchRequestsCollection, matchRequest);
-      testLog('Match request created with ID:', docRef.id);
-      return docRef.id;
+      await setDoc(doc(matchRequestsCollection, hackathonId), matchRequest, { merge: true });
+      testLog('Match request created for hackathon:', hackathonId);
+      return hackathonId;
     } catch (error) {
       testLog('Error creating match request:', error);
       throw error;
@@ -24,13 +27,10 @@ export function useMatchRequests() {
 
   const checkIfPendingRequest = async (userId: string, hackathonId: string) => {
     try {
-      const querySnapshot = await getDocs(query(
-        matchRequestsCollection,
-        where('userId', '==', userId),
-        where('hackathonId', '==', hackathonId)
-      ));
+      const docRef = doc(matchRequestsCollection, hackathonId);
+      const docSnap = await getDoc(docRef);
 
-      if (!querySnapshot.empty) {
+      if (docSnap.exists() && docSnap.data().users?.[userId]?.status === 'pending') {
         const now = new Date();
         const nextEightAM = new Date();
         nextEightAM.setHours(8, 0, 0, 0);
