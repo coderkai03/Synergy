@@ -258,7 +258,7 @@ function TeamMemberCard({ teammate, isHost }: {
             <p className="font-semibold text-white">
               {teammate.firstName} {teammate.lastName}
             </p>
-            <p className="text-sm text-gray-300">{teammate.email}</p>
+            {/* <p className="text-sm text-gray-300">{teammate.email}</p> */}
           </div>
           {isHost && (
             <Crown className="ml-auto w-5 h-5 text-yellow-500" />
