@@ -81,7 +81,7 @@ export default function HackathonTeamsScreen() {
           <div className="flex gap-4">
             <RequireProfile>
               <Button variant="outline" onClick={() => router.push('/teams/create')} className="gap-2 text-black">
-                <Plus className="w-4 h-4" /> Create Team
+                <Plus className="w-4 h-4" /> Form Team
               </Button>
             </RequireProfile>
             <InviteDialog

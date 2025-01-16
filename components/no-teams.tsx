@@ -20,7 +20,7 @@ export default function NoTeams() {
             <Button
               variant="outline"
               className="border-[#ffac4c] border-2 text-[#ffac4c] hover:text-[#ffac4c] bg-transparent hover:bg-transparent cursor-pointer w-40">
-              Create Team
+              Form Team
             </Button>
           </Link>
         </RequireProfile>

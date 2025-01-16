@@ -14,6 +14,7 @@ export function useCollection(collectionName: string): CollectionReference<Docum
     'teams': 'testTeams',
     'posts': 'testPosts',
     'hackathons': 'hackathons', // static collection name; no test equivalent
+    'matchRequests': 'testMatchRequests',
     // Add more collections as needed
   };
 

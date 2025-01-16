@@ -80,7 +80,7 @@ export function HackathonCard({
               className="flex-1 bg-[#4A4A4A] border-[#ffac4c] border-2 text-[#ffac4c] hover:bg-[#FFAD08]/10 hover:text-[#ffac4c] font-bold"
             >
               <Link href={userData ? `/teams/create${hackathon.id ? `?hackathonId=${hackathon.id}` : ''}` : '/account-setup'}>
-                Create Team
+                Form Team
               </Link>
             </Button>
           </RequireProfile>

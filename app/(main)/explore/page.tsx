@@ -123,7 +123,7 @@ export default function ExplorePage() {
                   variant="default"
                   className="mt-4 gap-2 bg-white text-black hover:bg-white"
                 >
-                  Create Team
+                  Form Team
                 </Button>
               </Link>
             </RequireProfile>
