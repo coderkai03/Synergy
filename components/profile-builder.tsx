@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,8 +19,9 @@ import { testLog } from "@/hooks/useCollection";
 export function ProfileBuilder() {
   const router = useRouter();
   const { user } = useUser();
-  const { userData, createUser, loading: userLoading } = useFirebaseUser();
+  const { getUserData, createUser, loading: userLoading } = useFirebaseUser();
 
+  const [userData, setUserData] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<User>({
     ...defaultUser,
@@ -28,6 +29,17 @@ export function ProfileBuilder() {
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
   });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!user) return;
+      const userData = await getUserData(user.id);
+      
+      if (!userData) return;
+      setUserData(userData);
+    };
+    fetchUserData();
+  }, [user]);
 
   const getHackerProfile = async (link: string) => {
     setIsLoading(true);
@@ -63,10 +75,11 @@ export function ProfileBuilder() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!userData) return;
     try {
       const data = await getHackerProfile(formData.github);
       setFormData({...formData, ...data});
-      const success = await createUser(formData);
+      const success = await createUser(formData, userData);
       if (success) {
         router.push("/home");
       }

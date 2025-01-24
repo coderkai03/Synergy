@@ -55,7 +55,10 @@ export default function Navbar() {
                                 <User className="h-5 w-5" />
                             </button>
                         </DropdownMenu.Trigger>
-                        <DropdownMenu.Content className="mt-2 w-32 space-y-2 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2" align="end">
+                        <DropdownMenu.Content className="mt-2 w-48 space-y-2 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2" align="end">
+                            <div className="px-2 py-1 text-sm text-zinc-400">
+                                Hey, {user?.firstName}
+                            </div>
                             <DropdownMenu.Item asChild>
                                 <Link 
                                     href="/account-setup"

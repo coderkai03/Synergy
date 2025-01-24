@@ -12,24 +12,52 @@ import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import Loading from "./loading";
 import NotFound from "./not-found";
 import { HackathonGrid } from "./hackathon-grid";
+import { User } from "@/types/User";
+import { useUser } from "@clerk/nextjs";
+import { testLog } from "@/hooks/useCollection";
 
 export function HackathonsListComponent() {
-  //currently pulling from constants, will need to pull from database
+  const { user } = useUser();
+
   const { getAllHackathons, loading: hackathonLoading } = useHackathons();
-  const { userData, loading: userLoading } = useFirebaseUser();
+  const { getUserData, loading: userLoading } = useFirebaseUser();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("all");
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userData, setUserData] = useState<User | null>(null);
 
   useEffect(() => {
-    const fetchHackathons = async () => {
-      const hackathons = await getAllHackathons();
-      setHackathons(hackathons);
+    const fetchUserData = async () => {
+      testLog('Fetching user data');
+      if (!user) return;
+      const userData = await getUserData(user.id);
+      testLog('User data fetched:', userData);
+
+      if (!userData) return;
+      setUserData(userData);
     };
+    fetchUserData();
+  }, [user]);
+
+  // Fetch hackathons only once on mount
+  useEffect(() => {
+    const fetchHackathons = async () => {
+      try {
+        setIsLoading(true);
+        const fetchedHackathons = await getAllHackathons();
+        setHackathons(fetchedHackathons);
+      } catch (error) {
+        console.error('Failed to fetch hackathons:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchHackathons();
-  }, []);
+  }, []); // Empty dependency array means this only runs once on mount
 
   // Simple function to filter hackathons by date
   const getActiveHackathons = (hackathons: Hackathon[]) => {
@@ -64,19 +92,11 @@ export function HackathonsListComponent() {
   const activeHackathons = getActiveHackathons(hackathons);
   const filteredHackathons = filterHackathons(activeHackathons);
 
-  if (
-    userLoading ||
-    hackathonLoading
-  ) {
+  if (isLoading || userLoading || hackathonLoading) {
     return <Loading />;
   }
 
-  if (
-    !userData &&
-    !hackathonLoading &&
-    !userLoading &&
-    !hackathons
-  ) {
+  if (!userData && !isLoading && !hackathons.length) {
     return <NotFound />;
   }
 

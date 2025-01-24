@@ -9,34 +9,35 @@ import { testLog, useCollection } from './useCollection';
 import { toast } from 'react-hot-toast';
 
 export function useFirebaseUser() {
-  const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { user } = useUser();
-
-  useEffect(() => {
-    setLoading(true);
-    if (!user?.id) return;
-
-    const fetchUserData = async () => {
-      const data = await getUsers([user.id]);
-      setUserData(data[0] as User);
+  const getUserData = async (userId: string) => {
+    if (!userId) return;
+    
+    try {
+      const res = await fetch(`/api/users/${userId}`);
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error);
+      
+      testLog('userData:', data.user);
+      return data.user as User;
+    } catch (error) {
+      console.error('Failed to fetch user data:', error);
+    } finally {
       setLoading(false);
-      testLog('userData:', data[0]);
     }
+  };
 
-    fetchUserData();
-  }, [user?.id]);
-
-  const createUser = async (formData: User) => {
+  const createUser = async (formData: User, userData: User) => {
     try {
       testLog("Submitting formData:", formData);
-      if (!user?.id) return;
-      const userDoc = doc(useCollection('users'), user.id);
+      if (!userData?.id) return;
+      const userDoc = doc(useCollection('users'), userData.id);
       await setDoc(userDoc, {
         ...formData, 
-        email: user?.primaryEmailAddress?.emailAddress,
+        email: userData.email,
       });
       testLog("User data updated successfully");
 
@@ -49,10 +50,10 @@ export function useFirebaseUser() {
   }
 
   // Move updateUserInvites outside useEffect so it can be returned
-  const updateUserInvites = async (index: number, invites: Invite[], accepted: boolean) => {
-    if (!user?.id) return;
+  const updateUserInvites = async (index: number, invites: Invite[], accepted: boolean, userData: User) => {
+    if (!userData?.id) return;
 
-    const userRef = doc(useCollection('users'), user.id);
+    const userRef = doc(useCollection('users'), userData.id);
     await updateDoc(userRef, {
       invites: invites.filter((_, i) => i !== index),
       teams: accepted 
@@ -77,7 +78,7 @@ export function useFirebaseUser() {
     return users;
   }
 
-  const getOlderUsers = async (limitCount: number, lastUserId?: string) => {
+  const getOlderUsers = async (limitCount: number, lastUserId?: string, userData?: User) => {
     setLoading(true);
     try {
       const usersRef = useCollection('users');
@@ -101,7 +102,7 @@ export function useFirebaseUser() {
       testLog("older user docs:", userDocs);
       const users = userDocs.docs
         .map((doc) => ({ ...doc.data(), id: doc.id } as User))
-        .filter((u) => u.id !== user?.id);
+        .filter((u) => u.id !== userData?.id);
 
       testLog("older users:", users);
 
@@ -120,8 +121,8 @@ export function useFirebaseUser() {
   return {
     loading,
     error,
-    userData,
     updateUserInvites,
+    getUserData,
     getUsers,
     createUser,
     getOlderUsers

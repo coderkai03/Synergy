@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import {
   getDocs,
@@ -22,34 +24,15 @@ import toast from 'react-hot-toast';
 import { useCollection, testLog } from './useCollection';
 
 export function useTeams() {
-  const { user } = useUser()
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getUserTeams = async () => {
-    setLoading(true);
-    testLog('fetching teams for user:', user?.id)
-
-    if (!user?.id) return;
-    testLog('user?.id', user?.id)
-
-    try {
-      const userRef = doc(useCollection('users'), user?.id);
-      const userDoc = await getDoc(userRef);
-      testLog('userDoc', userDoc.data())
-
-      const teamsData: string[] = userDoc.exists() ? userDoc.data()?.teams || [] : [];
-      const teams = await getTeams(teamsData);
-      testLog('teams', teams)
-
-      return teams;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch teams');
-    } finally {
-      setLoading(false);
-    }
-  }  
+  const getUserTeams = async (userId: string) => {
+    const res = await fetch(`/api/teams?userId=${userId}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data.teams as Team[];
+  };
 
   const updateTeamInvites = async (teammateIds: string[], userId: string, invite: Invite) => {
     try {
@@ -185,27 +168,16 @@ export function useTeams() {
     }
   }
 
-  const createTeam = async (team: Team, userTeams: Team[]) => {
-    if (userTeams.some(userTeam => userTeam.hackathonId === team.hackathonId)) {
-      return 'alreadyInTeam';
-    }
-
-    const teamRef = useCollection('teams');
-    const docRef = await addDoc(teamRef, team);
-
-    // Add id to the doc after creation
-    await updateDoc(docRef, {
-      id: docRef.id
+  const createTeam = async (team: Team, userId: string) => {
+    const res = await fetch('/api/teams', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ team, userId }),
     });
-
-    // Add teamId to user's teams collection
-    const userRef = doc(useCollection('users'), team.hostId);
-    await updateDoc(userRef, {
-      teams: arrayUnion(docRef.id)
-    });
-
-    return docRef.id;
-  }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data.teamId;
+  };
 
   const leaveTeam = async (teamId: string, userId: string) => {
     const teamRef = doc(useCollection('teams'), teamId);

@@ -45,6 +45,7 @@ export function Feedback() {
               />
               <Button 
                 onClick={handleSubmit}
+                disabled={!feedback}
                 className="mt-4 bg-white text-black hover:bg-zinc-200"
               >
                 Submit

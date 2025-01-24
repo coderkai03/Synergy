@@ -5,15 +5,30 @@ import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/User";
 import { testLog } from "@/hooks/useCollection";
+import { useUser } from "@clerk/nextjs";
 
 interface RequireProfileProps {
   children: React.ReactNode;
 }
 
 export function RequireProfile({ children }: RequireProfileProps) {
-  const { userData, loading } = useFirebaseUser();
   const router = useRouter();
+  
+  const { getUserData, loading } = useFirebaseUser();
+  const { user } = useUser();
   const [hasChecked, setHasChecked] = useState(false);
+  const [userData, setUserData] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!user) return;
+      const userData = await getUserData(user.id);
+
+      if (!userData) return;
+      setUserData(userData);
+    };
+    fetchUserData();
+  }, [user]);
 
   const isProfileComplete = (user: User | null): boolean => {
     if (!user) return false;

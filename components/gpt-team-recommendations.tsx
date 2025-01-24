@@ -6,25 +6,65 @@ import { User } from "@/types/User";
 import { TeamPreview } from "./team-preview";
 import { Button } from "./ui/button";
 import { Sparkles } from "lucide-react";
-import { useTeamRecommendations } from '@/hooks/useTeamRecommendations';
+import { TeamRecommendation, useTeamRecommendations } from '@/hooks/useTeamRecommendations';
+import { useMatchRequests } from '@/hooks/useMatchRequests';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { testLog } from '@/hooks/useCollection';
 
 interface GPTTeamRecommendationsProps {
   userData: User;
   hackathonId: string;
+  isGracePeriod: boolean;
 }
 
-export function GPTTeamRecommendations({ userData, hackathonId }: GPTTeamRecommendationsProps) {
-  const [recommendations, setRecommendations] = useState<(Team & { reasoning: string })[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const { getTeamRecommendations } = useTeamRecommendations();
+interface TeamData {
+  teams: Team[];
+}
 
+export function GPTTeamRecommendations({ 
+  userData, 
+  hackathonId,
+  isGracePeriod 
+}: GPTTeamRecommendationsProps) {
+  const [recommendations, setRecommendations] = useState<TeamData>({ teams: [] });
+  const [isLoading, setIsLoading] = useState(false);
+  const { getTeamRecommendations, getTeamsForHackathon } = useTeamRecommendations();
+  const { createMatchRequest } = useMatchRequests();
+  const router = useRouter();
+
+  // Handle instant recommendations
   const handleGetRecommendations = async () => {
     setIsLoading(true);
     try {
-      const result = await getTeamRecommendations(hackathonId, userData);
-      setRecommendations(result.recommendations);
+      const teamsForHackathon = await getTeamsForHackathon(hackathonId);
+      const result = await getTeamRecommendations(hackathonId, userData, teamsForHackathon);
+      testLog("result:", result)
+      const teams = await fetch(`/api/teams/some`, {
+        method: 'POST',
+        body: JSON.stringify({ teamIds: result })
+      });
+      const teamData = await teams.json();
+      testLog("teamData:", teamData)
+      setRecommendations(teamData);
     } catch (error) {
       console.error('Failed to get recommendations:', error);
+      toast.error('Failed to get recommendations');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle waitlist request
+  const handleMatchRequest = async () => {
+    setIsLoading(true);
+    try {
+      await createMatchRequest(userData.id, hackathonId);
+      toast.success("✨ AI Match request submitted!");
+      router.push('/home');
+    } catch (error) {
+      console.error('Failed to submit match request:', error);
+      toast.error('Failed to submit match request');
     } finally {
       setIsLoading(false);
     }
@@ -32,43 +72,55 @@ export function GPTTeamRecommendations({ userData, hackathonId }: GPTTeamRecomme
 
   return (
     <div className="space-y-6">
-      {recommendations.length === 0 ? (
+      {isGracePeriod ? (
+        // Waitlist Mode
         <div className="flex flex-col items-center space-y-4">
-          <p className="text-zinc-400 text-center">
-            Let AI find your perfect team based on your skills and experience.
+          <p className="text-zinc-400 text-sm">
+            Team matching will begin after the grace period ends. Join the waitlist to get matched!
           </p>
           <Button
-            onClick={handleGetRecommendations}
+            onClick={handleMatchRequest}
             className="w-full bg-amber-500 hover:bg-amber-600 text-white"
             disabled={isLoading}
           >
             <Sparkles className="w-4 h-4 mr-2" />
-            {isLoading ? "Finding perfect matches..." : "Get AI Recommendations"}
+            {isLoading ? "Submitting request..." : "Join AI Match Waitlist"}
           </Button>
         </div>
       ) : (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white">Recommended Teams</h3>
+        // Instant Mode
+        recommendations.teams.length === 0 ? (
+          <div className="flex flex-col items-center space-y-4">
             <Button
-              onClick={() => setRecommendations([])}
-              variant="outline"
-              className="text-zinc-400 hover:text-white"
-              size="sm"
+              onClick={handleGetRecommendations}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+              disabled={isLoading || !hackathonId}
             >
-              Clear
+              <Sparkles className="w-4 h-4 mr-2" />
+              {isLoading ? "Finding perfect matches..." : "Get AI Recommendations"}
             </Button>
           </div>
-          
-          {recommendations.map((team, index) => (
-            <div key={team.id} className="space-y-2">
-              <TeamPreview team={team} />
-              <p className="text-sm text-zinc-400 px-4">
-                <span className="text-amber-500">AI Reasoning:</span> {team.reasoning}
-              </p>
+        ) : (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-white">Recommended Teams</h3>
+              <Button
+                onClick={() => setRecommendations({ teams: [] })}
+                variant="outline"
+                className="text-zinc-400 hover:text-white"
+                size="sm"
+              >
+                Clear
+              </Button>
             </div>
-          ))}
-        </div>
+            
+            {recommendations.teams.map((team) => (
+              <div key={team.id} className="space-y-2">
+                <TeamPreview team={team} />
+              </div>
+            ))}
+          </div>
+        )
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 {
   "projects": {
-    "default": "synergy-2a320",
-    "synergy-prod": "synergy-2a320"
+    "default": "synergy-443009",
+    "synergy-prod": "synergy-443009"
   },
   "targets": {},
   "etags": {}

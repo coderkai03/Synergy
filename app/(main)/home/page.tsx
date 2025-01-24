@@ -9,22 +9,36 @@ import { useHackathons } from '@/hooks/useHackathons'
 import { useFirebaseUser } from '@/hooks/useFirebaseUsers'
 import { useEffect, useState } from 'react'
 import Loading from '@/components/loading'
+import { User } from '@/types/User'
+import { useUser } from '@clerk/nextjs'
 
 export default function DashboardPage() {
-    const { userData } = useFirebaseUser();
-    const { loading: hackathonLoading, getUpcomingHackathons } = useHackathons();
-    const { loading: teamLoading, checkIfUserHasTeam } = useTeams();
+  const { user } = useUser();
+  const { getUserData } = useFirebaseUser();
+  const { loading: hackathonLoading, getUpcomingHackathons } = useHackathons();
+  const { loading: teamLoading, checkIfUserHasTeam } = useTeams();
 
-    const [userTeam, setUserTeam] = useState<Team | null>(null);
-    const [upcomingHackathons, setUpcomingHackathons] = useState<Hackathon[]>([]);
+  const [userData, setUserData] = useState<User | null>(null);
+  const [userTeam, setUserTeam] = useState<Team | null>(null);
+  const [upcomingHackathons, setUpcomingHackathons] = useState<Hackathon[]>([]);
 
-    useEffect(() => {
-      const fetchUpcomingHackathons = async () => {
-        const hackathons = await getUpcomingHackathons(5);
-        setUpcomingHackathons(hackathons);
-      }
-      fetchUpcomingHackathons();
-    }, []);
+  useEffect(() => {
+    const fetchUpcomingHackathons = async () => {
+      const hackathons = await getUpcomingHackathons(5);
+      setUpcomingHackathons(hackathons);
+    }
+    fetchUpcomingHackathons();
+  }, []);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    const fetchUserData = async () => {
+      const userData = await getUserData(user?.id);
+      if (!userData) return;
+      setUserData(userData);
+    };
+    fetchUserData();
+  }, [user]);
 
   useEffect(() => {
     const fetchUpcomingTeam = async () => {
@@ -35,7 +49,7 @@ export default function DashboardPage() {
     }
 
     fetchUpcomingTeam();
-  }, [upcomingHackathons]);
+  }, [upcomingHackathons, userData]);
 
   if (hackathonLoading || teamLoading) return <Loading />;
 

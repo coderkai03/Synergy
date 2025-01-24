@@ -12,15 +12,28 @@ import Loading from "@/components/loading";
 import NotFound from "@/components/not-found";
 import { RequireProfile } from "@/components/require-profile";
 import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
+import { User } from "@/types/User";
 
 export default function ExplorePage() {
   const PAGE_LIMIT = 8;
+  const { user } = useUser();
   const { getAllTeams, loading: teamsLoading } = useTeams();
-  const { userData, loading: userLoading } = useFirebaseUser();
+  const { getUserData, loading: userLoading } = useFirebaseUser();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [allTeams, setAllTeams] = useState<Team[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [userData, setUserData] = useState<User>();
+
+  useEffect(() => {
+    if (!user?.id) return;
+    const fetchUserData = async () => {
+      const userData = await getUserData(user?.id);
+      setUserData(userData);
+    };
+    fetchUserData();
+  }, [user]);
 
   // Load all teams once
   useEffect(() => {

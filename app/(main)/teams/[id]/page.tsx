@@ -20,22 +20,59 @@ import { JoinTeamDialog } from "@/components/join-team-dialog";
 import { toast } from "react-hot-toast";
 import NotFound from "@/components/not-found";
 import Loading from "@/components/loading";
+import { useUser } from "@clerk/nextjs";
+import { testLog } from "@/hooks/useCollection";
 
 export default function TeamDetailPage() {
   const params = useParams();
   const router = useRouter();
-  
+  const id = params.id as string;
+  const { user } = useUser();
+
   const { loading: teamLoading, getTeams, leaveTeam, updateTeamHost, updateTeamInvitesByEmail, teammateExists } = useTeams();
   const { loading: hackathonLoading, getHackathons } = useHackathons();
-  const { loading: userLoading, getUsers, userData } = useFirebaseUser();
-
-  const id = params.id as string;
+  const { loading: userLoading, getUsers, getUserData } = useFirebaseUser();
+  
   const [team, setTeam] = useState<Team | null>(null);
   const [hackathon, setHackathon] = useState<Hackathon | null>(null);
   const [teammates, setTeammates] = useState<User[]>([]);
   const [requests, setRequests] = useState<string[]>([]);
+  const [userData, setUserData] = useState<User | null>(null);
+  const [isMember, setIsMember] = useState(false);
 
-  const isMember = team?.teammates.includes(userData?.id || '');
+  useEffect(() => {
+    if (!user) return;
+    const fetchUserData = async () => {
+      const userData = await getUserData(user.id);
+
+      if (!userData) return;
+      setUserData(userData);
+    };
+    fetchUserData();
+  }, [user]);
+
+  useEffect(() => {
+    if (!userData) return;
+    setIsMember(team?.teammates.includes(userData?.id || '') || false);
+  }, [userData, team]);
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      if (!id) return;
+      
+      try {
+        // setLoading(true);
+        const teams = await getTeams([id]);
+        setTeam(teams[0]);
+      } catch (error) {
+        console.error("Error fetching team:", error);
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    fetchTeam();
+  }, [id]);
 
   const handleAddTeammate = async (email: string) => {
     if (!team || !userData) return;
@@ -57,24 +94,6 @@ export default function TeamDetailPage() {
       console.error("Failed to add teammate:", error);
     }
   };
-
-  useEffect(() => {
-    const fetchTeam = async () => {
-      if (!id) return;
-      
-      try {
-        // setLoading(true);
-        const teams = await getTeams([id]);
-        setTeam(teams[0]);
-      } catch (error) {
-        console.error("Error fetching team:", error);
-      } finally {
-        // setLoading(false);
-      }
-    };
-
-    fetchTeam();
-  }, [id]);
 
   useEffect(() => {
     const fetchHackathonAndTeammates = async () => {

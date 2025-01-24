@@ -67,15 +67,17 @@ export function useHackathons() {
 
   const getAllHackathons = async () => {
     setLoading(true);
-    const hackathons = await getDocs(useCollection('hackathons'));
-    setLoading(false);
-    const hackathonsWithImages = await Promise.all(hackathons.docs.map(async (doc) => {
-      return {
-        ...doc.data(),
-        id: doc.id,
-      } as Hackathon;
-    }));
-    return hackathonsWithImages;
+    try {
+      const res = await fetch('/api/hackathons/all');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      return data.hackathons;
+    } catch (error) {
+      console.error('Failed to fetch hackathons:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   }
 
   const getUpcomingHackathons = async (limitCount: number) => {
@@ -83,10 +85,10 @@ export function useHackathons() {
       const allHackathons = await getAllHackathons();
             
       const upcomingHackathons = allHackathons
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .sort((a: Hackathon, b: Hackathon) => new Date(a.date).getTime() - new Date(b.date).getTime())
         .slice(0, limitCount);
 
-      testLog("upcoming hackathons: ", upcomingHackathons.map(h => h.id));
+      testLog("upcoming hackathons: ", upcomingHackathons.map((h: Hackathon) => h.id));
 
       if (upcomingHackathons.length === 0) {
         testLog("No upcoming hackathons found");
