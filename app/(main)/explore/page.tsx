@@ -78,7 +78,7 @@ export default function ExplorePage() {
         </div>
 
         {/* Teams Grid */}
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           {paginatedTeams.map((team) => (
             <TeamPreview key={team.id} team={team} />
           ))}
