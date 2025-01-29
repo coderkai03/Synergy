@@ -27,7 +27,6 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const { getAllHackathons } = useHackathons();
   const { createTeam, teamNameExists } = useTeams();
   const { getUserData } = useFirebaseUser();
-  const { createMatchRequest } = useMatchRequests();
 
   const [userData, setUserData] = useState<User | null>(null);
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);

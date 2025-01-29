@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     // Return user data with ID
     return NextResponse.json({ user: { ...userDoc.data(), id: userId } });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch user:' + error }, { status: 500 });
   }
 }
 
@@ -42,6 +42,6 @@ export async function POST(request: Request) {
     
     return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create user:' + error }, { status: 500 });
   }
 } 
