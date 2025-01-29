@@ -11,7 +11,6 @@ import { useEffect, useState } from 'react'
 import Loading from '@/components/loading'
 import { User } from '@/types/User'
 import { useUser } from '@clerk/nextjs'
-import NotFound from '@/components/not-found'
 import { testLog } from '@/hooks/useCollection'
 
 export default function DashboardPage() {

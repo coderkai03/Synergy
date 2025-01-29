@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/firebaseConfig';
-import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, query, where, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, getDoc, addDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { useCollection } from '@/hooks/useCollection';
 
 // GET: Fetch all teams for a specific user

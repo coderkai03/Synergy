@@ -10,11 +10,8 @@ import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Team } from "@/types/Teams";
 import Loading from "@/components/loading";
 import NotFound from "@/components/not-found";
-import { RequireProfile } from "@/components/require-profile";
-import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { User } from "@/types/User";
-import { testLog } from "@/hooks/useCollection";
 
 export default function ExplorePage() {
   const { user } = useUser();

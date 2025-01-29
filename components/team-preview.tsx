@@ -15,7 +15,7 @@ interface TeamPreviewProps {
 export function TeamPreview({ team }: TeamPreviewProps) {
   const router = useRouter();
   const { user } = useUser();
-  const { getHackathons, loading: hackathonLoading } = useHackathons();
+  const { getHackathons } = useHackathons();
 
   const [hackathon, setHackathon] = useState<Hackathon | null>(null);
   const [isMember, setIsMember] = useState(false);

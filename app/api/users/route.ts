@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/firebaseConfig';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useCollection } from '@/hooks/useCollection';
 
 // GET: Fetch user data by ID

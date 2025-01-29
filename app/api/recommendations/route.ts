@@ -4,7 +4,6 @@ import { testLog } from '@/hooks/useCollection';
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { z } from 'zod';
 import { User } from '@/types/User';
-import { Team } from '@/types/Teams';
 
 // Initialize OpenAI client
 const openai = new OpenAI({

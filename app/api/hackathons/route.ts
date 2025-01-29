@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/firebaseConfig';
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { useCollection } from '@/hooks/useCollection';
+import { orderBy, limit, getDocs } from 'firebase/firestore';
+import { query } from 'firebase/firestore';
 
 // GET: Fetch hackathons with optional limit
 export async function GET(request: Request) {

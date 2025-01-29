@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 import { testLog, useCollection } from '@/hooks/useCollection';
 

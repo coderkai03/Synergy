@@ -10,21 +10,6 @@ import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { useHackathons } from "@/hooks/useHackathons";
 import { Hackathon } from "@/types/Hackathons";
-import { HackathonPreview } from "./hackathon-preview";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandInput,
-  CommandItem,
-  CommandEmpty,
-  CommandGroup,
-} from "@/components/ui/command";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useTeams } from "@/hooks/useTeams";
 import { testLog } from "@/hooks/useCollection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -40,16 +25,13 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const router = useRouter();
 
   const { getAllHackathons } = useHackathons();
-  const { createTeam, teamNameExists, getUserTeams } = useTeams();
+  const { createTeam, teamNameExists } = useTeams();
   const { getUserData } = useFirebaseUser();
-  const { createMatchRequest, checkIfPendingRequest } = useMatchRequests();
+  const { createMatchRequest } = useMatchRequests();
 
   const [userData, setUserData] = useState<User | null>(null);
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
-  const [userTeams, setUserTeams] = useState<Team[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [pendingRequest, setPendingRequest] = useState(0);
   const [formData, setFormData] = useState<Team>({
     id: '',
     name: "",
@@ -71,21 +53,7 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   }, [user]);
 
   useEffect(() => {
-    const fetchUserTeams = async () => {
-      if (!user?.id) return;
-      const teams = await getUserTeams(user?.id || "");
-      setUserTeams(teams || []);
-    }
-    fetchUserTeams();
-  }, [user?.id]);
-
-  useEffect(() => {
     if (hackathonId) {
-      const checkPendingRequest = async () => {
-        const pending = await checkIfPendingRequest(user?.id || "", hackathonId);
-        setPendingRequest(pending);
-      }
-      checkPendingRequest();
       setFormData(prev => ({
         ...prev,
         hackathonId
@@ -138,27 +106,6 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
     } catch (error) {
       console.error("Error creating team:", error);
       toast.error("Failed to Form Team");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleMatchRequest = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      if (!user?.id || !formData.hackathonId) {
-        toast.error("Please select a hackathon");
-        return;
-      }
-      
-      await createMatchRequest(user.id, formData.hackathonId);
-      toast.success("✨ AI Match requested submitted!");
-      router.push('/home');
-    } catch (error) {
-      console.error("Error creating match request:", error);
-      toast.error("Failed to request AI Match");
     } finally {
       setIsSubmitting(false);
     }

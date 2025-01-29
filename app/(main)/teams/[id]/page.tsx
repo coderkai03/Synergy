@@ -21,7 +21,6 @@ import { toast } from "react-hot-toast";
 import NotFound from "@/components/not-found";
 import Loading from "@/components/loading";
 import { useUser } from "@clerk/nextjs";
-import { testLog } from "@/hooks/useCollection";
 
 export default function TeamDetailPage() {
   const params = useParams();

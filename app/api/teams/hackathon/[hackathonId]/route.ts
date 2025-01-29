@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/firebaseConfig';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { testLog, useCollection } from '@/hooks/useCollection';
+import { getDocs, query, where } from 'firebase/firestore';
+import { useCollection } from '@/hooks/useCollection';
 
 // GET: Fetch all teams for a specific hackathon
 export async function GET(

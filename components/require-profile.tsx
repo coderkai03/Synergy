@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/User";
 import { testLog } from "@/hooks/useCollection";
-import { useUser } from "@clerk/nextjs";
 
 interface RequireProfileProps {
   children: React.ReactNode;
