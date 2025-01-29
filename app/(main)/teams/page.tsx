@@ -110,7 +110,8 @@ export default function HackathonTeamsScreen() {
                 <Plus className="w-4 h-4" /> Form Team
               </Button>
             </RequireProfile>}
-            <InviteDialog
+            {userData && <InviteDialog
+              userData={userData}
               invites={invites}
               inviteTeams={teams}
               activeTeams={filteredTeams}
@@ -119,7 +120,7 @@ export default function HackathonTeamsScreen() {
               setInviteTeams={setTeams}
               setActiveTeams={setFilteredTeams}
               setUserHackathons={setHackathons}
-            />
+            />}
           </div>
         </div>
         <div className="space-y-8">
