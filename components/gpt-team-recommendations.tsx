@@ -79,7 +79,7 @@ export function GPTTeamRecommendations({
             Join the waitlist to get matched!
             <br/>
             <br/>
-            We'll notify you when we've found recommendations.
+            We&apos;ll notify you when we&apos;ve found recommendations.
           </h2>
           <div className="flex flex-col items-center space-y-4">
           <Button
