@@ -19,7 +19,7 @@ export default function Home() {
         <InfiniteMovingCards
           items={schools}
         />
-        <GetStarted/>
+        <GetStarted />
       </div>
 
       <section className="min--screen bg-[#111119] py-24 px-5 md:px-20">
