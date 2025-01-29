@@ -13,7 +13,6 @@ import { Hackathon } from "@/types/Hackathons";
 import { useTeams } from "@/hooks/useTeams";
 import { testLog } from "@/hooks/useCollection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMatchRequests } from "@/hooks/useMatchRequests";
 import { GPTTeamRecommendations } from "./gpt-team-recommendations";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { HackathonSelector } from "./hackathon-selector";
