@@ -14,13 +14,15 @@ import { testLog } from '@/hooks/useCollection'
 interface NextHackathonProps {
   userData: User | null,
   userTeam: Team | null,
-  hackathon: Hackathon
+  hackathon: Hackathon,
+  userLoading: boolean
 }
 
 export function NextHackathon({
     userData,
     userTeam,
-    hackathon
+    hackathon,
+    userLoading
 }: NextHackathonProps) {
   testLog("hackathon: ", hackathon);
   return (
@@ -69,7 +71,7 @@ export function NextHackathon({
                     Explore Teams
                   </Button>
                 </Link>
-                <RequireProfile>
+                {!userLoading && <RequireProfile userData={userData}>
                   <Link href={`/teams/create?hackathonId=${hackathon.id}`}>
                     <Button
                       variant="outline"
@@ -77,7 +79,7 @@ export function NextHackathon({
                       Form Team
                     </Button>
                   </Link>
-                </RequireProfile>
+                </RequireProfile>}
               </div>
             )}
           </div>

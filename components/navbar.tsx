@@ -6,8 +6,10 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { LogIn, LogOut, Menu, User } from "lucide-react";
 import { useClerk, useUser, SignInButton } from "@clerk/nextjs";
 import SynergyLogo from "./synergy-logo";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
+    const router = useRouter();
     const { signOut } = useClerk();
     const { user, isSignedIn } = useUser();
     const { getLogoSize } = SynergyLogo();
@@ -55,7 +57,10 @@ export default function Navbar() {
                                 <User className="h-5 w-5" />
                             </button>
                         </DropdownMenu.Trigger>
-                        <DropdownMenu.Content className="mt-2 w-32 space-y-2 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2" align="end">
+                        <DropdownMenu.Content className="mt-2 w-48 space-y-2 bg-zinc-800 text-white border border-amber-500 rounded-md shadow-lg p-2" align="end">
+                            <div className="px-2 py-1 text-sm text-zinc-400">
+                                Hey, {user?.firstName}
+                            </div>
                             <DropdownMenu.Item asChild>
                                 <Link 
                                     href="/account-setup"
@@ -67,7 +72,10 @@ export default function Navbar() {
                             </DropdownMenu.Item>
                             <DropdownMenu.Item asChild>
                                 <button 
-                                    onClick={() => signOut()}
+                                    onClick={() => {
+                                        signOut();
+                                        router.push('/');
+                                    }}
                                     className="flex w-full items-center gap-2 rounded hover:bg-amber-100 hover:text-black px-2 py-1"
                                 >
                                     <LogOut className="h-4 w-4" />
@@ -80,8 +88,8 @@ export default function Navbar() {
                     <button className="inline-flex items-center gap-2 text-white hover:text-amber-100">
                         <SignInButton
                             mode="modal"
-                            fallbackRedirectUrl={'/hackathons'}
-                            signUpForceRedirectUrl={'/account-setup'}
+                            fallbackRedirectUrl={'/home'}
+                            signUpForceRedirectUrl={'/home'}
                         >
                             <span className="inline-flex items-center gap-2">
                                 <span>Sign in</span>
@@ -148,7 +156,10 @@ export default function Navbar() {
                                 </DropdownMenu.Item>
                                 <DropdownMenu.Item asChild>
                                     <button
-                                        onClick={() => signOut()}
+                                        onClick={() => {
+                                            signOut();
+                                            router.push('/');
+                                        }}
                                         className="flex items-center gap-2 rounded hover:bg-amber-100 hover:text-black justify-end w-full"
                                     >
                                         <span>Sign Out</span>

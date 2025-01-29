@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import {
   getDocs,
@@ -22,36 +24,27 @@ import toast from 'react-hot-toast';
 import { useCollection, testLog } from './useCollection';
 
 export function useTeams() {
-  const { user } = useUser()
-
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const getUserTeams = async () => {
+  const getUserTeams = async (userId: string) => {
     setLoading(true);
-    testLog('fetching teams for user:', user?.id)
-
-    if (!user?.id) return;
-    testLog('user?.id', user?.id)
-
     try {
-      const userRef = doc(useCollection('users'), user?.id);
-      const userDoc = await getDoc(userRef);
-      testLog('userDoc', userDoc.data())
-
-      const teamsData: string[] = userDoc.exists() ? userDoc.data()?.teams || [] : [];
-      const teams = await getTeams(teamsData);
-      testLog('teams', teams)
-
-      return teams;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch teams');
+      const res = await fetch(`/api/teams?userId=${userId}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      return data.teams as Team[];
+    } catch (error) {
+      console.error('Failed to fetch user teams:', error);
+      setError('Failed to fetch user teams');
+      throw error;
     } finally {
       setLoading(false);
     }
-  }  
+  };
 
   const updateTeamInvites = async (teammateIds: string[], userId: string, invite: Invite) => {
+    setLoading(true);
     try {
       // Update each team document
       await Promise.all(teammateIds.map(async (teammateId) => {
@@ -73,10 +66,13 @@ export function useTeams() {
     } catch (error) {
       console.error('Error updating team invites:', error);
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
   const updateTeamInvitesByEmail = async (teammateEmails: string[], userId: string, invite: Invite) => {
+    setLoading(true);
     try {
       // Get all users matching the emails
       const usersRef = useCollection('users');
@@ -119,10 +115,13 @@ export function useTeams() {
     } catch (error) {
       console.error('Error updating team invites:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const updateTeammates = async (teamId: string, teammateId: string) => {
+    setLoading(true);
     const teamRef = doc(useCollection('teams'), teamId);
     const teamDoc = await getDoc(teamRef);
     if (!teamDoc.exists()) {
@@ -144,10 +143,12 @@ export function useTeams() {
   }
 
   const updateTeamHost = async (teamId: string, hostId: string) => {
+    setLoading(true);
     const teamRef = doc(useCollection('teams'), teamId);
     await updateDoc(teamRef, {
       hostId: hostId
     });
+    setLoading(false);
   }
 
   const getTeams = async (teamIds: string[]) => {
@@ -185,29 +186,28 @@ export function useTeams() {
     }
   }
 
-  const createTeam = async (team: Team, userTeams: Team[]) => {
-    if (userTeams.some(userTeam => userTeam.hackathonId === team.hackathonId)) {
-      return 'alreadyInTeam';
+  const createTeam = async (team: Team, userId: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/teams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ team, userId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      return data.teamId;
+    } catch (error) {
+      console.error('Failed to create team:', error);
+      setError('Failed to create team');
+      throw error;
+    } finally {
+      setLoading(false);
     }
-
-    const teamRef = useCollection('teams');
-    const docRef = await addDoc(teamRef, team);
-
-    // Add id to the doc after creation
-    await updateDoc(docRef, {
-      id: docRef.id
-    });
-
-    // Add teamId to user's teams collection
-    const userRef = doc(useCollection('users'), team.hostId);
-    await updateDoc(userRef, {
-      teams: arrayUnion(docRef.id)
-    });
-
-    return docRef.id;
-  }
+  };
 
   const leaveTeam = async (teamId: string, userId: string) => {
+    setLoading(true);
     const teamRef = doc(useCollection('teams'), teamId);
     // remove userId from team
     await updateDoc(teamRef, {
@@ -219,9 +219,11 @@ export function useTeams() {
     await updateDoc(userRef, {
       teams: arrayRemove(teamId)
     });
+    setLoading(false);
   }
 
   const deleteTeam = async (teamId: string, hostId: string) => {
+    setLoading(true);
     // delete team
     const teamRef = doc(useCollection('teams'), teamId);
     await deleteDoc(teamRef);
@@ -231,9 +233,11 @@ export function useTeams() {
     await updateDoc(userRef, {
       teams: arrayRemove(teamId)
     });
+    setLoading(false);
   }
 
   const teamNameExists = async (teamName: string, hackathonId: string) => {
+    setLoading(true);
     try {
       const teamsRef = useCollection('teams');
       const q = query(teamsRef, 
@@ -245,6 +249,8 @@ export function useTeams() {
     } catch (error) {
       console.error('Error checking team name:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -277,6 +283,7 @@ export function useTeams() {
   }
 
   const updateTeamRequests = async (teamId: string, userId: string) => {
+    setLoading(true);
     const teamRef = doc(useCollection('teams'), teamId);
     
     try {
@@ -297,6 +304,8 @@ export function useTeams() {
     } catch (error) {
       console.error('Error updating team requests:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -304,7 +313,7 @@ export function useTeams() {
     setLoading(true);
     try {
       const teamsRef = useCollection('teams');
-      const q = query(teamsRef, orderBy('id'));
+      const q = query(teamsRef, orderBy('id', 'desc'));
       const querySnapshot = await getDocs(q);
       const teams = querySnapshot.docs
         .map(doc => ({ ...doc.data(), id: doc.id } as Team))
@@ -357,10 +366,18 @@ export function useTeams() {
   }
 
   const teammateExists = async (teamId: string, teammateEmail: string) => {
-    const usersRef = useCollection('users');
-    const q = query(usersRef, where('email', '==', teammateEmail), where('teams', 'array-contains', teamId));
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty;
+    setLoading(true);
+    try {
+      const usersRef = useCollection('users');
+      const q = query(usersRef, where('email', '==', teammateEmail), where('teams', 'array-contains', teamId));
+      const querySnapshot = await getDocs(q);
+      return !querySnapshot.empty;
+    } catch (error) {
+      console.error('Error checking if teammate exists:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   }
 
   const checkIfUserHasTeam = async (teams: string[] | undefined, hackathonId: string) => {

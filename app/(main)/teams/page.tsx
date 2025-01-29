@@ -15,13 +15,18 @@ import { RequireProfile } from "@/components/require-profile"
 import Loading from "@/components/loading"
 import NoTeams from "@/components/no-teams"
 import { testLog } from "@/hooks/useCollection";
+import { useUser } from "@clerk/nextjs"
+import { User } from "@/types/User"
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()
-  const { loading: userLoading, userData } = useFirebaseUser();
+  const { user } = useUser();
+
+  const { loading: userLoading, getUserData } = useFirebaseUser();
   const { loading: hackathonLoading, getHackathons } = useHackathons();
   const { loading: teamLoading, getUserTeams } = useTeams();
 
+  const [userData, setUserData] = useState<User | null>(null);
   const [teams, setTeams] = useState<Team[]>([])
   const [userTeams, setUserTeams] = useState<Team[]>([])
   const [hackathons, setHackathons] = useState<Hackathon[]>([])
@@ -30,14 +35,21 @@ export default function HackathonTeamsScreen() {
 
   useEffect(() => {
     const fetchUserTeams = async () => {
-      const teams = await getUserTeams();
+      if (!user?.id) return;
+      const userData = await getUserData(user?.id);
+
+      if (!userData?.id) return;
+      setUserData(userData);
+      const teams = await getUserTeams(userData?.id);
       setUserTeams(teams || []);
     }
     fetchUserTeams();
-  }, [userData]);
+  }, [user]);
 
   useEffect(() => {
     testLog('userTeams', userTeams)
+
+    if (!userData) return;
 
     if (!userTeams?.length) {
       testLog("No userTeams found, returning early");
@@ -60,7 +72,9 @@ export default function HackathonTeamsScreen() {
       setHackathons(hackathons as Hackathon[]);
     };
     fetchHackathons();
-  }, [userTeams]);
+  }, [userTeams, userData]);
+
+  testLog('loading', userLoading, teamLoading, hackathonLoading);
 
   if (
     userLoading ||
@@ -73,18 +87,31 @@ export default function HackathonTeamsScreen() {
     return <Loading />;
   }
 
+  if (
+    (!userLoading &&
+      !hackathonLoading &&
+      !teamLoading) &&
+    (!userData ||
+      !userData?.teams ||
+      userData?.teams.length === 0)
+  ) {
+    testLog('not found');
+    return <Loading />;
+  }
+
   const teamsPage = () => {
     return (
       <>
       <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-white">My Teams</h1>
           <div className="flex gap-4">
-            <RequireProfile>
+            {!userLoading && <RequireProfile userData={userData}>
               <Button variant="outline" onClick={() => router.push('/teams/create')} className="gap-2 text-black">
                 <Plus className="w-4 h-4" /> Form Team
               </Button>
-            </RequireProfile>
-            <InviteDialog
+            </RequireProfile>}
+            {userData && <InviteDialog
+              userData={userData}
               invites={invites}
               inviteTeams={teams}
               activeTeams={filteredTeams}
@@ -93,17 +120,27 @@ export default function HackathonTeamsScreen() {
               setInviteTeams={setTeams}
               setActiveTeams={setFilteredTeams}
               setUserHackathons={setHackathons}
-            />
+            />}
           </div>
         </div>
         <div className="space-y-8">
-          {filteredTeams?.length > 0 && hackathons?.length > 0 ? (
+          {(!teamLoading &&
+            !hackathonLoading &&
+            filteredTeams?.length > 0 &&
+            hackathons?.length > 0) ? (
             <TeamListSection
               teams={filteredTeams}
               hackathons={hackathons}
             />
           ) : (
-            <NoTeams />
+            teamLoading ||
+            hackathonLoading ||
+            filteredTeams?.length === 0 ||
+            hackathons?.length === 0 ? (
+              <Loading />
+            ) : (
+              <NoTeams userLoading={userLoading} userData={userData} />
+            )
           )}
         </div>
       </>

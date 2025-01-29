@@ -2,8 +2,14 @@ import { Search } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { RequireProfile } from './require-profile';
+import { User } from '@/types/User';
 
-export default function NoTeams() {
+interface NoTeamsProps {
+  userLoading: boolean;
+  userData: User | null;
+}
+
+export default function NoTeams({ userLoading, userData }: NoTeamsProps) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] bg-[#111119]">
       <div className="flex flex-col gap-4 items-center justify-center h-full">
@@ -15,7 +21,7 @@ export default function NoTeams() {
             <Search className="w-4 h-4 mr-2" /> Explore Teams
           </Button>
         </Link>
-        <RequireProfile>
+        {!userLoading && <RequireProfile userData={userData}>
           <Link href="/teams/create">
             <Button
               variant="outline"
@@ -23,7 +29,7 @@ export default function NoTeams() {
               Form Team
             </Button>
           </Link>
-        </RequireProfile>
+        </RequireProfile>}
       </div>
     </div>
   );

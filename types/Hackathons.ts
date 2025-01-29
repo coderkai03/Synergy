@@ -7,6 +7,7 @@ export interface Hackathon {
   website: string;
   image: string;
   isOnline: boolean;
+  grace_period: boolean;  // true = waitlist mode, false = instant mode
 }
 
 export const problemSpaceOptions = [

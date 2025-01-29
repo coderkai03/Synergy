@@ -10,38 +10,27 @@ import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { useHackathons } from "@/hooks/useHackathons";
 import { Hackathon } from "@/types/Hackathons";
-import { HackathonPreview } from "./hackathon-preview";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandInput,
-  CommandItem,
-  CommandEmpty,
-  CommandGroup,
-} from "@/components/ui/command";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useTeams } from "@/hooks/useTeams";
 import { testLog } from "@/hooks/useCollection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMatchRequests } from "@/hooks/useMatchRequests";
+import { GPTTeamRecommendations } from "./gpt-team-recommendations";
+import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
+import { HackathonSelector } from "./hackathon-selector";
+import { User } from "@/types/User";
+import NotFound from "./not-found";
+
 
 export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const { user } = useUser();
   const router = useRouter();
-  const { getAllHackathons } = useHackathons();
-  const { createTeam, teamNameExists, getUserTeams } = useTeams();
-  const { createMatchRequest, checkIfPendingRequest } = useMatchRequests();
 
+  const { getAllHackathons, loading: hackathonsLoading } = useHackathons();
+  const { createTeam, teamNameExists } = useTeams();
+  const { getUserData, loading: userLoading } = useFirebaseUser();
+
+  const [userData, setUserData] = useState<User | null>(null);
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
-  const [userTeams, setUserTeams] = useState<Team[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [pendingRequest, setPendingRequest] = useState(0);
   const [formData, setFormData] = useState<Team>({
     id: '',
     name: "",
@@ -52,20 +41,18 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   });
 
   useEffect(() => {
-    const fetchUserTeams = async () => {
-      const teams = await getUserTeams();
-      setUserTeams(teams || []);
-    }
-    fetchUserTeams();
-  }, []);
+    const fetchUserData = async () => {
+      if (!user) return;
+      const data = await getUserData(user.id);
+
+      if (!data) return
+      setUserData(data);
+    };
+    fetchUserData();
+  }, [user]);
 
   useEffect(() => {
     if (hackathonId) {
-      const checkPendingRequest = async () => {
-        const pending = await checkIfPendingRequest(user?.id || "", hackathonId);
-        setPendingRequest(pending);
-      }
-      checkPendingRequest();
       setFormData(prev => ({
         ...prev,
         hackathonId
@@ -107,7 +94,7 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
     try {
       formData.hostId = user?.id || "";
       formData.teammates = [user?.id || ""];
-      const teamId = await createTeam(formData, userTeams);
+      const teamId = await createTeam(formData, user?.id || "");
 
       if (teamId && teamId !== 'alreadyInTeam') {
         router.push(`/teams/${teamId}`);
@@ -118,27 +105,6 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
     } catch (error) {
       console.error("Error creating team:", error);
       toast.error("Failed to Form Team");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleMatchRequest = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      if (!user?.id || !formData.hackathonId) {
-        toast.error("Please select a hackathon");
-        return;
-      }
-      
-      await createMatchRequest(user.id, formData.hackathonId);
-      toast.success("✨ AI Match requested submitted!");
-      router.push('/home');
-    } catch (error) {
-      console.error("Error creating match request:", error);
-      toast.error("Failed to request AI Match");
     } finally {
       setIsSubmitting(false);
     }
@@ -159,155 +125,72 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const activeHackathons = getActiveHackathons(hackathons);
   const selectedHackathon = activeHackathons.find(h => h.id === formData.hackathonId);
 
+  if (
+    (!hackathonsLoading &&
+      userLoading &&
+      hackathons.length === 0) ||
+    (!userData &&
+    !selectedHackathon &&
+    !activeHackathons)
+  ) {
+    return <NotFound />
+  }
+
   return (
-    <Tabs defaultValue="create" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 bg-zinc-800 border border-gray-700">
-        <TabsTrigger value="create">Create Team</TabsTrigger>
-        <TabsTrigger value="match">✨ AI Match</TabsTrigger>
-      </TabsList>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Label className="text-white" htmlFor="hackathon">Select Hackathon</Label>
+        <HackathonSelector
+          hackathons={activeHackathons}
+          selectedHackathon={selectedHackathon}
+          onSelect={(hackathonId) => setFormData({ ...formData, hackathonId })}
+        />
+      </div>
 
-      <TabsContent value="create">
-        <h2 className="text-zinc-400 mb-6 my-8">Create your own team and invite friends to join.</h2>
-        <form onSubmit={handleSubmit} className="space-y-5 text-white">
-          <div className="space-y-2">
-            <Label htmlFor="hackathon">Select Hackathon</Label>
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={open}
-                  className="w-full justify-between h-auto min-h-[2.5rem] py-2 bg-gray-800 border border-gray-700 hover:text-white shadow-sm rounded-lg hover:bg-gray-700"
-                >
-                  {selectedHackathon ? (
-                    <HackathonPreview hackathon={selectedHackathon} />
-                  ) : (
-                    "Select hackathon..."
-                  )}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[600px] h-[250px] p-0">
-                <Command>
-                  <CommandInput placeholder="Search hackathon..." />
-                  <CommandEmpty>No hackathon found.</CommandEmpty>
-                  <CommandGroup className="h-[200px] overflow-y-auto">
-                    {activeHackathons.map((hackathon) => (
-                      <CommandItem
-                        key={hackathon.id}
-                        value={hackathon.name}
-                        onSelect={() => {
-                          setFormData({
-                            ...formData,
-                            hackathonId: hackathon.id,
-                          });
-                          setOpen(false);
-                        }}
-                        className="py-2 text-black"
-                      >
-                        <HackathonPreview hackathon={hackathon} />
-                        <Check
-                          className={cn(
-                            "ml-auto h-4 w-4",
-                            formData.hackathonId === hackathon.id ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          </div>
+      <Tabs defaultValue="create" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 bg-zinc-800 border border-gray-700">
+          <TabsTrigger value="create">Create Team</TabsTrigger>
+          <TabsTrigger value="match">✨ AI Match</TabsTrigger>
+        </TabsList>
 
-          <div className="space-y-2">
-            <Label htmlFor="name">Team Name</Label>
-            <Input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              maxLength={20}
-              required
-              className="w-full"
-            />
-          </div>
-          
-          <Button 
-            type="submit" 
-            className="w-full bg-amber-500 hover:bg-amber-600 text-white" 
-            disabled={isSubmitting || !formData.hackathonId || !formData.name}
-          >
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </Button>
-        </form>
-      </TabsContent>
-
-      <TabsContent value="match">
-        <h2 className="text-zinc-400 mb-6 my-8">Let AI find your perfect team in less than 24 hours.</h2>
-        <form onSubmit={handleMatchRequest} className="space-y-5 text-white">
-          <div className="space-y-2">
-            <Label htmlFor="hackathon">Select Hackathon</Label>
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={open}
-                  className="w-full justify-between h-auto min-h-[2.5rem] py-2 bg-gray-800 border border-gray-700 hover:text-white shadow-sm rounded-lg hover:bg-gray-700"
-                >
-                  {selectedHackathon ? (
-                    <HackathonPreview hackathon={selectedHackathon} />
-                  ) : (
-                    "Select hackathon..."
-                  )}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[600px] h-[250px] p-0">
-                <Command>
-                  <CommandInput placeholder="Search hackathon..." />
-                  <CommandEmpty>No hackathon found.</CommandEmpty>
-                  <CommandGroup className="h-[200px] overflow-y-auto">
-                    {activeHackathons.map((hackathon) => (
-                      <CommandItem
-                        key={hackathon.id}
-                        value={hackathon.name}
-                        onSelect={() => {
-                          setFormData({
-                            ...formData,
-                            hackathonId: hackathon.id,
-                          });
-                          setOpen(false);
-                        }}
-                        className="py-2 text-black"
-                      >
-                        <HackathonPreview hackathon={hackathon} />
-                        <Check
-                          className={cn(
-                            "ml-auto h-4 w-4",
-                            formData.hackathonId === hackathon.id ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="mt-8">
+        <TabsContent value="create">
+          <h2 className="text-zinc-400 mb-6 my-8">Create your own team and invite friends to join.</h2>
+          <form onSubmit={handleSubmit} className="space-y-5 text-white">
+            <div className="space-y-2">
+              <Label htmlFor="name">Team Name</Label>
+              <Input
+                type="text"
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                maxLength={20}
+                required
+                className="w-full"
+              />
+            </div>
+            
             <Button 
               type="submit" 
               className="w-full bg-amber-500 hover:bg-amber-600 text-white" 
-              disabled={isSubmitting || !formData.hackathonId || pendingRequest > 0}
+              disabled={isSubmitting || !formData.name}
             >
-              {pendingRequest > 0 ? `Finding teammates. Check back later!` : (isSubmitting ? "Submitting..." : "Submit")}
+              {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
-          </div>
-        </form>
-      </TabsContent>
-    </Tabs>
+          </form>
+        </TabsContent>
+
+        <TabsContent value="match">
+          {userData ? (
+            <GPTTeamRecommendations 
+              userData={userData} 
+              hackathonId={formData.hackathonId}
+              isGracePeriod={selectedHackathon?.grace_period || false}
+            />
+          ) : (
+            <div>Please sign in to use AI matching.</div>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 } 

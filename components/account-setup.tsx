@@ -34,7 +34,7 @@ import { testLog } from "@/hooks/useCollection";
 export function AccountSetupComponent() {
   const router = useRouter();
   const { user } = useUser();
-  const { userData, createUser, loading: userLoading } = useFirebaseUser();
+  const { getUserData, createUser, loading: userLoading } = useFirebaseUser();
 
   const [formData, setFormData] = useState<User>({
     ...defaultUser,
@@ -49,7 +49,19 @@ export function AccountSetupComponent() {
     }
   });
   const [currentSection, setCurrentSection] = useState(0);
-  
+  const [userData, setUserData] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!user) return;
+      const userData = await getUserData(user.id);
+
+      if (!userData) return;
+      setUserData(userData);
+    };
+    fetchUserData();
+  }, [user]);
+
   useEffect(() => {
     testLog('Current userData:', userData);
     if (userData) {
@@ -119,7 +131,8 @@ export function AccountSetupComponent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await createUser(formData);
+    if (!userData) return;
+    const success = await createUser(formData, userData);
     if (success) {
       router.push("/home");
     }
