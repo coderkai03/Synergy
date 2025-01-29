@@ -1,0 +1,39 @@
+{
+    "teams": [
+      {
+        "name": "Team Dreamers",
+        "requests": [],
+        "hackathon_id": "7d5JhR9Jt8reVaScmqFj",
+        "hostId": "user_2s5WHITkrnwGr4T88czaME4LIKU",
+        "teammates": [
+          "user_2s5WHITkrnwGr4T88czaME4LIKU",
+          "user_2s7Wav92d79nNxcEGZyF0Xy0ZUV",
+          "user_2s6W5hxEVi5fbqkoOiArCVGEBES",
+          "user_2s88aQCxnb5uBSu22ukkxNNutwj"
+        ]
+      },
+      {
+        "name": "Team Thunder",
+        "requests": [],
+        "hackathon_id": "7d5JhR9Jt8reVaScmqFj",
+        "hostId": "user_2s5iKr8zcxmJkpoG0Ox8ljNKnI9",
+        "teammates": [
+          "user_2s5iKr8zcxmJkpoG0Ox8ljNKnI9",
+          "user_2s7th3kYwH0ONBtG2HDAbXlTPDm",
+          "user_2s9JihlB8zkjLXO9L0jDeHawQxv"
+        ]
+      },
+      {
+        "name": "Team Inferno",
+        "requests": [],
+        "hackathon_id": "7d5JhR9Jt8reVaScmqFj",
+        "hostId": "user_2sDtyGwucfTgAFk3VQSjmVo9FVb",
+        "teammates": [
+          "user_2sDtyGwucfTgAFk3VQSjmVo9FVb",
+          "user_2s3WwoJm5NvJ7M4Am6LC6Kepl5W",
+          "user_2sBLdlDUKZL9w8Mw9ucj5XxTs0t"
+        ]
+      }
+    ]
+  }
+  

@@ -1,0 +1,354 @@
+{
+  "users": [
+    {
+      "id": "user_2s5WHITkrnwGr4T88czaME4LIKU",
+      "interests": [],
+      "teams": [],
+      "invites": [],
+      "firstName": "Max",
+      "lastName": "Chwa",
+      "email": "mc5693@columbia.edu",
+      "profilePicture": "",
+      "bio": "I'm a CS Freshman with the coding abilities of an Intro to Java alumnus and the enthusiasm of someone who hasn't done Advanced Programming. This is my first hackathon.",
+      "school": "Columbia University",
+      "major": "Computer Science + English",
+      "technologies": [
+        "Java",
+        "JavaScript"
+      ],
+      "category_experience": [
+        "Web Development"
+      ],
+      "linkedin": "https://www.linkedin.com/in/max-chwa-33634211a/",
+      "devpost": "https://devpost.com/mc5693",
+      "github": "https://github.com/maxchwa",
+      "number_of_hackathons": "0",
+      "role_experience": {
+        "product_management": 1,
+        "software": 1,
+        "hardware": 1,
+        "design": 1
+      }
+    },
+    {
+      "id": "user_2s5iKr8zcxmJkpoG0Ox8ljNKnI9",
+      "interests": [],
+      "teams": [],
+      "invites": [],
+      "firstName": "Danil",
+      "lastName": "Ermolin",
+      "email": "ermodanil@gmail.com",
+      "profilePicture": "",
+      "bio": "Hi,\nCurrently working as IT tech and looking to get into cybersecurity and cloud. Let’s connect!",
+      "school": "CUNY Brooklyn College ",
+      "major": "Computer Science ",
+      "technologies": [
+        "JavaScript",
+        "Python",
+        "Java",
+        "MySQL",
+        "React",
+        "Node.js",
+        "Redis",
+        "Express.js",
+        "AWS"
+      ],
+      "category_experience": [
+        "Cybersecurity",
+        "Web Development",
+        "Cloud Computing"
+      ],
+      "linkedin": "https://www.linkedin.com/in/ermodanil",
+      "devpost": "https://devpost.com/BrklynDanil",
+      "github": "https://github.com/danace38",
+      "number_of_hackathons": "0",
+      "role_experience": {
+        "product_management": 1,
+        "software": 1,
+        "hardware": 1,
+        "design": 1
+      }
+    },
+    {
+      "id": "user_2s6W5hxEVi5fbqkoOiArCVGEBES",
+      "interests": [],
+      "teams": [],
+      "invites": [],
+      "firstName": "Pei Yi",
+      "lastName": "Li",
+      "email": "pl2923@columbia.edu",
+      "profilePicture": "",
+      "bio": "Currently pursuing a Master of Science in Business Analytics at Columbia University ",
+      "school": "Columbia University",
+      "major": "Business Analytics",
+      "technologies": [
+        "Python",
+        "Java",
+        "SQL"
+      ],
+      "category_experience": [
+        "Data Science"
+      ],
+      "linkedin": "www.linkedin.com/in/pei-yii",
+      "devpost": "https://devpost.com/pl2923?ref_content=user-portfolio&ref_feature=portfolio&ref_medium=global-nav",
+      "github": "https://github.com/cindyliwho",
+      "number_of_hackathons": "0",
+      "role_experience": {
+        "product_management": 1,
+        "software": 2,
+        "hardware": 1,
+        "design": 1
+      }
+    },
+    {
+      "id": "user_2s7Wav92d79nNxcEGZyF0Xy0ZUV",
+      "interests": [],
+      "teams": [],
+      "invites": [],
+      "firstName": "Maryam",
+      "lastName": "Naser",
+      "email": "mn3171@columbia.edu",
+      "profilePicture": "",
+      "bio": "“in conclusion, not a failure to society”",
+      "school": "Columbia University",
+      "major": "Mechanical Engineering ",
+      "technologies": [
+        "Python",
+        "Java",
+        "C"
+      ],
+      "category_experience": [
+        "Data Science"
+      ],
+      "linkedin": "https://www.linkedin.com/in/maryam-naser/",
+      "devpost": "https://devpost.com/maryamn",
+      "github": "https://github.com/maryamn1",
+      "number_of_hackathons": "1",
+      "role_experience": {
+        "product_management": 2,
+        "software": 2,
+        "hardware": 1,
+        "design": 1
+      }
+    },
+    {
+      "id": "user_2s7th3kYwH0ONBtG2HDAbXlTPDm",
+      "interests": [],
+      "teams": [],
+      "invites": [],
+      "firstName": "Aaron",
+      "lastName": "Liu",
+      "email": "al4578@columbia.edu",
+      "profilePicture": "",
+      "bio": "Hello! I am a first-year Columbia University student who is very passionate in applying machine learning and data analysis into solving real-world problems.",
+      "school": "Columbia University",
+      "major": "Computer Science and Mathematics",
+      "technologies": [
+        "Python",
+        "Java",
+        "TypeScript"
+      ],
+      "category_experience": [
+        "Data Science",
+        "Web Development",
+        "AI/Machine Learning"
+      ],
+      "linkedin": "https://www.linkedin.com/in/aaronliu2028/",
+      "devpost": "https://devfest2025.devpost.com/participants",
+      "github": "https://github.com/websiteguy1222",
+      "number_of_hackathons": "0",
+      "role_experience": {
+        "product_management": 1,
+        "software": 2,
+        "hardware": 1,
+        "design": 1
+      }
+    },
+    {
+      "id": "user_2s88aQCxnb5uBSu22ukkxNNutwj",
+      "interests": [],
+      "teams": [],
+      "invites": [],
+      "firstName": "Nikas",
+      "lastName": "Lukyanov",
+      "email": "nl2951@columbia.edu",
+      "profilePicture": "",
+      "bio": "Applied math student interested in ML and Stats",
+      "school": "Columbia University",
+      "major": "Mathematics",
+      "technologies": [
+        "Python",
+        "MATLAB",
+        "Java",
+        "TensorFlow",
+        "PyTorch"
+      ],
+      "category_experience": [
+        "AI/Machine Learning",
+        "Data Science"
+      ],
+      "linkedin": "https://www.linkedin.com/in/nikaslukyanov/",
+      "devpost": "https://devpost.com/nikaslukyanov?ref_content=user-portfolio&ref_feature=portfolio&ref_medium=global-nav",
+      "github": "https://github.com/nikaslukyanov",
+      "number_of_hackathons": "0",
+      "role_experience": {
+        "product_management": 1,
+        "software": 3,
+        "hardware": 1,
+        "design": 1
+      }
+    },
+    {
+      "id": "user_2s8U6b50Advb5nezNxTGikJGTRK",
+      "interests": [],
+      "teams": [],
+      "invites": [],
+      "firstName": "Jonah",
+      "lastName": "Aden",
+      "email": "adenjonah@gmail.com",
+      "profilePicture": "",
+      "bio": "Ship it\n",
+      "school": "columbia",
+      "major": "cs and stats",
+      "technologies": [
+        "C",
+        "JavaScript",
+        "Python"
+      ],
+      "category_experience": [
+        "Data Science",
+        "Web Development"
+      ],
+      "linkedin": "https://linkedin.com/in/jonah-aden",
+      "devpost": "https://devpost.com/adenjonah",
+      "github": "https://www.github.com/adenjonah",
+      "number_of_hackathons": "0",
+      "role_experience": {
+        "product_management": 3,
+        "software": 2,
+        "hardware": 2,
+        "design": 3
+      }
+    },
+    {
+      "id": "user_2s9JihlB8zkjLXO9L0jDeHawQxv",
+      "interests": [],
+      "teams": [],
+      "invites": [],
+      "firstName": "Mengxi",
+      "lastName": "Liu",
+      "email": "ml5189@columbia.edu",
+      "profilePicture": "",
+      "bio": "Columbia Engineering M.S. Data Science '25",
+      "school": "Columbia University",
+      "major": "Data Science",
+      "technologies": [
+        "Python",
+        "R",
+        "Java",
+        "C"
+      ],
+      "category_experience": [
+        "Data Science"
+      ],
+      "linkedin": "https://www.linkedin.com/in/mengxiliu2002/",
+      "devpost": "https://devpost.com/ml5189",
+      "github": "https://github.com/Miki273",
+      "number_of_hackathons": "0",
+      "role_experience": {
+        "product_management": 1,
+        "software": 1,
+        "hardware": 1,
+        "design": 1
+      }
+    },
+    {
+      "id": "user_2sBLdlDUKZL9w8Mw9ucj5XxTs0t",
+      "interests": [],
+      "teams": [],
+      "invites": [],
+      "firstName": "Atulya",
+      "lastName": "Madhavan",
+      "email": "am6063@columbia.edu",
+      "profilePicture": "",
+      "bio": "Computer science student interested in learning more about data science.",
+      "school": "Columbia University",
+      "major": "Data Science",
+      "technologies": [
+        "Java"
+      ],
+      "category_experience": [
+        "Blockchain"
+      ],
+      "linkedin": "https://www.linkedin.com/in/atulya-madhavan-524045341/",
+      "devpost": "NA",
+      "github": "NA",
+      "number_of_hackathons": "0",
+      "role_experience": {
+        "product_management": 1,
+        "software": 1,
+        "hardware": 1,
+        "design": 1
+      }
+    },
+    {
+      "id": "user_2sDtyGwucfTgAFk3VQSjmVo9FVb",
+      "interests": [],
+      "teams": [],
+      "invites": [],
+      "firstName": "Ousmane",
+      "lastName": "Diallo",
+      "email": "ousmane@speakhire.org",
+      "profilePicture": "",
+      "bio": "I am an undergraduate Student majoring in Computer Systems.",
+      "school": "CUNY New York City College of Technology",
+      "major": "Computer Systems of Technology",
+      "technologies": [
+        "JavaScript"
+      ],
+      "category_experience": [
+        "AI/Machine Learning"
+      ],
+      "linkedin": "https://www.linkedin.com/in/ousmane-diallo-005ab7246/",
+      "devpost": "https://devpost.com/ousmanediallo826?ref_content=user-portfolio&ref_feature=portfolio&ref_medium=global-nav",
+      "github": "https://github.com/ousmanediallo826",
+      "number_of_hackathons": "1",
+      "role_experience": {
+        "product_management": 1,
+        "software": 2,
+        "hardware": 1,
+        "design": 1
+      }
+    },
+    {
+      "id": "user_2s3WwoJm5NvJ7M4Am6LC6Kepl5W",
+      "interests": [],
+      "teams": [],
+      "invites": [],
+      "firstName": "Kaan",
+      "lastName": "Erdem",
+      "email": "erdeka2006@gmail.com",
+      "profilePicture": "",
+      "bio": "Computer Science Student",
+      "school": "Columbia University",
+      "major": "Computer Science ",
+      "technologies": [
+        "Java",
+        "Python"
+      ],
+      "category_experience": [
+        "AI/Machine Learning"
+      ],
+      "linkedin": "https://www.linkedin.com/in/kaan-erdem-9b9a24282/",
+      "devpost": "-",
+      "github": "-",
+      "number_of_hackathons": "0",
+      "role_experience": {
+        "product_management": 2,
+        "software": 2,
+        "hardware": 1,
+        "design": 2
+      }
+    }
+  ]
+}
