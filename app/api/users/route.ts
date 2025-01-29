@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { useCollection } from '@/hooks/useCollection';
+import { collectionRouter } from '@/app/api/collectionRouter';
 
 // GET: Fetch user data by ID
 export async function GET(request: Request) {
@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 
   try {
     // Get user document
-    const userRef = doc(useCollection('users'), userId);
+    const userRef = doc(collectionRouter('users'), userId);
     const userDoc = await getDoc(userRef);
     
     // Check if user exists
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     const { user } = await request.json();
     
     // Create/update user document
-    const userRef = doc(useCollection('users'), user.id);
+    const userRef = doc(collectionRouter('users'), user.id);
     await setDoc(userRef, user);
     
     return NextResponse.json({ success: true });

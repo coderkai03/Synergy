@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDocs, query, where } from 'firebase/firestore';
-import { useCollection } from '@/hooks/useCollection';
+import { collectionRouter } from '@/app/api/collectionRouter';
 
 // GET: Fetch all teams for a specific hackathon
 export async function GET(
@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     // Query teams collection for specific hackathon
-    const teamsRef = useCollection('teams');
+    const teamsRef = collectionRouter('teams');
     const q = query(teamsRef, where('hackathonId', '==', params.hackathonId));
     const snapshot = await getDocs(q);
     

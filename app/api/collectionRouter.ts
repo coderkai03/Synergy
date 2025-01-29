@@ -21,3 +21,12 @@ export function collectionRouter(collectionName: string): CollectionReference<Do
   
   return collection(db, actualCollectionName) as CollectionReference<DocumentData>;
 }
+
+export function testRouteLog(...args: any[]) {
+    const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+    const isTest = publishableKey?.includes('pk_test');
+  
+    if (isTest) {
+      console.log(...args);
+    }
+  }

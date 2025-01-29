@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { doc, getDoc, addDoc, updateDoc, arrayUnion } from 'firebase/firestore';
-import { useCollection } from '@/hooks/useCollection';
+import { collectionRouter } from '@/app/api/collectionRouter';
 
 // GET: Fetch all teams for a specific user
 export async function GET(request: Request) {
@@ -15,13 +15,13 @@ export async function GET(request: Request) {
 
   try {
     // Get user document to access their teams
-    const userRef = doc(useCollection('users'), userId);
+    const userRef = doc(collectionRouter('users'), userId);
     const userDoc = await getDoc(userRef);
     const teamsData = userDoc.exists() ? userDoc.data()?.teams || [] : [];
     
     // Fetch full team data for each team ID
     const teams = await Promise.all(teamsData.map(async (teamId: string) => {
-      const teamRef = doc(useCollection('teams'), teamId);
+      const teamRef = doc(collectionRouter('teams'), teamId);
       const teamDoc = await getDoc(teamRef);
       return teamDoc.exists() ? { ...teamDoc.data(), id: teamId } : null;
     }));
@@ -40,14 +40,14 @@ export async function POST(request: Request) {
     const { team, userId } = await request.json();
     
     // Create new team document
-    const teamRef = useCollection('teams');
+    const teamRef = collectionRouter('teams');
     const docRef = await addDoc(teamRef, team);
     
     // Update team with its own ID
     await updateDoc(docRef, { id: docRef.id });
     
     // Add team to user's teams array
-    const userRef = doc(useCollection('users'), userId);
+    const userRef = doc(collectionRouter('users'), userId);
     await updateDoc(userRef, {
       teams: arrayUnion(docRef.id)
     });

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { useCollection } from '@/hooks/useCollection';
+import { collectionRouter } from '@/app/api/collectionRouter';
 import { orderBy, limit, getDocs } from 'firebase/firestore';
 import { query } from 'firebase/firestore';
 
@@ -11,7 +11,7 @@ export async function GET(request: Request) {
 
   try {
     // Query hackathons collection with ordering and limit
-    const hackathonsRef = useCollection('hackathons');
+    const hackathonsRef = collectionRouter('hackathons');
     const q = query(hackathonsRef, orderBy('date', 'desc'), limit(limitCount));
     const snapshot = await getDocs(q);
     
