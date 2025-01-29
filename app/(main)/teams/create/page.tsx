@@ -7,6 +7,7 @@ import { RequireProfile } from "@/components/require-profile";
 import { useUser } from "@clerk/nextjs";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { User } from "@/types/User";
+import Loading from "@/components/loading";
 
 function CreateTeamContent() {
   const searchParams = useSearchParams();
@@ -26,6 +27,9 @@ function CreateTeamContent() {
     fetchUserData();
   }, [user]);
 
+  if (userLoading) {
+    return <Loading />
+  }
 
   return (
     <div>

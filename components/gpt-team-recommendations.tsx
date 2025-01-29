@@ -74,10 +74,14 @@ export function GPTTeamRecommendations({
     <div className="space-y-6">
       {isGracePeriod ? (
         // Waitlist Mode
-        <div className="flex flex-col items-center space-y-4">
-          <p className="text-zinc-400 text-sm">
-            Team matching will begin after the grace period ends. Join the waitlist to get matched!
-          </p>
+        <div>
+          <h2 className="text-zinc-400 mb-6 my-8 leading-relaxed">
+            Join the waitlist to get matched!
+            <br/>
+            <br/>
+            We'll notify you when we've found recommendations.
+          </h2>
+          <div className="flex flex-col items-center space-y-4">
           <Button
             onClick={handleMatchRequest}
             className="w-full bg-amber-500 hover:bg-amber-600 text-white"
@@ -85,20 +89,26 @@ export function GPTTeamRecommendations({
           >
             <Sparkles className="w-4 h-4 mr-2" />
             {isLoading ? "Submitting request..." : "Join AI Match Waitlist"}
-          </Button>
+            </Button>
+          </div>
         </div>
       ) : (
         // Instant Mode
         recommendations.teams.length === 0 ? (
-          <div className="flex flex-col items-center space-y-4">
-            <Button
-              onClick={handleGetRecommendations}
-              className="w-full bg-amber-500 hover:bg-amber-600 text-white"
-              disabled={isLoading || !hackathonId}
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              {isLoading ? "Finding perfect matches..." : "Get AI Recommendations"}
-            </Button>
+          <div>
+            <h2 className="text-zinc-400 mb-6 my-8">
+              Let AI find your perfect team in seconds.
+            </h2>
+            <div className="flex flex-col items-center space-y-4">
+              <Button
+                onClick={handleGetRecommendations}
+                className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+                disabled={isLoading || !hackathonId}
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                {isLoading ? "Finding perfect matches..." : "Get AI Recommendations"}
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="space-y-6">

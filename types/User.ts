@@ -26,6 +26,7 @@ export type User = {
   }
   teams: string[];
   invites: Invite[];
+  ai_match_uses: number;
 }
 
 export const defaultUser: User = {
@@ -54,6 +55,7 @@ export const defaultUser: User = {
   },
   teams: [],
   invites: [],
+  ai_match_uses: 0,
 }
 
 export const getMatchScoreColor = (score: number): string => {
@@ -205,7 +207,8 @@ export const mockHackers: User[] = [
       design: 2
     },
     teams: [],
-    invites: []
+    invites: [],
+    ai_match_uses: 0,
   },
   {
     id: "2",
@@ -230,7 +233,8 @@ export const mockHackers: User[] = [
       design: 1
     },
     teams: [],
-    invites: []
+    invites: [],
+    ai_match_uses: 0,
   },
   {
     id: "3",
@@ -255,7 +259,8 @@ export const mockHackers: User[] = [
       design: 1
     },
     teams: [],
-    invites: []
+    invites: [],
+    ai_match_uses: 0,
   },
   {
     id: "4",
@@ -280,7 +285,8 @@ export const mockHackers: User[] = [
       design: 3
     },
     teams: [],
-    invites: []
+    invites: [],
+    ai_match_uses: 0,
   },
   {
     id: "5",
@@ -305,6 +311,7 @@ export const mockHackers: User[] = [
       design: 2
     },
     teams: [],
-    invites: []
+    invites: [],
+    ai_match_uses: 0,
   }
 ];

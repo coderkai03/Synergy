@@ -17,15 +17,16 @@ import { GPTTeamRecommendations } from "./gpt-team-recommendations";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { HackathonSelector } from "./hackathon-selector";
 import { User } from "@/types/User";
+import NotFound from "./not-found";
 
 
 export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const { user } = useUser();
   const router = useRouter();
 
-  const { getAllHackathons } = useHackathons();
+  const { getAllHackathons, loading: hackathonsLoading } = useHackathons();
   const { createTeam, teamNameExists } = useTeams();
-  const { getUserData } = useFirebaseUser();
+  const { getUserData, loading: userLoading } = useFirebaseUser();
 
   const [userData, setUserData] = useState<User | null>(null);
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
@@ -124,6 +125,17 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const activeHackathons = getActiveHackathons(hackathons);
   const selectedHackathon = activeHackathons.find(h => h.id === formData.hackathonId);
 
+  if (
+    (!hackathonsLoading &&
+      userLoading &&
+      hackathons.length === 0) ||
+    (!userData &&
+    !selectedHackathon &&
+    !activeHackathons)
+  ) {
+    return <NotFound />
+  }
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -168,9 +180,6 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
         </TabsContent>
 
         <TabsContent value="match">
-          <h2 className="text-zinc-400 mb-6 my-8">
-            Let AI find your perfect team in seconds.
-          </h2>
           {userData ? (
             <GPTTeamRecommendations 
               userData={userData} 
