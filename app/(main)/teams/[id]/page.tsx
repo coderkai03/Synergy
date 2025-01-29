@@ -201,7 +201,8 @@ export default function TeamDetailPage() {
                     ) : (
                       <JoinTeamDialog
                         team={team}
-                        userData={userData} />
+                        userData={userData}
+                        userLoading={userLoading} />
                     )}
                   </>
                 )}

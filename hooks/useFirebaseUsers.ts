@@ -9,7 +9,7 @@ import { testLog, useCollection } from './useCollection';
 import { toast } from 'react-hot-toast';
 
 export function useFirebaseUser() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const getUserData = async (userId: string) => {
@@ -48,6 +48,8 @@ export function useFirebaseUser() {
       toast.error("Failed to save your profile. Please try again.");
       setError('Failed to save your profile. Please try again.');
       return false;
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -86,6 +88,8 @@ export function useFirebaseUser() {
       setError('Failed to fetch users');
       setLoading(false);
       return [];
+    } finally {
+      setLoading(false);
     }
   }
 

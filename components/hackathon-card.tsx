@@ -6,7 +6,7 @@ import { Hackathon } from "@/types/Hackathons";
 import { User } from "@/types/User";
 import Image from "next/image";
 import SynergyLogo from "./synergy-logo";
-import { RequireProfile, isProfileComplete } from "./require-profile";
+import { isProfileComplete } from "./require-profile";
 
 interface HackathonCardProps {
   hackathon: Hackathon;
@@ -15,8 +15,8 @@ interface HackathonCardProps {
 }
 
 export function HackathonCard({
-  hackathon, 
-  userData, 
+  hackathon,
+  userData,
   previewOnly
 }: HackathonCardProps) {
   const { getIconSize } = SynergyLogo();

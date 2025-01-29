@@ -6,7 +6,7 @@ import { Hackathon } from '@/types/Hackathons';
 import { useCollection, testLog } from './useCollection';
 
 export function useHackathons() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const getOlderHackathons = async (limitCount: number, lastHackathonId?: string) => {
     setLoading(true);
@@ -58,10 +58,11 @@ export function useHackathons() {
       } catch (err) {
         console.error("Error fetching hackathon:", err);
         return null;
+      } finally {
+        setLoading(false);
       }
     }));
 
-    setLoading(false);
     return hackathons as Hackathon[];
   }
 
@@ -81,14 +82,25 @@ export function useHackathons() {
   }
 
   const getUpcomingHackathons = async (limitCount: number) => {
+    setLoading(true);
     try {
-      const allHackathons = await getAllHackathons();
-            
-      const upcomingHackathons = allHackathons
-        .sort((a: Hackathon, b: Hackathon) => new Date(a.date).getTime() - new Date(b.date).getTime())
-        .slice(0, limitCount);
+      const hackathonsRef = useCollection('hackathons');
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-      testLog("upcoming hackathons: ", upcomingHackathons.map((h: Hackathon) => h.id));
+      const q = query(hackathonsRef,
+        where('date', '>=', today.toISOString()),
+        orderBy('date'),
+        limit(limitCount)
+      );
+
+      const querySnapshot = await getDocs(q);
+      const upcomingHackathons = querySnapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id
+      })) as Hackathon[];
+
+      testLog("upcoming hackathons: ", upcomingHackathons.map(h => h.id));
 
       if (upcomingHackathons.length === 0) {
         testLog("No upcoming hackathons found");
@@ -99,6 +111,8 @@ export function useHackathons() {
     } catch (error) {
       console.error("Error fetching upcoming hackathons:", error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   }
 

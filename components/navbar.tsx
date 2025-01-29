@@ -6,8 +6,10 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { LogIn, LogOut, Menu, User } from "lucide-react";
 import { useClerk, useUser, SignInButton } from "@clerk/nextjs";
 import SynergyLogo from "./synergy-logo";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
+    const router = useRouter();
     const { signOut } = useClerk();
     const { user, isSignedIn } = useUser();
     const { getLogoSize } = SynergyLogo();
@@ -70,7 +72,10 @@ export default function Navbar() {
                             </DropdownMenu.Item>
                             <DropdownMenu.Item asChild>
                                 <button 
-                                    onClick={() => signOut()}
+                                    onClick={() => {
+                                        signOut();
+                                        router.push('/');
+                                    }}
                                     className="flex w-full items-center gap-2 rounded hover:bg-amber-100 hover:text-black px-2 py-1"
                                 >
                                     <LogOut className="h-4 w-4" />
@@ -151,7 +156,10 @@ export default function Navbar() {
                                 </DropdownMenu.Item>
                                 <DropdownMenu.Item asChild>
                                     <button
-                                        onClick={() => signOut()}
+                                        onClick={() => {
+                                            signOut();
+                                            router.push('/');
+                                        }}
                                         className="flex items-center gap-2 rounded hover:bg-amber-100 hover:text-black justify-end w-full"
                                     >
                                         <span>Sign Out</span>

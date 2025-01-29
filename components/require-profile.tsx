@@ -9,6 +9,7 @@ import { useUser } from "@clerk/nextjs";
 
 interface RequireProfileProps {
   children: React.ReactNode;
+  userData?: User | null;
 }
 
 export const isProfileComplete = (user: User | null): boolean => {
@@ -29,36 +30,23 @@ export const isProfileComplete = (user: User | null): boolean => {
   return requiredFields.every(Boolean);
 };
 
-export function RequireProfile({ children }: RequireProfileProps) {
+export function RequireProfile({ children, userData }: RequireProfileProps) {
   const router = useRouter();
   
-  const { getUserData, loading } = useFirebaseUser();
-  const { user } = useUser();
   const [hasChecked, setHasChecked] = useState(false);
-  const [userData, setUserData] = useState<User | null>(null);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!user) return;
-      const userData = await getUserData(user.id);
-
-      if (!userData) return;
-      setUserData(userData);
-    };
-    fetchUserData();
-  }, [user]);
 
   useEffect(() => {
     // Only check when loading is complete and we haven't checked yet
-    if (!loading && !hasChecked) {
+    if (!hasChecked) {
       setHasChecked(true);
+      // testLog('User data:', userData);
       
-      if (!isProfileComplete(userData)) {
+      if (userData !== undefined && !isProfileComplete(userData)) {
         testLog('Profile incomplete:', userData);
         router.push('/account-setup');
       }
     }
-  }, [userData, loading, hasChecked, router]);
+  }, [userData, hasChecked, router]);
 
   // If we've checked and the profile is complete, render children
   return <>{children}</>;

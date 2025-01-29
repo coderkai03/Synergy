@@ -21,6 +21,8 @@ export function TeamPreview({ team }: TeamPreviewProps) {
   const [isMember, setIsMember] = useState(false);
   const isHost = user?.id === team.hostId;
 
+  testLog('teampreview: ', team);
+
   useEffect(() => {
     if (!user) return;
     setIsMember(team.teammates.includes(user.id));
@@ -41,7 +43,10 @@ export function TeamPreview({ team }: TeamPreviewProps) {
     router.push(`/teams/${id}`);
   };
 
-  if (!team || !hackathon || !isMember) return null;
+  if (!team || !hackathon) {
+    testLog('teampreview|null: ', team, hackathon, isMember);
+    return null;
+  }
   
   return (
     <div key={team.id} onClick={() => onTeamClick(team.id)}>

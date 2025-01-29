@@ -11,6 +11,8 @@ import { useEffect, useState } from 'react'
 import Loading from '@/components/loading'
 import { User } from '@/types/User'
 import { useUser } from '@clerk/nextjs'
+import NotFound from '@/components/not-found'
+import { testLog } from '@/hooks/useCollection'
 
 export default function DashboardPage() {
   const { user } = useUser();
@@ -51,7 +53,19 @@ export default function DashboardPage() {
     fetchUpcomingTeam();
   }, [upcomingHackathons, userData]);
 
+  testLog('loading', userLoading, teamLoading, hackathonLoading);
   if (hackathonLoading || teamLoading || userLoading) return <Loading />;
+
+  // if (
+  //   (!userLoading &&
+  //     !teamLoading &&
+  //     !hackathonLoading) &&
+  //   (!userData ||
+  //   !userData?.teams ||
+  //   userData?.teams.length === 0)
+  // ) {
+  //   return <NotFound />;
+  // }
 
   return (
     <div className="min-h-screen bg-[#111119] p-4">
@@ -62,10 +76,11 @@ export default function DashboardPage() {
                 userData={userData}
                 userTeam={userTeam}
                 hackathon={upcomingHackathons[0]}
-            />
-            <UpcomingHackathons
-              hackathons={upcomingHackathons.slice(1, 5)}
-              userData={userData}
+                userLoading={userLoading}
+              />
+              <UpcomingHackathons
+                hackathons={upcomingHackathons.slice(1, 5)}
+                userData={userData}
               />
             </div>
           )}
