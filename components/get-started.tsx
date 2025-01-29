@@ -2,8 +2,6 @@ import { SignInButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
-import { User } from "@/types/User";
-import { isProfileComplete } from "./require-profile";
 
 export default function GetStarted() {
   const { isLoaded, isSignedIn } = useUser();
