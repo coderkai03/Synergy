@@ -12,7 +12,7 @@ import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import Loading from "./loading";
 import NotFound from "./not-found";
 import { HackathonGrid } from "./hackathon-grid";
-import { User } from "@/types/User";
+import { defaultUser, User } from "@/types/User";
 import { useUser } from "@clerk/nextjs";
 import { testLog } from "@/hooks/useCollection";
 
@@ -27,17 +27,17 @@ export function HackathonsListComponent() {
   const [locationFilter, setLocationFilter] = useState("all");
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState<User | null>(null);
+  const [userData, setUserData] = useState<User>(defaultUser);
 
   useEffect(() => {
     const fetchUserData = async () => {
       testLog('Fetching user data');
-      if (!user) return;
-      const userData = await getUserData(user.id);
-      testLog('User data fetched:', userData);
+      if (!user || userData !== defaultUser) return;
+      const fetchedUserData = await getUserData(user.id);
+      testLog('User data fetched:', fetchedUserData);
 
-      if (!userData) return;
-      setUserData(userData);
+      if (!fetchedUserData) return;
+      setUserData(fetchedUserData);
     };
     fetchUserData();
   }, [user]);

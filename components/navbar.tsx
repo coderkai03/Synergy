@@ -83,8 +83,8 @@ export default function Navbar() {
                     <button className="inline-flex items-center gap-2 text-white hover:text-amber-100">
                         <SignInButton
                             mode="modal"
-                            fallbackRedirectUrl={'/hackathons'}
-                            signUpForceRedirectUrl={'/account-setup'}
+                            fallbackRedirectUrl={'/home'}
+                            signUpForceRedirectUrl={'/home'}
                         >
                             <span className="inline-flex items-center gap-2">
                                 <span>Sign in</span>

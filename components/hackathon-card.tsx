@@ -6,7 +6,7 @@ import { Hackathon } from "@/types/Hackathons";
 import { User } from "@/types/User";
 import Image from "next/image";
 import SynergyLogo from "./synergy-logo";
-import { RequireProfile } from "./require-profile";
+import { RequireProfile, isProfileComplete } from "./require-profile";
 
 interface HackathonCardProps {
   hackathon: Hackathon;
@@ -73,17 +73,15 @@ export function HackathonCard({
           {hackathon.location}
         </div>
         {!previewOnly && <div className="mt-3 flex gap-2">
-          <RequireProfile>
             <Button
               asChild
               variant="outline"
               className="flex-1 bg-[#4A4A4A] border-[#ffac4c] border-2 text-[#ffac4c] hover:bg-[#FFAD08]/10 hover:text-[#ffac4c] font-bold"
             >
-              <Link href={userData ? `/teams/create${hackathon.id ? `?hackathonId=${hackathon.id}` : ''}` : '/account-setup'}>
+              <Link href={isProfileComplete(userData) ? `/teams/create${hackathon.id ? `?hackathonId=${hackathon.id}` : ''}` : '/account-setup'}>
                 Form Team
               </Link>
             </Button>
-          </RequireProfile>
           <Button 
             asChild
             className="flex-1 bg-amber-500 hover:bg-amber-600 font-bold text-white hover:text-white"

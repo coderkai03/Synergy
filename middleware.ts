@@ -6,6 +6,7 @@ const publicRoutes = createRouteMatcher([
   "/",
   "/contact-us",
   "/legal",
+  "/hackathons",
   // "/hacker/:id",
   // Static files and Next.js internals
   "/_next(.*)",

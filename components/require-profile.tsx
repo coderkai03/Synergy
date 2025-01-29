@@ -11,6 +11,24 @@ interface RequireProfileProps {
   children: React.ReactNode;
 }
 
+export const isProfileComplete = (user: User | null): boolean => {
+  if (!user) return false;
+
+  const requiredFields = [
+    user.id,
+    user.firstName,
+    user.lastName,
+    user.email,
+    user.school,
+    user.major,
+    user.technologies?.length > 0,
+    user.role_experience && Object.keys(user.role_experience).length > 0,
+    user.category_experience?.length > 0
+  ];
+
+  return requiredFields.every(Boolean);
+};
+
 export function RequireProfile({ children }: RequireProfileProps) {
   const router = useRouter();
   
@@ -29,24 +47,6 @@ export function RequireProfile({ children }: RequireProfileProps) {
     };
     fetchUserData();
   }, [user]);
-
-  const isProfileComplete = (user: User | null): boolean => {
-    if (!user) return false;
-
-    const requiredFields = [
-      user.id,
-      user.firstName,
-      user.lastName,
-      user.email,
-      user.school,
-      user.major,
-      user.technologies?.length > 0,
-      user.role_experience && Object.keys(user.role_experience).length > 0,
-      user.category_experience?.length > 0
-    ];
-
-    return requiredFields.every(Boolean);
-  };
 
   useEffect(() => {
     // Only check when loading is complete and we haven't checked yet

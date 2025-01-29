@@ -14,7 +14,7 @@ import { useUser } from '@clerk/nextjs'
 
 export default function DashboardPage() {
   const { user } = useUser();
-  const { getUserData } = useFirebaseUser();
+  const { getUserData, loading: userLoading } = useFirebaseUser();
   const { loading: hackathonLoading, getUpcomingHackathons } = useHackathons();
   const { loading: teamLoading, checkIfUserHasTeam } = useTeams();
 
@@ -51,7 +51,7 @@ export default function DashboardPage() {
     fetchUpcomingTeam();
   }, [upcomingHackathons, userData]);
 
-  if (hackathonLoading || teamLoading) return <Loading />;
+  if (hackathonLoading || teamLoading || userLoading) return <Loading />;
 
   return (
     <div className="min-h-screen bg-[#111119] p-4">

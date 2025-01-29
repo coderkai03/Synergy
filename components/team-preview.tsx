@@ -15,10 +15,16 @@ interface TeamPreviewProps {
 export function TeamPreview({ team }: TeamPreviewProps) {
   const router = useRouter();
   const { user } = useUser();
-  const { getHackathons } = useHackathons();
+  const { getHackathons, loading: hackathonLoading } = useHackathons();
 
   const [hackathon, setHackathon] = useState<Hackathon | null>(null);
+  const [isMember, setIsMember] = useState(false);
   const isHost = user?.id === team.hostId;
+
+  useEffect(() => {
+    if (!user) return;
+    setIsMember(team.teammates.includes(user.id));
+  }, [user, team]);
 
   useEffect(() => {
     const fetchHackathon = async () => {
@@ -35,7 +41,7 @@ export function TeamPreview({ team }: TeamPreviewProps) {
     router.push(`/teams/${id}`);
   };
 
-  if (!team || !hackathon) return null;
+  if (!team || !hackathon || !isMember) return null;
   
   return (
     <div key={team.id} onClick={() => onTeamClick(team.id)}>
@@ -51,7 +57,7 @@ export function TeamPreview({ team }: TeamPreviewProps) {
             <div className="flex flex-col items-end gap-2">
               <div className="flex items-center gap-2">
                 <p className="text-sm text-gray-300">{team.teammates.length}/4 teammates</p>
-                {team.requests && team.requests.length > 0 && (
+                {isMember && team.requests && team.requests.length > 0 && (
                   <div className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {team.requests.length}
                   </div>
