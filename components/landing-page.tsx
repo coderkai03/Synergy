@@ -75,7 +75,7 @@ export default function LandingPage() {
                 <Zap className="h-8 w-8 md:h-12 md:w-12 text-white mb-4" />
                 <h3 className="text-lg md:text-2xl font-semibold text-white">Find matches using AI</h3>
                 <p className="text-sm md:text-base text-gray-300">
-                  Can't find a team? Our matching algorithm will find the perfect teams for you!
+                  Can&apos;t find a team? Our matching algorithm will find the perfect teams for you!
                 </p>
               </div>
             </div>
@@ -85,72 +85,6 @@ export default function LandingPage() {
         <div className="mt-10 mb-20">
           <GetStarted/>
         </div>
-
-        {/* TODO: BETA VERSION */}
-        {/* <div className="grid lg:grid-cols-2 gap-8 items-start p-20 text-white">
-          <div className="space-y-8">
-            <div className="rounded-lg p-6 backdrop-blur hover:bg-zinc-900/50">
-              <div className="flex gap-4 items-start">
-                <div className="p-2 bg-amber-500/10 rounded-lg">
-                  <ClipboardList className="w-6 h-6 text-amber-500" />
-                </div>
-                <div className="space-y-2">
-                  <h2 className="text-xl font-semibold">
-                    Complete the <span className="text-amber-500">sign up form</span>
-                  </h2>
-                  <p className="text-zinc-400">
-                    Create your profile and tell us about your interests, skills, and what you&apos;re looking to learn
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-lg p-6 backdrop-blur hover:bg-zinc-900/50">
-              <div className="flex gap-4 items-start">
-                <div className="p-2 bg-amber-500/10 rounded-lg">
-                  <Users className="w-6 h-6 text-amber-500" />
-                </div>
-                <div className="space-y-2">
-                  <h2 className="text-xl font-semibold">
-                    Select Hackathon to <span className="text-amber-500">find team</span>
-                  </h2>
-                  <p className="text-zinc-400">
-                    Browse through upcoming hackathons and choose the ones that match your interests and schedule
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-lg p-6 backdrop-blur hover:bg-zinc-900/50">
-              <div className="flex gap-4 items-start">
-                <div className="p-2 bg-amber-500/10 rounded-lg">
-                  <UserPlus className="w-6 h-6 text-amber-500" />
-                </div>
-                <div className="space-y-2">
-                  <h2 className="text-xl font-semibold">
-                    Wait to <span className="text-amber-500">get matched</span>
-                  </h2>
-                  <p className="text-zinc-400">
-                    Our matching algorithm will help you find the perfect teammates based on skills and interests
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="bg-amber-500 absolute -inset-1.5 rounded-xl" />
-            <div className="relative bg-zinc-900 p-2 rounded-xl overflow-hidden">
-              <Image
-                src={betaPrev}
-                width={400}
-                height={200}
-                alt="Platform interface showing hackathon selection and team matching"
-                className="rounded-lg w-full transition-transform duration-300 transform hover:scale-105"
-              />
-            </div>
-          </div>
-        </div> */}
     </div>
   );
 }
