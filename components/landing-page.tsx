@@ -73,9 +73,9 @@ export default function LandingPage() {
               <div className="absolute -inset-1 bg-gradient-to-r from-zinc-600 to-yellow-600 rounded-lg opacity-100 group-hover:blur"></div>
               <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent h-full">
                 <Zap className="h-8 w-8 md:h-12 md:w-12 text-white mb-4" />
-                <h3 className="text-lg md:text-2xl font-semibold text-white">Sit back and relax!</h3>
+                <h3 className="text-lg md:text-2xl font-semibold text-white">Find matches using AI</h3>
                 <p className="text-sm md:text-base text-gray-300">
-                  Our matching algorithm will find the perfect team for you.
+                  Can't find a team? Our matching algorithm will find the perfect teams for you!
                 </p>
               </div>
             </div>
