@@ -8,7 +8,6 @@ import { Button } from "./ui/button";
 import { Sparkles, Send } from "lucide-react";
 import { useTeamRecommendations } from '@/hooks/useTeamRecommendations';
 import { Input } from "./ui/input";
-import { TeamWithUserData } from '@/types/TeamWithUserData';
 import { useMatchRequests } from '@/hooks/useMatchRequests';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -64,6 +63,7 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
         }
       ]);
     } catch (error) {
+      console.error('Failed to get team recommendations:', error);
       setMessages([
         {
           role: 'assistant',
