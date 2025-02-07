@@ -12,7 +12,6 @@ import { useMatchRequests } from '@/hooks/useMatchRequests';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useTeams } from '@/hooks/useTeams';
-import { cn } from "@/lib/utils";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -64,7 +63,7 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
       setMessages([
         {
           role: 'assistant',
-          content: "Here are some teams that would be a great match for your skills:",
+          content: "Here's a team that would be a great match for your skills:",
           teams: teams,
           reason: result.reason
         }
@@ -97,25 +96,6 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
       setIsLoading(false);
     }
   };
-
-  const limitReached = () => {
-    return (
-      <div className="flex flex-col items-center justify-center">
-        <h2 className="text-zinc-400 mb-6 my-8 leading-relaxed text-center">
-          You&apos;ve reached the limit for AI Matches. 
-          <br/>
-          <br/>
-          Matches reset at midnight!
-        </h2>
-        <Button
-          onClick={() => window.location.href = '/explore'}
-          className="bg-amber-500 hover:bg-amber-600 text-white"
-        >
-          Explore Teams
-        </Button>
-      </div>
-    )
-  }
 
   return (
     <div className="space-y-6">
@@ -164,7 +144,9 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
                   </p>
                   {message.teams && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                      {message.teams.map((team) => (
+                      {message.teams
+                        .filter((_, index) => index === 0) // Show first team for now
+                        .map((team) => (
                         <div key={team.id} className="flex flex-col space-y-2">
                           <TeamPreview team={team} />
                         </div>
@@ -193,10 +175,16 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
 
             {/* Limit Message */}
             {aiMatchUses === 0 && (
-              <div className="text-center mt-4">
+              <div className="text-center mt-8 space-y-2">
                 <p className="text-red-300 font-medium">
                   You&apos;ve reached the limit for AI Matches. Matches reset at midnight!
                 </p>
+                <Button
+                  onClick={() => window.location.href = '/explore'}
+                  className="bg-amber-500 hover:bg-amber-600 text-white"
+                >
+                  Explore Teams
+                </Button>
               </div>
             )}
           </div>
