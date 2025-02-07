@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server';
 import { doc, getDoc } from 'firebase/firestore';
-import { testLog, useCollection } from '@/hooks/useCollection';
+import { collectionRouter, testRouteLog } from '@/app/api/collectionRouter';
 
 // GET: Fetch hackathon by ID
 export async function POST(request: Request) {
   // Extract ID from request body
   const body = await request.json();
   const { id } = body;
-  testLog('Requested hackathon ID:', id);
+  testRouteLog('Requested hackathon ID:', id);
 
   if (!id) {
-    testLog('No hackathon ID provided');
+    testRouteLog('No hackathon ID provided');
     return NextResponse.json(
       { error: 'Hackathon ID is required' },
       { status: 400 }
@@ -19,12 +19,12 @@ export async function POST(request: Request) {
 
   try {
     // Get single hackathon document by ID
-    const hackathonRef = doc(useCollection('hackathons'), id);
-    testLog('Getting hackathon ref:', hackathonRef.path);
+    const hackathonRef = doc(collectionRouter('hackathons'), id);
+    testRouteLog('Getting hackathon ref:', hackathonRef.path);
     const snapshot = await getDoc(hackathonRef);
 
     if (!snapshot.exists()) {
-      testLog('Hackathon not found:', id);
+      testRouteLog('Hackathon not found:', id);
       return NextResponse.json(
         { error: 'Hackathon not found' },
         { status: 404 }
@@ -35,11 +35,11 @@ export async function POST(request: Request) {
       ...snapshot.data(),
       id: snapshot.id,
     };
-    testLog('Found hackathon:', hackathon);
+    testRouteLog('Found hackathon:', hackathon);
 
     return NextResponse.json({ hackathon });
   } catch (error) {
-    testLog('Error fetching hackathon:', error);
+    testRouteLog('Error fetching hackathon:', error);
     return NextResponse.json(
       { error: 'Failed to fetch hackathon' },
       { status: 500 }
