@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
-import { useCollection } from '@/hooks/useCollection';
+import { collectionRouter } from '@/app/api/collectionRouter';
+import { getDocs } from 'firebase/firestore';
 
 // GET: Fetch all hackathons
 export async function GET() {
   try {
     // Get all hackathons from collection
-    const hackathonsRef = useCollection('hackathons');
+    const hackathonsRef = collectionRouter('hackathons');
     const snapshot = await getDocs(hackathonsRef);
     
     // Map documents to hackathon objects with IDs

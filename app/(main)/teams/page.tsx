@@ -74,6 +74,8 @@ export default function HackathonTeamsScreen() {
     fetchHackathons();
   }, [userTeams, userData]);
 
+  testLog('loading', userLoading, teamLoading, hackathonLoading);
+
   if (
     userLoading ||
     teamLoading ||
@@ -85,18 +87,31 @@ export default function HackathonTeamsScreen() {
     return <Loading />;
   }
 
+  if (
+    (!userLoading &&
+      !hackathonLoading &&
+      !teamLoading) &&
+    (!userData ||
+      !userData?.teams ||
+      userData?.teams.length === 0)
+  ) {
+    testLog('not found');
+    return <Loading />;
+  }
+
   const teamsPage = () => {
     return (
       <>
       <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-white">My Teams</h1>
           <div className="flex gap-4">
-            <RequireProfile>
+            {!userLoading && <RequireProfile userData={userData}>
               <Button variant="outline" onClick={() => router.push('/teams/create')} className="gap-2 text-black">
                 <Plus className="w-4 h-4" /> Form Team
               </Button>
-            </RequireProfile>
-            <InviteDialog
+            </RequireProfile>}
+            {userData && <InviteDialog
+              userData={userData}
               invites={invites}
               inviteTeams={teams}
               activeTeams={filteredTeams}
@@ -105,17 +120,27 @@ export default function HackathonTeamsScreen() {
               setInviteTeams={setTeams}
               setActiveTeams={setFilteredTeams}
               setUserHackathons={setHackathons}
-            />
+            />}
           </div>
         </div>
         <div className="space-y-8">
-          {filteredTeams?.length > 0 && hackathons?.length > 0 ? (
+          {(!teamLoading &&
+            !hackathonLoading &&
+            filteredTeams?.length > 0 &&
+            hackathons?.length > 0) ? (
             <TeamListSection
               teams={filteredTeams}
               hackathons={hackathons}
             />
           ) : (
-            <NoTeams />
+            teamLoading ||
+            hackathonLoading ||
+            filteredTeams?.length === 0 ||
+            hackathons?.length === 0 ? (
+              <Loading />
+            ) : (
+              <NoTeams userLoading={userLoading} userData={userData} />
+            )
           )}
         </div>
       </>

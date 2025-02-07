@@ -13,8 +13,7 @@ export function useFirebaseUser() {
   const [error, setError] = useState<string | null>(null);
 
   const getUserData = async (userId: string) => {
-    if (!userId) return;
-    
+    setLoading(true);
     try {
       const res = await fetch(`/api/users/${userId}`);
       const data = await res.json();
@@ -25,12 +24,14 @@ export function useFirebaseUser() {
       return data.user as User;
     } catch (error) {
       console.error('Failed to fetch user data:', error);
+      setError('Failed to fetch user data');
     } finally {
       setLoading(false);
     }
   };
 
   const createUser = async (formData: User, userData: User) => {
+    setLoading(true);
     try {
       testLog("Submitting formData:", formData);
       if (!userData?.id) return;
@@ -45,12 +46,16 @@ export function useFirebaseUser() {
     } catch (error) {
       testLog("Error saving to Firestore:", error);
       toast.error("Failed to save your profile. Please try again.");
+      setError('Failed to save your profile. Please try again.');
       return false;
+    } finally {
+      setLoading(false);
     }
   }
 
   // Move updateUserInvites outside useEffect so it can be returned
   const updateUserInvites = async (index: number, invites: Invite[], accepted: boolean, userData: User) => {
+    setLoading(true);
     if (!userData?.id) return;
 
     const userRef = doc(useCollection('users'), userData.id);
@@ -62,20 +67,30 @@ export function useFirebaseUser() {
     });
     
     testLog(`Updated user invites: ${accepted ? 'accepted' : 'declined'} invite to ${invites[index].teamId}`);
+    setLoading(false);
   }    
 
   const getUsers = async (userIds: string[]) => {
     setLoading(true);
-    const users = await Promise.all(userIds.map(async (userId) => {
-      const userRef = doc(useCollection('users'), userId);
-      const userDoc = await getDoc(userRef);
-      return {
+    try {
+      const users = await Promise.all(userIds.map(async (userId) => {
+        const userRef = doc(useCollection('users'), userId);
+        const userDoc = await getDoc(userRef);
+        return {
         ...userDoc.data(),
         id: userId
       } as User;
     }));
-    setLoading(false);
-    return users;
+      setLoading(false);
+      return users;
+    } catch (error) {
+      testLog('Error fetching users:', error);
+      setError('Failed to fetch users');
+      setLoading(false);
+      return [];
+    } finally {
+      setLoading(false);
+    }
   }
 
   const getOlderUsers = async (limitCount: number, lastUserId?: string, userData?: User) => {

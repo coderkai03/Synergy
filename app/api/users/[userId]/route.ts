@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
-import { testLog, useCollection } from '@/hooks/useCollection';
+import { testLog } from '@/hooks/useCollection';
+import { collectionRouter } from '@/app/api/collectionRouter';
 
 // GET: Fetch user data by ID
 export async function GET(
@@ -11,7 +11,7 @@ export async function GET(
     testLog("fetching user data for: ", params.userId);
   try {
     // Get user document
-    const userRef = doc(useCollection('users'), params.userId);
+    const userRef = doc(collectionRouter('users'), params.userId);
     const userDoc = await getDoc(userRef);
 
     // testLog('userDoc:', userDoc);

@@ -13,8 +13,20 @@ import { toast } from "react-hot-toast"
 import { InviteCard } from "@/components/invite-card"
 import { testLog } from "@/hooks/useCollection";
 
+interface InviteDialogProps {
+  userData: User;
+  invites: Invite[];
+  inviteTeams: Team[];
+  activeTeams: Team[];
+  userHackathons: Hackathon[];
+  setInvites: (invites: Invite[]) => void;
+  setInviteTeams: (teams: Team[]) => void;
+  setActiveTeams: (teams: Team[]) => void;
+  setUserHackathons: (hackathons: Hackathon[]) => void;
+}
 
 export function InviteDialog({
+  userData,
   invites,
   inviteTeams,
   activeTeams,
@@ -23,16 +35,7 @@ export function InviteDialog({
   setInviteTeams, 
   setActiveTeams,
   setUserHackathons 
-}: { 
-  invites: Invite[], 
-  inviteTeams: Team[],
-  activeTeams: Team[],
-  userHackathons: Hackathon[],
-  setInvites: (invites: Invite[]) => void,
-  setInviteTeams: (teams: Team[]) => void, 
-  setActiveTeams: (teams: Team[]) => void,
-  setUserHackathons: (hackathons: Hackathon[]) => void 
-}) {
+}: InviteDialogProps) {
   const { user } = useUser();
   const { updateTeammates } = useTeams();
   const { getUsers, updateUserInvites } = useFirebaseUser();
@@ -78,7 +81,7 @@ export function InviteDialog({
     const success = await updateTeammates(teamId, user.id);
     if (!success) return;
     
-    await updateUserInvites(inviteId, invites, true);
+    await updateUserInvites(inviteId, invites, true, userData);
     const updatedInvites = invites.filter(invite => invite.teamId !== teamId);
     setInvites(updatedInvites);
 
@@ -111,7 +114,7 @@ export function InviteDialog({
   const handleDecline = async (inviteId: number) => {
     if (!user?.id) return;
 
-    await updateUserInvites(inviteId, invites, false);
+    await updateUserInvites(inviteId, invites, false, userData);
     const updatedInvites = invites.filter(invite => invite.teamId !== invites[inviteId].teamId);
     setInvites(updatedInvites);
 

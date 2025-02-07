@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/firebaseConfig';
-import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, query, where, arrayUnion, arrayRemove } from 'firebase/firestore';
-import { useCollection } from '@/hooks/useCollection';
+import { doc, getDoc, addDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { collectionRouter } from '@/app/api/collectionRouter';
 
 // GET: Fetch all teams for a specific user
 export async function GET(request: Request) {
@@ -16,13 +15,13 @@ export async function GET(request: Request) {
 
   try {
     // Get user document to access their teams
-    const userRef = doc(useCollection('users'), userId);
+    const userRef = doc(collectionRouter('users'), userId);
     const userDoc = await getDoc(userRef);
     const teamsData = userDoc.exists() ? userDoc.data()?.teams || [] : [];
     
     // Fetch full team data for each team ID
     const teams = await Promise.all(teamsData.map(async (teamId: string) => {
-      const teamRef = doc(useCollection('teams'), teamId);
+      const teamRef = doc(collectionRouter('teams'), teamId);
       const teamDoc = await getDoc(teamRef);
       return teamDoc.exists() ? { ...teamDoc.data(), id: teamId } : null;
     }));
@@ -30,7 +29,7 @@ export async function GET(request: Request) {
     // Return filtered teams (removing any null values)
     return NextResponse.json({ teams: teams.filter(Boolean) });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch teams' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch teams:' + error }, { status: 500 });
   }
 }
 
@@ -41,20 +40,20 @@ export async function POST(request: Request) {
     const { team, userId } = await request.json();
     
     // Create new team document
-    const teamRef = useCollection('teams');
+    const teamRef = collectionRouter('teams');
     const docRef = await addDoc(teamRef, team);
     
     // Update team with its own ID
     await updateDoc(docRef, { id: docRef.id });
     
     // Add team to user's teams array
-    const userRef = doc(useCollection('users'), userId);
+    const userRef = doc(collectionRouter('users'), userId);
     await updateDoc(userRef, {
       teams: arrayUnion(docRef.id)
     });
 
     return NextResponse.json({ teamId: docRef.id });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to create team' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create team:' + error }, { status: 500 });
   }
 } 

@@ -12,10 +12,11 @@ import { useEffect, useState } from 'react'
 import Loading from '@/components/loading'
 import { User } from '@/types/User'
 import { useUser } from '@clerk/nextjs'
+import { testLog } from '@/hooks/useCollection'
 
 export default function DashboardPage() {
   const { user } = useUser();
-  const { getUserData } = useFirebaseUser();
+  const { getUserData, loading: userLoading } = useFirebaseUser();
   const { loading: hackathonLoading, getUpcomingHackathons } = useHackathons();
   const { loading: teamLoading, checkIfUserHasTeam, getUpcomingTeams } = useTeams();
 
@@ -58,7 +59,19 @@ export default function DashboardPage() {
     fetchUpcomingTeam();
   }, [upcomingHackathons, userData]);
 
-  if (hackathonLoading || teamLoading) return <Loading />;
+  testLog('loading', userLoading, teamLoading, hackathonLoading);
+  if (hackathonLoading || teamLoading || userLoading) return <Loading />;
+
+  // if (
+  //   (!userLoading &&
+  //     !teamLoading &&
+  //     !hackathonLoading) &&
+  //   (!userData ||
+  //   !userData?.teams ||
+  //   userData?.teams.length === 0)
+  // ) {
+  //   return <NotFound />;
+  // }
 
   return (
     <div className="min-h-screen bg-[#111119] p-4">
@@ -69,6 +82,7 @@ export default function DashboardPage() {
               userData={userData}
               userTeam={userTeam}
               hackathon={upcomingHackathons[0]}
+              userLoading={userLoading}
             />
             <UpcomingTeams
               teams={upcomingTeams}

@@ -6,7 +6,7 @@ import { Hackathon } from '@/types/Hackathons';
 import { useCollection, testLog } from './useCollection';
 
 export function useHackathons() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const getOlderHackathons = async (limitCount: number, lastHackathonId?: string) => {
     setLoading(true);
@@ -58,10 +58,11 @@ export function useHackathons() {
       } catch (err) {
         console.error("Error fetching hackathon:", err);
         return null;
+      } finally {
+        setLoading(false);
       }
     }));
 
-    setLoading(false);
     return hackathons as Hackathon[];
   }
 

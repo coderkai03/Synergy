@@ -21,7 +21,6 @@ import { toast } from "react-hot-toast";
 import NotFound from "@/components/not-found";
 import Loading from "@/components/loading";
 import { useUser } from "@clerk/nextjs";
-import { testLog } from "@/hooks/useCollection";
 
 export default function TeamDetailPage() {
   const params = useParams();
@@ -189,23 +188,6 @@ export default function TeamDetailPage() {
                   )}
                 </div>
               </div>
-              <div className="flex flex-col gap-4">
-                {userData && (
-                  <>
-                    {isMember ? (
-                      <LeaveTeamDialog
-                        team={team}
-                        userData={userData}
-                        teammates={teammates}
-                        onLeaveTeam={handleLeaveTeam} />
-                    ) : (
-                      <JoinTeamDialog
-                        team={team}
-                        userData={userData} />
-                    )}
-                  </>
-                )}
-              </div>
             </div>
           </CardHeader>
           <CardContent>
@@ -224,6 +206,22 @@ export default function TeamDetailPage() {
                         <AddTeammateDialog
                           isHost={userData.id === team.hostId}
                           onAddTeammate={handleAddTeammate} />
+                      </>
+                    )}
+                    {userData && (
+                      <>
+                        {isMember ? (
+                          <LeaveTeamDialog
+                            team={team}
+                            userData={userData}
+                            teammates={teammates}
+                            onLeaveTeam={handleLeaveTeam} />
+                        ) : (
+                          <JoinTeamDialog
+                            team={team}
+                            userData={userData}
+                            userLoading={userLoading} />
+                        )}
                       </>
                     )}
                   </div>

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/firebaseConfig';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { useCollection } from '@/hooks/useCollection';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { collectionRouter } from '@/app/api/collectionRouter';
 
 // GET: Fetch user data by ID
 export async function GET(request: Request) {
@@ -16,7 +15,7 @@ export async function GET(request: Request) {
 
   try {
     // Get user document
-    const userRef = doc(useCollection('users'), userId);
+    const userRef = doc(collectionRouter('users'), userId);
     const userDoc = await getDoc(userRef);
     
     // Check if user exists
@@ -27,7 +26,7 @@ export async function GET(request: Request) {
     // Return user data with ID
     return NextResponse.json({ user: { ...userDoc.data(), id: userId } });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch user:' + error }, { status: 500 });
   }
 }
 
@@ -38,11 +37,11 @@ export async function POST(request: Request) {
     const { user } = await request.json();
     
     // Create/update user document
-    const userRef = doc(useCollection('users'), user.id);
+    const userRef = doc(collectionRouter('users'), user.id);
     await setDoc(userRef, user);
     
     return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create user:' + error }, { status: 500 });
   }
 } 

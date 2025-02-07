@@ -6,10 +6,7 @@ import { User } from '@/types/User';
 import { testLog } from './useCollection';
 import { toast } from 'react-hot-toast';
 import { TeamWithUserData } from '@/types/TeamWithUserData';
-
-export interface TeamRecommendation {
-  recommendations: string[]
-}
+import { TeamRecommendationsArray } from '@/types/TeamRecommendations';
 
 export function useTeamRecommendations() {
   const [loading, setLoading] = useState(false);
@@ -50,7 +47,8 @@ export function useTeamRecommendations() {
   const getTeamRecommendations = async (
     hackathonId: string,
     userData: User,
-    teamsWithUserData: TeamWithUserData[]
+    teamsWithUserData: TeamWithUserData[],
+    input: string
   ) => {
     setLoading(true);
     try {
@@ -63,12 +61,13 @@ export function useTeamRecommendations() {
         body: JSON.stringify({
           userData,
           teams: teamsWithUserData,
-          hackathonId
+          hackathonId,
+          input
         })
       });
 
       if (!response.ok) throw new Error('Failed to get recommendations');
-      const result = (await response.json()).recommendations.recommendations as string[];
+      const result = (await response.json()).recommendations as TeamRecommendationsArray;
       testLog("hook result:", result)
       return result;
     } catch (error) {

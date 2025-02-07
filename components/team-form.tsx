@@ -10,46 +10,27 @@ import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { useHackathons } from "@/hooks/useHackathons";
 import { Hackathon } from "@/types/Hackathons";
-import { HackathonPreview } from "./hackathon-preview";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandInput,
-  CommandItem,
-  CommandEmpty,
-  CommandGroup,
-} from "@/components/ui/command";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useTeams } from "@/hooks/useTeams";
 import { testLog } from "@/hooks/useCollection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMatchRequests } from "@/hooks/useMatchRequests";
 import { GPTTeamRecommendations } from "./gpt-team-recommendations";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { HackathonSelector } from "./hackathon-selector";
 import { User } from "@/types/User";
+import NotFound from "./not-found";
 
 
 export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   const { user } = useUser();
   const router = useRouter();
 
-  const { getAllHackathons } = useHackathons();
-  const { createTeam, teamNameExists, getUserTeams } = useTeams();
-  const { getUserData } = useFirebaseUser();
-  const { createMatchRequest, checkIfPendingRequest } = useMatchRequests();
+  const { getAllHackathons, loading: hackathonsLoading } = useHackathons();
+  const { createTeam, teamNameExists } = useTeams();
+  const { getUserData, loading: userLoading } = useFirebaseUser();
 
   const [userData, setUserData] = useState<User | null>(null);
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
-  const [userTeams, setUserTeams] = useState<Team[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [pendingRequest, setPendingRequest] = useState(0);
   const [formData, setFormData] = useState<Team>({
     id: '',
     name: "",
@@ -71,21 +52,7 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
   }, [user]);
 
   useEffect(() => {
-    const fetchUserTeams = async () => {
-      if (!user?.id) return;
-      const teams = await getUserTeams(user?.id || "");
-      setUserTeams(teams || []);
-    }
-    fetchUserTeams();
-  }, [user?.id]);
-
-  useEffect(() => {
     if (hackathonId) {
-      const checkPendingRequest = async () => {
-        const pending = await checkIfPendingRequest(user?.id || "", hackathonId);
-        setPendingRequest(pending);
-      }
-      checkPendingRequest();
       setFormData(prev => ({
         ...prev,
         hackathonId
@@ -143,27 +110,6 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
     }
   };
 
-  const handleMatchRequest = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      if (!user?.id || !formData.hackathonId) {
-        toast.error("Please select a hackathon");
-        return;
-      }
-      
-      await createMatchRequest(user.id, formData.hackathonId);
-      toast.success("✨ AI Match requested submitted!");
-      router.push('/home');
-    } catch (error) {
-      console.error("Error creating match request:", error);
-      toast.error("Failed to request AI Match");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const getActiveHackathons = (hackathons: Hackathon[]) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -178,6 +124,17 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
 
   const activeHackathons = getActiveHackathons(hackathons);
   const selectedHackathon = activeHackathons.find(h => h.id === formData.hackathonId);
+
+  if (
+    (!hackathonsLoading &&
+      userLoading &&
+      hackathons.length === 0) ||
+    (!userData &&
+    !selectedHackathon &&
+    !activeHackathons)
+  ) {
+    return <NotFound />
+  }
 
   return (
     <div className="space-y-6">
@@ -223,9 +180,6 @@ export function TeamForm({ hackathonId }: { hackathonId?: string }) {
         </TabsContent>
 
         <TabsContent value="match">
-          <h2 className="text-zinc-400 mb-6 my-8">
-            Let AI find your perfect team in seconds.
-          </h2>
           {userData ? (
             <GPTTeamRecommendations 
               userData={userData} 
