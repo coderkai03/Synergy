@@ -35,7 +35,7 @@ function CreateTeamContent() {
     <div>
       {!userLoading && <RequireProfile userData={userData}>
         <div className="min-h-screen bg-[#111119] p-4 flex justify-center items-center">
-          <main className="container w-[600px] mx-auto">
+          <main className="container w-3/4 h-3/4 mx-auto">
             <div className="bg-zinc-800 rounded-lg p-6 border border-zinc-700">
               <TeamForm hackathonId={hackathonId || undefined} />
             </div>

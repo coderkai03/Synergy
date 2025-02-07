@@ -188,24 +188,6 @@ export default function TeamDetailPage() {
                   )}
                 </div>
               </div>
-              <div className="flex flex-col gap-4">
-                {userData && (
-                  <>
-                    {isMember ? (
-                      <LeaveTeamDialog
-                        team={team}
-                        userData={userData}
-                        teammates={teammates}
-                        onLeaveTeam={handleLeaveTeam} />
-                    ) : (
-                      <JoinTeamDialog
-                        team={team}
-                        userData={userData}
-                        userLoading={userLoading} />
-                    )}
-                  </>
-                )}
-              </div>
             </div>
           </CardHeader>
           <CardContent>
@@ -224,6 +206,22 @@ export default function TeamDetailPage() {
                         <AddTeammateDialog
                           isHost={userData.id === team.hostId}
                           onAddTeammate={handleAddTeammate} />
+                      </>
+                    )}
+                    {userData && (
+                      <>
+                        {isMember ? (
+                          <LeaveTeamDialog
+                            team={team}
+                            userData={userData}
+                            teammates={teammates}
+                            onLeaveTeam={handleLeaveTeam} />
+                        ) : (
+                          <JoinTeamDialog
+                            team={team}
+                            userData={userData}
+                            userLoading={userLoading} />
+                        )}
                       </>
                     )}
                   </div>

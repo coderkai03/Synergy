@@ -10,8 +10,9 @@ const openai = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY
 });
 
-const RecommendationsResponseSchema = z.object({
-  recommendations: z.array(z.string())
+const RecommendationsArraySchema = z.object({
+  teamIds: z.array(z.string()),
+  reason: z.string()
 });
 
 interface TeamBody {
@@ -23,6 +24,7 @@ interface RecommendationsRequest {
   userData: User;
   teams: TeamBody[];
   hackathonId: string;
+  input: string;
 }
 
 // POST: Generate team recommendations using GPT-4
@@ -34,9 +36,10 @@ export async function POST(request: Request) {
     const {
       userData,
       teams,
-      hackathonId
+      hackathonId,
+      input
     } = body as RecommendationsRequest;
-    testLog('RECOMMENDATIONS_INPUT', { userData, teams, hackathonId });
+    testLog('RECOMMENDATIONS_INPUT', { userData, teams, hackathonId, input });
 
     // Construct GPT prompt with detailed team information
     const prompt = `
@@ -54,8 +57,10 @@ export async function POST(request: Request) {
         - Team Experience: ${team.teammates.flatMap(member => member.category_experience).join(', ')}
       `).join('\n')}
 
-      Please recommend up to 3 teams that would best complement this user's skills and experience.
-      Consider team size, skill diversity, and experience levels. Return the team IDs.
+      Please recommend up to 3 teams that would best match the user's request: ${input}.
+      Try to complement the user's skills and experience. Exclude miscellaneous attributes like IDs from input or output.
+      Return the team IDs and a reason for the recommendations.
+      The reason should be a short sentence in 2nd POV that explains why the teams are good matches for the user.
     `;
     testLog('RECOMMENDATIONS_PROMPT', prompt);
 
@@ -63,9 +68,9 @@ export async function POST(request: Request) {
     const completion = await openai.beta.chat.completions.parse({
       messages: [{ role: "user", content: prompt }],
       model: "gpt-4o-mini",
-      response_format: zodResponseFormat(RecommendationsResponseSchema, "recommendations"),
+      response_format: zodResponseFormat(RecommendationsArraySchema, "recommendations"),
       temperature: 0.5,
-      max_tokens: 100,
+      max_tokens: 1000,
     });
     testLog('RECOMMENDATIONS_COMPLETION', completion);
 

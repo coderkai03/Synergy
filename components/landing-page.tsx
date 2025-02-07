@@ -1,129 +1,156 @@
-// "use client";
+"use client";
 
-// import React, { useRef } from "react";
-// import { motion, useTransform, useScroll } from "framer-motion";
-// import { ArrowRight } from "lucide-react";
-// // import { CardWithEffect } from "./CardWithEffect"; // Ensure CardWithEffect is correctly imported
+import { motion } from "framer-motion";
+import {Zap, Search, User } from "lucide-react";
+import GetStarted from "@/components/get-started";
+import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
+import { schools } from "@/types/Schools";
 
-// const cardData = [
-//   {
-//     id: 1,
-//     name: "Alice",
-//     skill: "Frontend Developer",
-//     url: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80",
-//   },
-//   {
-//     id: 2,
-//     name: "Bob",
-//     skill: "Backend Developer",
-//     url: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80",
-//   },
-//   {
-//     id: 3,
-//     name: "Charlie",
-//     skill: "UI/UX Designer",
-//     url: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80",
-//   },
-//   {
-//     id: 4,
-//     name: "Diana",
-//     skill: "Data Scientist",
-//     url: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80",
-//   },
-//   {
-//     id: 5,
-//     name: "Ethan",
-//     skill: "DevOps Engineer",
-//     url: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80",
-//   },
-// ];
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen flex flex-col w-full bg-[#111119]">
+      <div className="h-[100vh] w-full bg-cover bg-center flex flex-col items-center justify-center space-y-5 text-center -mt-10">
+        <p className="text-2xl md:text-4xl font-bold leading-relaxed text-white">
+          Find your dream team<br/>for any hackathon.
+        </p>
+        <p className="text-zinc-400 text-xl">
+          Used by students at
+        </p>
+        <InfiniteMovingCards
+          items={schools}
+        />
+        <GetStarted/>
+      </div>
 
-// export function LandingPageComponent() {
-//   return (
-//     <div className="min-h-screen bg-gradient-to-b from-purple-100 to-blue-100">
-//       <header className="container mx-auto px-4 py-6">
-//         <nav className="flex justify-between items-center">
-//           <h1 className="text-2xl font-bold text-primary">Synergy</h1>
-//           <button className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold hover:bg-primary/90 transition-colors">
-//             Sign Up
-//           </button>
-//         </nav>
-//       </header>
+      <section className="min--screen bg-[#111119] py-24 px-5 md:px-20">
+          <div className="container px-5 mx-auto">
+            <h2 className="text-center mb-16 text-2xl md:text-4xl text-white">
+              Match with teams that synergize with you.
+            </h2>
+          </div>
+      
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mt-24 grid grid-cols-1 md:grid-cols-3 w-[90%] mx-auto gap-8 bg-[#111119] mb-4"
+          >
+            <div className="relative group h-64">
+              <div className="absolute -inset-1 bg-gradient-to-r from-yellow-600 to-zinc-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
+              <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent h-full">
+                <User className="h-8 w-8 md:h-12 md:w-12 text-white mb-4" />
+                <h3 className="text-lg md:text-2xl font-semibold text-white">Build your profile</h3>
+                <p className="text-sm md:text-base text-gray-300">
+                  Create a hacker profile that flexes your skills and interests.
+                </p>
+              </div>
+            </div>
+            
+            {/* TODO: BETA VERSION */}
+            {/* <div className="relative group mb-4 h-72">
+              <div className="absolute -inset-1 bg-gradient-to-r from-zinc-600 to-zinc-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
+              <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent h-full">
+                <Users className="h-12 w-12 text-white mb-4" />
+                <h3 className="text-2xl font-semibold text-white">Swipe through teams</h3>
+                <p className="text-gray-300">
+                  Browse hundreds of hackers and teams for your next hackathon.
+                </p>
+              </div>
+            </div> */}
 
-//       <main>
-//         <section className="hero container mx-auto py-20 text-center">
-//           <h2 className="text-4xl md:text-6xl font-bold mb-6">
-//             Find Your Perfect Hackathon Teammate
-//           </h2>
-//           <p className="text-xl md:text-2xl mb-8 text-muted-foreground">
-//             Swipe right to connect, swipe left to pass. It's that simple!
-//           </p>
-//           <a
-//             href="#demo" // Updated href to link to the demo section
-//             className="inline-flex items-center bg-secondary text-secondary-foreground px-6 py-3 rounded-full text-lg font-semibold hover:bg-secondary/90 transition-colors"
-//           >
-//             Get on the list! <ArrowRight className="ml-2 h-5 w-5" />
-//           </a>
-//         </section>
+            <div className="relative group h-64">
+              <div className="absolute -inset-1 bg-gradient-to-r from-zinc-600 to-zinc-600 rounded-lg opacity-100 group-hover:blur-lg"></div>
+              <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent h-full">
+                <Search className="h-8 w-8 md:h-12 md:w-12 text-white mb-4" />
+                <h3 className="text-lg md:text-2xl font-semibold text-white">Apply for teams</h3>
+                <p className="text-sm md:text-base text-gray-300">
+                  Browse through hackathons and apply for teams.
+                </p>
+              </div>
+            </div>
 
-//         <section id="demo" className="container mx-auto py-20">
-//           <ScrollControlledSwipeCards />
-//         </section>
-//       </main>
+            <div className="relative group h-64">
+              <div className="absolute -inset-1 bg-gradient-to-r from-zinc-600 to-yellow-600 rounded-lg opacity-100 group-hover:blur"></div>
+              <div className="relative bg-black rounded-lg p-8 space-y-6 border-2 border-transparent group-hover:border-transparent h-full">
+                <Zap className="h-8 w-8 md:h-12 md:w-12 text-white mb-4" />
+                <h3 className="text-lg md:text-2xl font-semibold text-white">Sit back and relax!</h3>
+                <p className="text-sm md:text-base text-gray-300">
+                  Our matching algorithm will find the perfect team for you.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </section>
 
-//       <footer className="container mx-auto px-4 py-6 text-center text-muted-foreground">
-//         <p>&copy; 2024 Synergy. All rights reserved.</p>
-//       </footer>
-//     </div>
-//   );
-// }
+        <div className="mt-10 mb-20">
+          <GetStarted/>
+        </div>
 
-// const ScrollControlledSwipeCards = () => {
-//   const scrollRef = useRef(null);
-//   const { scrollYProgress } = useScroll({
-//     target: scrollRef,
-//     offset: ["start start", "end start"],
-//   });
+        {/* TODO: BETA VERSION */}
+        {/* <div className="grid lg:grid-cols-2 gap-8 items-start p-20 text-white">
+          <div className="space-y-8">
+            <div className="rounded-lg p-6 backdrop-blur hover:bg-zinc-900/50">
+              <div className="flex gap-4 items-start">
+                <div className="p-2 bg-amber-500/10 rounded-lg">
+                  <ClipboardList className="w-6 h-6 text-amber-500" />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-xl font-semibold">
+                    Complete the <span className="text-amber-500">sign up form</span>
+                  </h2>
+                  <p className="text-zinc-400">
+                    Create your profile and tell us about your interests, skills, and what you&apos;re looking to learn
+                  </p>
+                </div>
+              </div>
+            </div>
 
-//   // Define transformations for each card based on scroll progress
-//   const cardTransforms = cardData.map((card, index) => {
-//     const start = index * 0.15;
-//     const end = start + 0.2;
+            <div className="rounded-lg p-6 backdrop-blur hover:bg-zinc-900/50">
+              <div className="flex gap-4 items-start">
+                <div className="p-2 bg-amber-500/10 rounded-lg">
+                  <Users className="w-6 h-6 text-amber-500" />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-xl font-semibold">
+                    Select Hackathon to <span className="text-amber-500">find team</span>
+                  </h2>
+                  <p className="text-zinc-400">
+                    Browse through upcoming hackathons and choose the ones that match your interests and schedule
+                  </p>
+                </div>
+              </div>
+            </div>
 
-//     const y = useTransform(scrollYProgress, [start, end], [0, -300]);
-//     const x = useTransform(
-//       scrollYProgress,
-//       [start, end],
-//       [0, index % 2 === 0 ? -300 : 300]
-//     );
-//     const opacity = useTransform(
-//       scrollYProgress,
-//       [(start + end) / 2, end],
-//       [1, 0]
-//     );
-//     const rotate = useTransform(
-//       scrollYProgress,
-//       [start, end],
-//       [0, index % 2 === 0 ? -45 : 45]
-//     );
+            <div className="rounded-lg p-6 backdrop-blur hover:bg-zinc-900/50">
+              <div className="flex gap-4 items-start">
+                <div className="p-2 bg-amber-500/10 rounded-lg">
+                  <UserPlus className="w-6 h-6 text-amber-500" />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-xl font-semibold">
+                    Wait to <span className="text-amber-500">get matched</span>
+                  </h2>
+                  <p className="text-zinc-400">
+                    Our matching algorithm will help you find the perfect teammates based on skills and interests
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-//     return { y, x, opacity, rotate };
-//   });
-
-//   return (
-//     <div ref={scrollRef} className="relative h-[300vh]">
-//       <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden">
-//         <motion.div className="relative w-full h-full flex items-center justify-center">
-//           {cardData.map((card, index) => (
-//             <CardWithEffect
-//               key={card.id}
-//               card={card}
-//               transforms={cardTransforms[index]}
-//               zIndex={50 - index * 10}
-//             />
-//           ))}
-//         </motion.div>
-//       </div>
-//     </div>
-//   );
-// };
+          <div className="relative">
+            <div className="bg-amber-500 absolute -inset-1.5 rounded-xl" />
+            <div className="relative bg-zinc-900 p-2 rounded-xl overflow-hidden">
+              <Image
+                src={betaPrev}
+                width={400}
+                height={200}
+                alt="Platform interface showing hackathon selection and team matching"
+                className="rounded-lg w-full transition-transform duration-300 transform hover:scale-105"
+              />
+            </div>
+          </div>
+        </div> */}
+    </div>
+  );
+}

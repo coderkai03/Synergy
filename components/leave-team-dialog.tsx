@@ -59,8 +59,7 @@ export function LeaveTeamDialog({
         <DialogTrigger asChild>
           <Button
             variant="destructive"
-            size="sm"
-            className="flex items-center gap-2"
+            className="gap-2"
           >
             <LogOut className="w-4 h-4" />
             Leave Team
