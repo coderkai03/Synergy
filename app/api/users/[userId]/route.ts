@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { testLog } from '@/hooks/useCollection';
 import { collectionRouter } from '@/app/api/collectionRouter';
 
@@ -37,4 +37,20 @@ export async function GET(
       { status: 500 }
     );
   }
-} 
+}
+
+// PUT: Update user data by ID
+export async function PUT(
+  request: Request,
+  { params }: { params: { userId: string } }
+) {
+  try {
+    const { ai_match_uses } = await request.json();
+    const userRef = doc(collectionRouter('users'), params.userId);
+    await updateDoc(userRef, { ai_match_uses });
+    return NextResponse.json({ message: 'User data updated successfully' });
+  } catch (error) {
+    console.error('Error updating user data:', error);
+    return NextResponse.json({ error: 'Failed to update user data' }, { status: 500 });
+  }
+}

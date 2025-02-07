@@ -82,3 +82,26 @@ body {
     border-color: hsl(var(--border));
   }
 }
+
+@keyframes typing {
+  from { 
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.typing-animation {
+  display: inline-block;
+  animation: typing 0.5s ease-out;
+  animation-fill-mode: both;
+}
+
+.typing-animation span {
+  opacity: 0;
+  display: inline-block;
+  animation: typing 0.5s ease-out forwards;
+}

@@ -78,9 +78,18 @@ export function useTeamRecommendations() {
     }
   };
 
+  const updateAiMatchUses = async (userData: User) => {
+    await fetch(`/api/users/${userData.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ai_match_uses: userData.ai_match_uses - 1 })
+    });
+  }
+
   return {
     getTeamRecommendations,
     getTeamsForHackathon,
+    updateAiMatchUses,
     loading
   };
 } 
