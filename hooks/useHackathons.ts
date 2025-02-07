@@ -88,9 +88,13 @@ export function useHackathons() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
+      // Get end date (end of current day)
+      const endDate = new Date();
+      endDate.setHours(23, 59, 59, 999);
+
       const q = query(hackathonsRef,
-        where('date', '>=', today.toISOString()),
-        orderBy('date'),
+        where('endDate', '>=', today.toISOString()),
+        orderBy('endDate'),
         limit(limitCount)
       );
 
@@ -100,10 +104,10 @@ export function useHackathons() {
         id: doc.id
       })) as Hackathon[];
 
-      testLog("upcoming hackathons: ", upcomingHackathons.map(h => h.id));
+      testLog("upcoming and ongoing hackathons: ", upcomingHackathons.map(h => h.id));
 
       if (upcomingHackathons.length === 0) {
-        testLog("No upcoming hackathons found");
+        testLog("No upcoming or ongoing hackathons found");
         return [];
       }
 
