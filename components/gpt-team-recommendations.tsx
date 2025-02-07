@@ -143,7 +143,7 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
                     ))}
                   </p>
                   {message.teams && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
                       {message.teams
                         .filter((_, index) => index === 0) // Show first team for now
                         .map((team) => (
