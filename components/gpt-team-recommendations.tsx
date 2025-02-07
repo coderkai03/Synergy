@@ -12,6 +12,7 @@ import { useMatchRequests } from '@/hooks/useMatchRequests';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useTeams } from '@/hooks/useTeams';
+import { cn } from "@/lib/utils";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -30,7 +31,7 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
   const router = useRouter();
   const { createMatchRequest } = useMatchRequests();
   const { getTeams } = useTeams();
-  const { getTeamRecommendations, getTeamsForHackathon } = useTeamRecommendations();
+  const { getTeamRecommendations, getTeamsForHackathon, updateAiMatchUses } = useTeamRecommendations();
 
   const [messages, setMessages] = useState<Message[]>([{
     role: 'assistant',
@@ -38,10 +39,14 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
   }]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [aiMatchUses, setAiMatchUses] = useState(userData.ai_match_uses);
 
   const handleGetRecommendations = async () => {
     setIsLoading(true);
     try {
+      if (aiMatchUses === 0) {
+        throw new Error('No AI Matches left');
+      }
       // Reset chat and start new conversation
       setMessages([
         {
@@ -53,7 +58,9 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
       const teamsForHackathon = await getTeamsForHackathon(hackathonId);
       const result = await getTeamRecommendations(hackathonId, userData, teamsForHackathon.filter(team => !userData.teams.includes(team.id)), input);
       const teams = await getTeams(result.teamIds);
-      
+      await updateAiMatchUses(userData);
+      setAiMatchUses(aiMatchUses - 1);
+
       setMessages([
         {
           role: 'assistant',
@@ -91,9 +98,29 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
     }
   };
 
+  const limitReached = () => {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h2 className="text-zinc-400 mb-6 my-8 leading-relaxed text-center">
+          You&apos;ve reached the limit for AI Matches. 
+          <br/>
+          <br/>
+          Matches reset at midnight!
+        </h2>
+        <Button
+          onClick={() => window.location.href = '/explore'}
+          className="bg-amber-500 hover:bg-amber-600 text-white"
+        >
+          Explore Teams
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
-      {isGracePeriod ? (
+      <div>
+        {isGracePeriod ? (
         // Waitlist Mode
         <div>
           <h2 className="text-zinc-400 mb-6 my-8 leading-relaxed">
@@ -116,24 +143,62 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
       ) : (
         <div className="space-y-6">
           {/* Match Mode */}
-          <div className="min-h-[200px] rounded-md border border-gray-700 p-4 space-y-4">
-            {messages.map((message, index) => (
-              <div key={index} className="space-y-4">
-                <p className="text-gray-100">{message.content}</p>
-                {message.teams && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                    {message.teams.map((team) => (
-                      <div key={team.id} className="flex flex-col space-y-2">
-                        <TeamPreview team={team} />
-                      </div>
+          <div className="min-h-[200px] rounded-md border border-gray-700 p-4 flex flex-col">
+            {/* Chat Messages */}
+            <div className="flex-1 space-y-4">
+              {messages.map((message, index) => (
+                <div key={index} className="space-y-4">
+                  <p className="text-gray-100 whitespace-pre-line">
+                    {message.content.split('\n').map((line, i) => (
+                      <span
+                        key={i}
+                        className="typing-animation block"
+                        style={{
+                          animationDelay: `${i * 0.5}s`,
+                          animationDuration: '0.5s'
+                        }}
+                      >
+                        {line}
+                      </span>
                     ))}
-                  </div>
-                )}
-                {message.reason && (
-                  <p className="text-gray-100">{message.reason}</p>
-                )}
+                  </p>
+                  {message.teams && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                      {message.teams.map((team) => (
+                        <div key={team.id} className="flex flex-col space-y-2">
+                          <TeamPreview team={team} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {message.reason && (
+                    <p className="text-gray-100 whitespace-pre-line">
+                      {message.reason.split('\n').map((line, i) => (
+                        <span
+                          key={i}
+                          className="typing-animation block"
+                          style={{
+                            animationDelay: `${i * 0.5}s`,
+                            animationDuration: '0.5s'
+                          }}
+                        >
+                          {line}
+                        </span>
+                      ))}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Limit Message */}
+            {aiMatchUses === 0 && (
+              <div className="text-center mt-4">
+                <p className="text-red-300 font-medium">
+                  You&apos;ve reached the limit for AI Matches. Matches reset at midnight!
+                </p>
               </div>
-            ))}
+            )}
           </div>
           
           {/* Input Area */}
@@ -152,7 +217,7 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
             <Button
               onClick={handleGetRecommendations}
               className="bg-amber-500 hover:bg-amber-600 text-white"
-              disabled={isLoading}
+              disabled={isLoading || aiMatchUses === 0}
             >
               {isLoading ? (
                 <Sparkles className="w-4 h-4 animate-spin" />
@@ -163,6 +228,10 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
           </div>
         </div>
       )}
+      </div>
+      <div className="text-center text-sm text-zinc-500">
+        AI Matches left: {aiMatchUses}
+      </div>
     </div>
   );
 } 
