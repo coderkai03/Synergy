@@ -19,7 +19,7 @@ export default function Navbar() {
         return (
             <div className="flex items-center gap-4 space-x-4">
                 <Link 
-                    href="/home"
+                    href="/"
                     className="text-white hover:text-amber-100"
                 >
                     Home

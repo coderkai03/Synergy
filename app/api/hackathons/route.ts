@@ -1,28 +1,48 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/firebaseConfig';
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
-import { useCollection } from '@/hooks/useCollection';
+import { doc, getDoc } from 'firebase/firestore';
+import { testLog, useCollection } from '@/hooks/useCollection';
 
-// GET: Fetch hackathons with optional limit
-export async function GET(request: Request) {
-  // Extract limit from query parameters (default: 10)
-  const { searchParams } = new URL(request.url);
-  const limitCount = Number(searchParams.get('limit')) || 10;
+// GET: Fetch hackathon by ID
+export async function POST(request: Request) {
+  // Extract ID from request body
+  const body = await request.json();
+  const { id } = body;
+  testLog('Requested hackathon ID:', id);
+
+  if (!id) {
+    testLog('No hackathon ID provided');
+    return NextResponse.json(
+      { error: 'Hackathon ID is required' },
+      { status: 400 }
+    );
+  }
 
   try {
-    // Query hackathons collection with ordering and limit
-    const hackathonsRef = useCollection('hackathons');
-    const q = query(hackathonsRef, orderBy('date', 'desc'), limit(limitCount));
-    const snapshot = await getDocs(q);
-    
-    // Map documents to hackathon objects with IDs
-    const hackathons = snapshot.docs.map(doc => ({
-      ...doc.data(),
-      id: doc.id,
-    }));
+    // Get single hackathon document by ID
+    const hackathonRef = doc(useCollection('hackathons'), id);
+    testLog('Getting hackathon ref:', hackathonRef.path);
+    const snapshot = await getDoc(hackathonRef);
 
-    return NextResponse.json({ hackathons });
+    if (!snapshot.exists()) {
+      testLog('Hackathon not found:', id);
+      return NextResponse.json(
+        { error: 'Hackathon not found' },
+        { status: 404 }
+      );
+    }
+
+    const hackathon = {
+      ...snapshot.data(),
+      id: snapshot.id,
+    };
+    testLog('Found hackathon:', hackathon);
+
+    return NextResponse.json({ hackathon });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch hackathons' }, { status: 500 });
+    testLog('Error fetching hackathon:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch hackathon' },
+      { status: 500 }
+    );
   }
-} 
+}

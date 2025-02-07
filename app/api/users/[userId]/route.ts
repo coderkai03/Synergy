@@ -14,7 +14,7 @@ export async function GET(
     const userRef = doc(useCollection('users'), params.userId);
     const userDoc = await getDoc(userRef);
 
-    testLog('userDoc:', userDoc);
+    // testLog('userDoc:', userDoc);
     
     if (!userDoc.exists()) {
       return NextResponse.json(

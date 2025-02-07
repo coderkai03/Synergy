@@ -6,7 +6,7 @@ import { User } from "@/types/User";
 import { TeamPreview } from "./team-preview";
 import { Button } from "./ui/button";
 import { Sparkles } from "lucide-react";
-import { TeamRecommendation, useTeamRecommendations } from '@/hooks/useTeamRecommendations';
+import { useTeamRecommendations } from '@/hooks/useTeamRecommendations';
 import { useMatchRequests } from '@/hooks/useMatchRequests';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';

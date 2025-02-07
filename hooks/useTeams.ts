@@ -19,7 +19,6 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { Invite, Team } from '@/types/Teams';
-import { useUser } from '@clerk/nextjs';
 import toast from 'react-hot-toast';
 import { useCollection, testLog } from './useCollection';
 
@@ -364,6 +363,81 @@ export function useTeams() {
     }
   }
 
+  const getUpcomingTeams = async (teams: string[], limitCount: number) => {
+    if (!teams) return [];
+
+    setLoading(true);
+    try {
+      // Get all team docs for the user's teams
+      const teamDocs = await Promise.all(
+        teams.map(async (teamId) => {
+          const teamRef = doc(useCollection('teams'), teamId);
+          const teamDoc = await getDoc(teamRef);
+          if (!teamDoc.exists()) return null;
+          return {
+            ...teamDoc.data(),
+            id: teamId
+          } as Team;
+        })
+      );
+
+      testLog("teamDocs: ", teamDocs);
+
+      // Get hackathon dates
+      const teamsWithDates = await Promise.all(
+        teamDocs
+          .filter((team) => team !== null)
+          .map(async (team) => {
+            const res = await fetch('/api/hackathons', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                id: team.hackathonId
+              })
+            });
+            const data = await res.json();
+            if (!res.ok || !data.hackathon) return null;
+            return {
+              teamId: team.id,
+              hackathonDate: data.hackathon.date
+            };
+          })
+      );
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      testLog("teamsWithDates: ", teamsWithDates);
+
+      // Filter for teams with upcoming hackathons and sort by date
+      const upcomingTeams = teamDocs
+        .filter((team) => team !== null)
+        .filter((team) => { // filter for teams with upcoming hackathons
+          const dateInfo = teamsWithDates.find(td => td?.teamId === team.id);
+          testLog("dateInfo: ", dateInfo, dateInfo && dateInfo.hackathonDate >= today.toISOString());
+          return dateInfo && dateInfo.hackathonDate >= today.toISOString();
+        })
+        .sort((a, b) => { // sort by date
+          const aDate = teamsWithDates.find(td => td?.teamId === a.id)?.hackathonDate;
+          testLog("aDate: ", aDate);
+          const bDate = teamsWithDates.find(td => td?.teamId === b.id)?.hackathonDate;
+          testLog("bDate: ", bDate);
+          return new Date(aDate).getTime() - new Date(bDate).getTime();
+        });
+
+      testLog("upcoming teams: ", upcomingTeams.map(t => t.id));
+
+      return upcomingTeams.slice(0, limitCount);
+    } catch (error) {
+      testLog('Error getting upcoming teams:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return {
     loading,
     error,
@@ -382,7 +456,8 @@ export function useTeams() {
     updateRequests,
     updateTeamRequests,
     teammateExists,
-    checkIfUserHasTeam
+    checkIfUserHasTeam,
+    getUpcomingTeams
   };
 }
 
