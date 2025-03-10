@@ -12,6 +12,7 @@ import Loading from "@/components/loading";
 import NotFound from "@/components/not-found";
 import { useUser } from "@clerk/nextjs";
 import { User } from "@/types/User";
+import { RequireProfile } from "@/components/require-profile";
 
 export default function ExplorePage() {
   const { user } = useUser();
@@ -35,13 +36,11 @@ export default function ExplorePage() {
   // Load all teams once
   useEffect(() => {
     const loadTeams = async () => {
-      const teams = await getAllTeams(userData?.teams || []);
+      const teams = await getAllTeams();
       setAllTeams(teams);
     };
-    if (userData) {
-      loadTeams();
-    }
-  }, [userData]);
+    loadTeams();
+  }, []);
 
   // Filter teams based on search
   const filteredTeams = allTeams.filter(team => 
@@ -71,7 +70,8 @@ export default function ExplorePage() {
     return <Loading />;
   }
 
-  if (!userData && !allTeams.length) {
+  if (!allTeams.length) {
+    console.log("loading", userLoading, teamsLoading);
     return <NotFound />;
   }
 
@@ -92,7 +92,9 @@ export default function ExplorePage() {
         {/* Teams Grid */}
         <div className={`grid grid-cols-1 ${!isMobile && 'sm:grid-cols-2 md:grid-cols-3'} gap-4`}>
           {paginatedTeams.map((team) => (
-            <TeamPreview key={team.id} team={team} />
+            <RequireProfile key={team.id} userData={userData}>
+              <TeamPreview team={team} />
+            </RequireProfile>
           ))}
         </div>
 

@@ -81,7 +81,7 @@ export function ProfileBuilder() {
       setFormData({...formData, ...data});
       const success = await createUser(formData, userData);
       if (success) {
-        router.push("/home");
+        router.push("/");
       }
     } catch (error) {
       console.error("Form submission error:", error);

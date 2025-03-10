@@ -6,7 +6,7 @@ import { Hackathon } from '@/types/Hackathons';
 import { useCollection, testLog } from './useCollection';
 
 export function useHackathons() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const getOlderHackathons = async (limitCount: number, lastHackathonId?: string) => {
     setLoading(true);
@@ -50,20 +50,22 @@ export function useHackathons() {
 
   const getHackathons = async (ids: string[]) => {
     setLoading(true);
-    const hackathons = await Promise.all(ids.map(async (id) => {
-      try {
-        const hackathonRef = doc(useCollection('hackathons'), id);
-        const hackathon = await getDoc(hackathonRef);
-        return {...hackathon.data(), id} as Hackathon;
-      } catch (err) {
-        console.error("Error fetching hackathon:", err);
-        return null;
-      } finally {
-        setLoading(false);
-      }
-    }));
+    try {
+      const hackathons = await Promise.all(ids.map(async (id) => {
+        try {
+          const hackathonRef = doc(useCollection('hackathons'), id);
+          const hackathon = await getDoc(hackathonRef);
+          return {...hackathon.data(), id} as Hackathon;
+        } catch (err) {
+          console.error("Error fetching hackathon:", err);
+          return null;
+        }
+      }));
 
-    return hackathons as Hackathon[];
+      return hackathons as Hackathon[];
+    } finally {
+      setLoading(false);
+    }
   }
 
   const getAllHackathons = async () => {

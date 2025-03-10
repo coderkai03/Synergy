@@ -23,7 +23,7 @@ import toast from 'react-hot-toast';
 import { useCollection, testLog } from './useCollection';
 
 export function useTeams() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const getUserTeams = async (userId: string) => {
@@ -308,15 +308,16 @@ export function useTeams() {
     }
   };
 
-  const getAllTeams = async (userTeamIds: string[]) => {
+  const getAllTeams = async () => {
     setLoading(true);
     try {
       const teamsRef = useCollection('teams');
       const q = query(teamsRef, orderBy('id', 'desc'));
       const querySnapshot = await getDocs(q);
-      const teams = querySnapshot.docs
-        .map(doc => ({ ...doc.data(), id: doc.id } as Team))
-        .filter((team) => !userTeamIds.includes(team.id));
+      const teams = querySnapshot.docs.map(doc => ({ 
+        ...doc.data(), 
+        id: doc.id 
+      } as Team));
       return teams;
     } catch (error) {
       console.error('Error fetching all teams:', error);
@@ -382,8 +383,8 @@ export function useTeams() {
   const checkIfUserHasTeam = async (teams: string[] | undefined, hackathonId: string) => {
     if (!teams) return false;
 
-    setLoading(true);
     try {
+      setLoading(true);
       // Get all team docs for the user's teams
       const teamDocs = await Promise.all(
         teams.map(async (teamId) => {

@@ -88,7 +88,7 @@ export function GPTTeamRecommendations({ userData, hackathonId, isGracePeriod }:
     try {
       await createMatchRequest(userData.id, hackathonId);
       toast.success("✨ AI Match request submitted!");
-      router.push('/home');
+      router.push('/');
     } catch (error) {
       console.error('Failed to submit match request:', error);
       toast.error('Failed to submit match request');

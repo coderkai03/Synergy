@@ -44,19 +44,23 @@ export default function DashboardPage() {
   }, [user]);
 
   useEffect(() => {
-    const fetchUpcomingTeams = async () => {
-      if (!userData?.teams) return;
-      const teams = await getUpcomingTeams(userData?.teams, 3);
-      setUpcomingTeams(teams);
-    }
-    fetchUpcomingTeams();
+    const fetchData = async () => {
+      if (!userData?.teams || upcomingHackathons.length === 0) return;
+      
+      try {
+        const [teams, teamForHackathon] = await Promise.all([
+          getUpcomingTeams(userData.teams, 3),
+          checkIfUserHasTeam(userData.teams, upcomingHackathons[0].id)
+        ]);
+        
+        setUpcomingTeams(teams);
+        setUserTeam(teamForHackathon ? teamForHackathon[0] : null);
+      } catch (error) {
+        console.error('Error fetching team data:', error);
+      }
+    };
 
-    const fetchUpcomingTeam = async () => {
-      if (upcomingHackathons.length === 0) return;
-      const teamForHackathon = await checkIfUserHasTeam(userData?.teams, upcomingHackathons[0].id);
-      setUserTeam(teamForHackathon ? teamForHackathon[0] : null);
-    }
-    fetchUpcomingTeam();
+    fetchData();
   }, [upcomingHackathons, userData]);
 
   testLog('loading', userLoading, teamLoading, hackathonLoading);
