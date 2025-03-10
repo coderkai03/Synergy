@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/User";
 import { testLog } from "@/hooks/useCollection";

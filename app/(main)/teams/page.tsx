@@ -17,7 +17,6 @@ import NoTeams from "@/components/no-teams"
 import { testLog } from "@/hooks/useCollection";
 import { useUser } from "@clerk/nextjs"
 import { User } from "@/types/User"
-import NotFound from "@/components/not-found"
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()

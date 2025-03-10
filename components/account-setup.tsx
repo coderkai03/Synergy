@@ -28,13 +28,12 @@ import SkillsSection from "./slider-section";
 import { useFirebaseUser } from "@/hooks/useFirebaseUsers";
 import { ItemSelect } from "./item-select";
 import { Textarea } from "./ui/textarea";
-import NotFound from "./not-found";
 import { testLog } from "@/hooks/useCollection";
 
 export function AccountSetupComponent() {
   const router = useRouter();
   const { user } = useUser();
-  const { getUserData, createUser, loading: userLoading } = useFirebaseUser();
+  const { getUserData, createUser } = useFirebaseUser();
 
   const [formData, setFormData] = useState<User>({
     ...defaultUser,
