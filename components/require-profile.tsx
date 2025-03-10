@@ -30,22 +30,24 @@ export const isProfileComplete = (user: User | null): boolean => {
 
 export function RequireProfile({ children, userData }: RequireProfileProps) {
   const router = useRouter();
-  
-  const [hasChecked, setHasChecked] = useState(false);
 
-  useEffect(() => {
-    // Only check when loading is complete and we haven't checked yet
-    if (!hasChecked) {
-      setHasChecked(true);
-      // testLog('User data:', userData);
-      
-      if (userData !== undefined && !isProfileComplete(userData)) {
-        testLog('Profile incomplete:', userData);
-        router.push('/account-setup');
-      }
+  const handleInteraction = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Only check if the target is an interactive element
+    const target = e.target as HTMLElement;
+    const isInteractive = target.matches('button, a, input, select, textarea') ||
+      target.closest('button, a, input, select, textarea');
+
+    if (isInteractive && userData !== undefined && !isProfileComplete(userData)) {
+      testLog('Profile incomplete:', userData);
+      e.preventDefault();
+      e.stopPropagation();
+      router.push('/account-setup');
     }
-  }, [userData, hasChecked, router]);
+  };
 
-  // If we've checked and the profile is complete, render children
-  return <>{children}</>;
+  return (
+    <div onClick={handleInteraction}>
+      {children}
+    </div>
+  );
 } 

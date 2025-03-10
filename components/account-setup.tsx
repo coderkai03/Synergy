@@ -63,7 +63,6 @@ export function AccountSetupComponent() {
   }, [user]);
 
   useEffect(() => {
-    testLog('Current userData:', userData);
     if (userData) {
       setFormData(prevFormData => ({
         ...userData,
@@ -134,7 +133,7 @@ export function AccountSetupComponent() {
     if (!userData) return;
     const success = await createUser(formData, userData);
     if (success) {
-      router.push("/home");
+      router.push("/");
     }
   };
 
@@ -143,18 +142,12 @@ export function AccountSetupComponent() {
     setCurrentSection(prev => prev + 1);
   };
 
-  if (
-    (!userData &&
-    !userLoading) &&
-    !userData
-  ) {
-    return <NotFound />;
-  }
+  console.log("login data:", userData);
 
   return (
     <div className="flex items-start justify-center min-h-screen bg-[#111119] p-4 pt-24">
       <div className="w-full max-w-2xl">
-        {userData ? (
+        {formData ? (
           <Card className="items-center space-y-6 w-full bg-[#111119] text-white border-none pt-5">
             <form onSubmit={
                 currentSection === 4 ? handleSubmit : handleNext

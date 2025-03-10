@@ -17,6 +17,7 @@ import NoTeams from "@/components/no-teams"
 import { testLog } from "@/hooks/useCollection";
 import { useUser } from "@clerk/nextjs"
 import { User } from "@/types/User"
+import NotFound from "@/components/not-found"
 
 export default function HackathonTeamsScreen() {
   const router = useRouter()
@@ -81,21 +82,7 @@ export default function HackathonTeamsScreen() {
     teamLoading ||
     hackathonLoading
   ) {
-    testLog('teams: ', teamLoading);
-    testLog('hackathons: ', hackathonLoading);
-    testLog('user: ', userLoading);
-    return <Loading />;
-  }
-
-  if (
-    (!userLoading &&
-      !hackathonLoading &&
-      !teamLoading) &&
-    (!userData ||
-      !userData?.teams ||
-      userData?.teams.length === 0)
-  ) {
-    testLog('not found');
+    testLog('loading', userLoading, teamLoading, hackathonLoading);
     return <Loading />;
   }
 
@@ -133,14 +120,7 @@ export default function HackathonTeamsScreen() {
               hackathons={hackathons}
             />
           ) : (
-            teamLoading ||
-            hackathonLoading ||
-            filteredTeams?.length === 0 ||
-            hackathons?.length === 0 ? (
-              <Loading />
-            ) : (
-              <NoTeams userLoading={userLoading} userData={userData} />
-            )
+            <NoTeams userLoading={userLoading} userData={userData} />
           )}
         </div>
       </>
