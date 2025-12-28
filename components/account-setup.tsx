@@ -129,7 +129,15 @@ export function AccountSetupComponent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userData) return;
+    if (!user) return;
+    const userData = {
+      ...formData,
+      id: user.id,
+      email: user.primaryEmailAddress?.emailAddress || "",
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      profilePicture: user.imageUrl || ""
+    };
     const success = await createUser(formData, userData);
     if (success) {
       router.push("/");
