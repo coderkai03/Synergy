@@ -45,7 +45,8 @@ export function AccountSetupComponent() {
       software: -1,
       hardware: -1,
       design: -1
-    }
+    },
+    ai_match_uses: 10
   });
   const [currentSection, setCurrentSection] = useState(0);
   const [userData, setUserData] = useState<User | null>(null);
